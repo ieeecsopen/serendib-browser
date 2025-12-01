@@ -300,6 +300,51 @@ const App: React.FC = () => {
     setPasswordPrompt(prev => ({ ...prev, isVisible: false }));
   };
 
+  // --- Zoom Handlers ---
+  const ZOOM_PRESETS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0];
+  
+  const handleTabZoomChange = (tabId: string, zoomFactor: number) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, zoomLevel: zoomFactor } : t
+    ));
+  };
+
+  const handleZoomIn = () => {
+    if ((window as any).__activeWebview?.zoomIn) {
+      (window as any).__activeWebview.zoomIn();
+    } else if (activeTab) {
+      const current = activeTab.zoomLevel || 1.0;
+      const nextLevel = ZOOM_PRESETS.find(z => z > current + 0.01) || ZOOM_PRESETS[ZOOM_PRESETS.length - 1];
+      handleTabZoomChange(activeTabId, nextLevel);
+    }
+  };
+
+  const handleZoomOut = () => {
+    if ((window as any).__activeWebview?.zoomOut) {
+      (window as any).__activeWebview.zoomOut();
+    } else if (activeTab) {
+      const current = activeTab.zoomLevel || 1.0;
+      const prevLevel = [...ZOOM_PRESETS].reverse().find(z => z < current - 0.01) || ZOOM_PRESETS[0];
+      handleTabZoomChange(activeTabId, prevLevel);
+    }
+  };
+
+  const handleZoomReset = () => {
+    if ((window as any).__activeWebview?.resetZoom) {
+      (window as any).__activeWebview.resetZoom();
+    } else if (activeTab) {
+      handleTabZoomChange(activeTabId, 1.0);
+    }
+  };
+
+  const handleSetZoom = (level: number) => {
+    if ((window as any).__activeWebview?.setZoomFactor) {
+      (window as any).__activeWebview.setZoomFactor(level);
+    } else if (activeTab) {
+      handleTabZoomChange(activeTabId, level);
+    }
+  };
+
   const updateTab = (id: string, updates: Partial<Tab>) => {
     setTabs(prev => prev.map(t => {
       if (t.id !== id) return t;
