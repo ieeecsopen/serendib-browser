@@ -14,7 +14,7 @@ import {
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
-  Shield, Code
+  Shield, Code, Maximize
 } from 'lucide-react';
 
 // ============================================================================
@@ -460,6 +460,17 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
                   const webview = (window as any).__activeWebview;
                   if (webview?.openDevTools) {
                     webview.openDevTools();
+                  }
+                })} 
+              />
+              <MenuItem 
+                icon={<Maximize size={16} />} 
+                label="Full Screen" 
+                shortcut="F11"
+                onClick={() => onAction(() => {
+                  const electron = (window as any).electron;
+                  if (electron?.toggleFullscreen) {
+                    electron.toggleFullscreen();
                   }
                 })} 
               />
