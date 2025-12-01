@@ -32,6 +32,44 @@
       .no-drag {
         -webkit-app-region: no-drag;
       }
+      
+      /* Custom Scrollbar Styles - Dark Theme */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      ::-webkit-scrollbar-thumb:active {
+        background: rgba(255, 255, 255, 0.35);
+      }
+      ::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+      /* Thin scrollbar for menus */
+      .scrollbar-thin::-webkit-scrollbar {
+        width: 5px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 3px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+      }
+      /* Firefox scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+      }
     </style>
     <link rel="stylesheet" href="/index.css">
   </head>
