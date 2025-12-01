@@ -10,7 +10,7 @@ import type { Tab, Workspace, Container } from '../../types';
 import { 
   X, Plus, Globe, Settings, History, Home, Layers, 
   Briefcase, Newspaper, User, Edit3, Trash2, ArrowRight, 
-  Box, ShieldAlert 
+  Box, ShieldAlert, PanelLeftClose, PanelLeft, RotateCw
 } from 'lucide-react';
 
 // ============================================================================
@@ -58,7 +58,8 @@ const getWorkspaceIcon = (name: string) => {
   return iconMap[name.toLowerCase()] || <Layers size={14} />;
 };
 
-const getTabIcon = (url: string) => {
+const getTabIcon = (url: string, isLoading?: boolean) => {
+  if (isLoading) return <RotateCw size={13} className="animate-spin" />;
   if (!url.startsWith('serendib://')) return <Globe size={13} />;
   if (url.includes('settings')) return <Settings size={13} />;
   if (url.includes('history')) return <History size={13} />;
@@ -95,10 +96,20 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [editType, setEditType] = useState<'tab' | 'workspace' | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // Load collapsed state from localStorage
+    const saved = localStorage.getItem('serendib-sidebar-collapsed');
+    return saved === 'true';
+  });
   
   // Refs
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Save collapsed state to localStorage
+  useEffect(() => {
+    localStorage.setItem('serendib-sidebar-collapsed', String(isCollapsed));
+  }, [isCollapsed]);
 
   // Effects
   useEffect(() => {
@@ -192,27 +203,40 @@ export const TabSystem: React.FC<TabSystemProps> = ({
 
   return (
     <>
-      <div className="flex flex-col h-full w-[260px] bg-[#050505]/95 backdrop-blur-xl border-r border-white/5 z-10 text-zinc-400 font-sans select-none transition-all duration-300">
+      <div className={`flex flex-col h-full ${isCollapsed ? 'w-[60px]' : 'w-[260px]'} bg-[#050505]/95 backdrop-blur-xl border-r border-white/5 z-10 text-zinc-400 font-sans select-none transition-all duration-300`}>
         
         {/* Header: Traffic Lights & New Tab Button */}
-        <div className="pt-8 pb-4 px-5 flex flex-col gap-5 shrink-0">
-          <div className="flex items-center space-x-2 opacity-50 hover:opacity-100 transition-opacity mb-2">
-            <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10 shadow-inner" />
-            <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10 shadow-inner" />
-            <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10 shadow-inner" />
+        <div className={`pt-8 pb-4 ${isCollapsed ? 'px-2' : 'px-5'} flex flex-col gap-5 shrink-0`}>
+          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2'} opacity-50 hover:opacity-100 transition-opacity mb-2`}>
+            {!isCollapsed && (
+              <>
+                <div className="w-3 h-3 rounded-full bg-[#FF5F56] border border-black/10 shadow-inner" />
+                <div className="w-3 h-3 rounded-full bg-[#FFBD2E] border border-black/10 shadow-inner" />
+                <div className="w-3 h-3 rounded-full bg-[#27C93F] border border-black/10 shadow-inner" />
+              </>
+            )}
+            {/* Collapse Toggle Button */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className={`${isCollapsed ? '' : 'ml-auto'} p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-all`}
+              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            >
+              {isCollapsed ? <PanelLeft size={16} /> : <PanelLeftClose size={16} />}
+            </button>
           </div>
 
           <button
             onClick={onTabCreate}
-            className="w-full flex items-center justify-center space-x-2 h-9 rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all duration-200 text-xs font-medium group border border-white/5 shadow-sm"
+            className={`w-full flex items-center justify-center ${isCollapsed ? 'h-10 w-10 mx-auto' : 'space-x-2 h-9'} rounded-lg bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all duration-200 text-xs font-medium group border border-white/5 shadow-sm`}
+            title={isCollapsed ? 'New Tab' : undefined}
           >
             <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
-            <span>New Tab</span>
+            {!isCollapsed && <span>New Tab</span>}
           </button>
         </div>
 
         {/* Tabs List */}
-        <div className="flex-1 overflow-y-auto px-2 space-y-1 scrollbar-none py-2">
+        <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'px-1' : 'px-2'} space-y-1 scrollbar-none py-2`}>
           {tabs.map((tab) => {
             const container = containers.find(c => c.id === tab.containerId);
             const isActive = activeTabId === tab.id;
@@ -228,8 +252,9 @@ export const TabSystem: React.FC<TabSystemProps> = ({
                 onDragEnd={handleDragEnd}
                 onClick={() => onTabSelect(tab.id)}
                 onContextMenu={(e) => handleContextMenu(e, 'tab', tab.id)}
+                title={isCollapsed ? tab.title || 'New Tab' : undefined}
                 className={`
-                  group relative flex items-center h-9 px-3 rounded-lg cursor-pointer transition-all duration-200
+                  group relative flex items-center ${isCollapsed ? 'h-10 w-10 mx-auto justify-center' : 'h-9 px-3'} rounded-lg cursor-pointer transition-all duration-200
                   ${isActive ? 'bg-white/10 text-white shadow-md backdrop-blur-sm' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}
                   ${draggedTabId === tab.id ? 'opacity-30' : ''}
                 `}
@@ -237,71 +262,86 @@ export const TabSystem: React.FC<TabSystemProps> = ({
                 {/* Container Indicator */}
                 {container && (
                   <div
-                    className={`absolute left-1 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full shadow-[0_0_5px_currentColor] transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                    className={`absolute ${isCollapsed ? 'top-1 right-1' : 'left-1 top-1/2 -translate-y-1/2'} w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor] transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
                     style={{ backgroundColor: container.color, color: container.color }}
                     title={container.name}
                   />
                 )}
 
-                {/* Icon */}
-                <div className={`mr-3 ml-1 shrink-0 ${isActive ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'}`}>
-                  {getTabIcon(tab.url)}
+                {/* Icon / Favicon */}
+                <div className={`shrink-0 ${isActive ? 'text-white' : 'text-zinc-600 group-hover:text-zinc-400'} ${!isCollapsed && 'mr-3 ml-1'}`}>
+                  {tab.favicon ? (
+                    <img src={tab.favicon} alt="" className="w-4 h-4 rounded-sm" />
+                  ) : (
+                    getTabIcon(tab.url, tab.isLoading)
+                  )}
                 </div>
 
-                {/* Title / Edit Input */}
-                {isEditing ? (
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
-                    onBlur={saveEdit}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveEdit();
-                      if (e.key === 'Escape') setEditingId(null);
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-1 min-w-0 bg-transparent text-xs font-medium focus:outline-none text-white border-b border-white/20 pb-0.5"
-                  />
-                ) : (
-                  <div className="flex-1 min-w-0 flex items-center">
-                    <span
-                      className="truncate text-[13px] font-medium leading-none flex-1 mt-0.5"
-                      onDoubleClick={() => startEditing(tab.id, tab.title, 'tab')}
-                    >
-                      {tab.title || 'New Tab'}
-                    </span>
-                    {container?.isDisposable && (
-                      <span title="Disposable Tab" className="ml-1.5 shrink-0">
-                        <ShieldAlert size={10} className="text-red-500" />
-                      </span>
+                {/* Title / Edit Input - Hidden when collapsed */}
+                {!isCollapsed && (
+                  <>
+                    {isEditing ? (
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={saveEdit}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') saveEdit();
+                          if (e.key === 'Escape') setEditingId(null);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex-1 min-w-0 bg-transparent text-xs font-medium focus:outline-none text-white border-b border-white/20 pb-0.5"
+                      />
+                    ) : (
+                      <div className="flex-1 min-w-0 flex items-center">
+                        <span
+                          className="truncate text-[13px] font-medium leading-none flex-1 mt-0.5"
+                          onDoubleClick={() => startEditing(tab.id, tab.title, 'tab')}
+                        >
+                          {tab.title || 'New Tab'}
+                        </span>
+                        {container?.isDisposable && (
+                          <span title="Disposable Tab" className="ml-1.5 shrink-0">
+                            <ShieldAlert size={10} className="text-red-500" />
+                          </span>
+                        )}
+                      </div>
                     )}
-                  </div>
+
+                    {/* Close Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onTabClose(tab.id);
+                      }}
+                      className="absolute right-2 p-1 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <X size={12} />
+                    </button>
+                  </>
                 )}
 
-                {/* Close Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTabClose(tab.id);
-                  }}
-                  className="absolute right-2 p-1 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
-                >
-                  <X size={12} />
-                </button>
+                {/* Disposable indicator when collapsed */}
+                {isCollapsed && container?.isDisposable && (
+                  <div className="absolute bottom-0.5 right-0.5">
+                    <ShieldAlert size={8} className="text-red-500" />
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
 
         {/* Workspace Switcher */}
-        <div className="p-3 mt-auto border-t border-white/5 bg-[#0A0A0A]/50 backdrop-blur-md">
-          <div className="flex items-center justify-between gap-1">
-            <div className="flex items-center gap-1 overflow-x-auto scrollbar-none flex-1">
+        <div className={`p-3 mt-auto border-t border-white/5 bg-[#0A0A0A]/50 backdrop-blur-md ${isCollapsed ? 'flex flex-col items-center gap-1' : ''}`}>
+          <div className={`flex ${isCollapsed ? 'flex-col' : ''} items-center justify-between gap-1`}>
+            <div className={`flex ${isCollapsed ? 'flex-col' : ''} items-center gap-1 ${isCollapsed ? '' : 'overflow-x-auto scrollbar-none flex-1'}`}>
               {workspaces.map((ws) => {
                 const isEditing = editingId === ws.id && editType === 'workspace';
                 
-                return isEditing ? (
+                return isEditing && !isCollapsed ? (
                   <input
                     key={ws.id}
                     ref={inputRef}
