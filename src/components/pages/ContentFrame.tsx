@@ -357,27 +357,19 @@ const SidebarAppIcon: React.FC<{
   name: string;
   url: string;
   logo: string;
-  fallbackColor: string;
   onNavigate: (url: string) => void;
-}> = ({ name, url, logo, fallbackColor, onNavigate }) => {
-  const [imgError, setImgError] = useState(false);
-  
+}> = ({ name, url, logo, onNavigate }) => {
   return (
     <button
       onClick={() => onNavigate(url)}
-      className={`group relative w-10 h-10 rounded-xl bg-gradient-to-br ${fallbackColor} flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-200 overflow-hidden`}
+      className="group relative w-10 h-10 flex items-center justify-center transition-all duration-200"
       title={name}
     >
-      {!imgError ? (
-        <img 
-          src={logo} 
-          alt={name}
-          className="w-6 h-6 object-contain"
-          onError={() => setImgError(true)}
-        />
-      ) : (
-        <span className="text-white font-bold text-sm">{name.charAt(0)}</span>
-      )}
+      <img 
+        src={logo} 
+        alt={name}
+        className="w-6 h-6 object-contain group-hover:scale-125 transition-transform duration-200"
+      />
       
       {/* Tooltip */}
       <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/10">
