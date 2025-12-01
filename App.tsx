@@ -860,6 +860,7 @@ const App: React.FC = () => {
             onTabFaviconChange={handleTabFaviconChange}
             onPasswordFormDetected={handlePasswordFormDetected}
             onCredentialSubmitted={handleCredentialSubmitted}
+            onTabZoomChange={handleTabZoomChange}
           />
           
           <AIPanel 
