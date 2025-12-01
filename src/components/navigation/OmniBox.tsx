@@ -6,13 +6,15 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import type { Container } from '../../types';
+import type { Container, SitePermissions, DefaultPermissions, PermissionType, PermissionSetting } from '../../types';
 import { SiteInfoPopup } from '../ui/SiteInfoPopup';
 import { ZoomControl } from '../ui/ZoomControl';
+import PermissionsPopup from '../ui/PermissionsPopup';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
-  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText
+  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
+  Shield
 } from 'lucide-react';
 
 // ============================================================================
