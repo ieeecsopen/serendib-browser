@@ -21,6 +21,8 @@ export interface Tab {
   isMuted?: boolean;
   /** Whether this tab is playing audio */
   isPlayingAudio?: boolean;
+  /** Whether this is a private/incognito tab */
+  isPrivate?: boolean;
 }
 
 /** Container for context isolation (like Firefox containers) */
