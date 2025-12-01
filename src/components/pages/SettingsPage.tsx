@@ -733,12 +733,12 @@ const AboutSection: React.FC = () => (
     <Card>
       <CardContent className="pt-6">
         <div className="flex items-center gap-4 mb-6">
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600">
             <Globe size={32} className="text-white" />
           </div>
           <div>
             <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Serendib Browser</h3>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Version 1.0.0</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Version 1.0.0 • <span className="text-amber-500">ශ්‍රී ලංකාවේ නිර්මාණය</span></p>
           </div>
         </div>
         
@@ -746,27 +746,35 @@ const AboutSection: React.FC = () => (
         
         <div className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-zinc-500">Electron</span>
-            <span className="text-zinc-300">v33.0.0</span>
+            <span style={{ color: 'var(--text-muted)' }}>Electron</span>
+            <span style={{ color: 'var(--text-secondary)' }}>v33.0.0</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">Chromium</span>
-            <span className="text-zinc-300">v130.0.0</span>
+            <span style={{ color: 'var(--text-muted)' }}>Chromium</span>
+            <span style={{ color: 'var(--text-secondary)' }}>v130.0.0</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">Node.js</span>
-            <span className="text-zinc-300">v20.18.0</span>
+            <span style={{ color: 'var(--text-muted)' }}>Node.js</span>
+            <span style={{ color: 'var(--text-secondary)' }}>v20.18.0</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-zinc-500">React</span>
-            <span className="text-zinc-300">v19.2.0</span>
+            <span style={{ color: 'var(--text-muted)' }}>React</span>
+            <span style={{ color: 'var(--text-secondary)' }}>v19.2.0</span>
           </div>
         </div>
         
         <Separator className="my-4" />
         
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 rounded-lg transition-colors">
+          <button 
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+            style={{ 
+              backgroundColor: 'var(--bg-tertiary)', 
+              color: 'var(--text-secondary)',
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)'}
+          >
             <Download size={16} />
             Check for Updates
           </button>
@@ -776,10 +784,16 @@ const AboutSection: React.FC = () => (
 
     <Card>
       <CardContent className="pt-6 text-center">
-        <p className="text-sm text-zinc-500 mb-2">
+        <div className="mb-3">
+          <span className="text-2xl">🇱🇰</span>
+        </div>
+        <p className="text-sm mb-1" style={{ color: 'var(--text-muted)' }}>
           Made with ❤️ in Sri Lanka
         </p>
-        <p className="text-xs text-zinc-600">
+        <p className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
+          <span className="text-amber-500">ආයුබෝවන්</span> • <span className="text-emerald-500">வணக்கம்</span>
+        </p>
+        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
           © 2025 Serendib Browser. All rights reserved.
         </p>
       </CardContent>
