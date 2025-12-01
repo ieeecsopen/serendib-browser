@@ -400,6 +400,8 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
           onCloseTab={onTabClose}
           onChangeTabContainer={onChangeTabContainer}
           onMoveTabToWorkspace={onMoveTabToWorkspace}
+          onTogglePinTab={onTogglePinTab}
+          onToggleMuteTab={onToggleMuteTab}
         />
       )}
     </div>
@@ -421,6 +423,8 @@ interface TabContextMenuProps {
   onCloseTab: (id: string) => void;
   onChangeTabContainer: (tabId: string, containerId: string) => void;
   onMoveTabToWorkspace: (tabId: string, workspaceId: string) => void;
+  onTogglePinTab?: (tabId: string) => void;
+  onToggleMuteTab?: (tabId: string) => void;
 }
 
 const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
