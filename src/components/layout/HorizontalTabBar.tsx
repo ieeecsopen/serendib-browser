@@ -174,7 +174,7 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
   };
 
   return (
-    <div className="flex items-center h-10 bg-[#0A0A0A] border-b border-white/5 shrink-0 select-none">
+    <div className="flex items-center h-10 shrink-0 select-none" style={{ backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-secondary)' }}>
       
       {/* Workspace Switcher */}
       <div className="relative" ref={workspaceMenuRef}>
@@ -188,7 +188,7 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
         </button>
 
         {isWorkspaceMenuOpen && (
-          <div className="absolute top-full left-0 mt-1 w-48 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
+          <div className="absolute top-full left-0 mt-1 w-48 rounded-xl shadow-2xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             <div className="px-3 py-1.5 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
               Workspaces
             </div>
@@ -473,8 +473,8 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
     return (
       <div
         ref={ref}
-        style={{ top: contextMenu.y, left: contextMenu.x }}
-        className="fixed z-50 w-56 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 text-zinc-300 backdrop-blur-xl"
+        style={{ top: contextMenu.y, left: contextMenu.x, backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+        className="fixed z-50 w-56 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 backdrop-blur-xl"
       >
         {/* Tab Actions */}
         <div className="pb-1.5 mb-1.5 border-b border-white/5 space-y-0.5">

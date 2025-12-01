@@ -339,9 +339,9 @@ const NewTabPage: React.FC<{
   canvasRef: React.RefObject<HTMLCanvasElement>;
   onNavigate: (url: string) => void;
 }> = ({ canvasRef, onNavigate }) => (
-  <div className="flex-1 bg-[#050505] relative overflow-hidden flex flex-col font-sans text-white select-none">
+  <div className="flex-1 relative overflow-hidden flex flex-col font-sans select-none" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
     <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/10 to-[#050505] pointer-events-none" />
+    <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-primary))' }} />
     
     <div className="relative z-10 flex-1 flex">
       {/* Social Sidebar */}
