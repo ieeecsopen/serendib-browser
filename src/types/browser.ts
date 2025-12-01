@@ -140,3 +140,39 @@ export interface Extension {
   enabled: boolean;
   permissions: string[];
 }
+
+/** Permission types that can be controlled per site */
+export type PermissionType = 
+  | 'camera'
+  | 'microphone'
+  | 'location'
+  | 'notifications'
+  | 'clipboard-read'
+  | 'clipboard-write'
+  | 'autoplay'
+  | 'popups';
+
+/** Permission setting for a specific permission */
+export type PermissionSetting = 'allow' | 'block' | 'ask';
+
+/** Site-specific permission settings */
+export interface SitePermissions {
+  /** The origin (e.g., "https://example.com") */
+  origin: string;
+  /** Individual permission settings */
+  permissions: Partial<Record<PermissionType, PermissionSetting>>;
+  /** When these permissions were last modified */
+  lastModified: number;
+}
+
+/** Global default permission settings */
+export interface DefaultPermissions {
+  camera: PermissionSetting;
+  microphone: PermissionSetting;
+  location: PermissionSetting;
+  notifications: PermissionSetting;
+  'clipboard-read': PermissionSetting;
+  'clipboard-write': PermissionSetting;
+  autoplay: PermissionSetting;
+  popups: PermissionSetting;
+}
