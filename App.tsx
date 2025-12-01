@@ -438,6 +438,21 @@ const App: React.FC = () => {
     }
   };
 
+  // --- Pin/Mute Tab Handlers ---
+  const handleTogglePinTab = (tabId: string) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, isPinned: !t.isPinned } : t
+    ));
+  };
+
+  const handleToggleMuteTab = (tabId: string) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, isMuted: !t.isMuted } : t
+    ));
+    // Also mute the webview audio if in Electron
+    // This would require additional webview integration
+  };
+
   const handleSwitchContainer = (tabId: string, containerId: string) => {
     const tab = tabs.find(t => t.id === tabId);
     if (tab) {
@@ -774,6 +789,8 @@ const App: React.FC = () => {
           
           onChangeTabContainer={handleSwitchContainer}
           onCreateDisposableTab={handleCreateDisposableTab}
+          onTogglePinTab={handleTogglePinTab}
+          onToggleMuteTab={handleToggleMuteTab}
         />
         </div>
       )}
@@ -799,6 +816,8 @@ const App: React.FC = () => {
             onCreateWorkspace={handleCreateWorkspace}
             onChangeTabContainer={handleSwitchContainer}
             onCreateDisposableTab={handleCreateDisposableTab}
+            onTogglePinTab={handleTogglePinTab}
+            onToggleMuteTab={handleToggleMuteTab}
           />
         )}
 
