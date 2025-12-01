@@ -3,3 +3,4 @@
  */
 
 export { OmniBox } from './OmniBox';
+export { AddressBarAutocomplete } from './AddressBarAutocomplete';

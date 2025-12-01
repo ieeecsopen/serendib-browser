@@ -7,7 +7,12 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
   SYSTEM = 'system',
-  SERENDIB = 'serendib'
+  SERENDIB = 'serendib',
+  MIDNIGHT = 'midnight',
+  FOREST = 'forest',
+  ROSE = 'rose',
+  SUNSET = 'sunset',
+  NORD = 'nord'
 }
 
 /** Supported languages */
