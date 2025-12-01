@@ -123,7 +123,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
     <div className="h-16 bg-[#050505] flex items-center px-6 shrink-0 z-20 border-b border-white/5">
       
       {/* Left Section - Navigation Controls */}
-      <div className="flex items-center space-x-1 text-zinc-500 w-48">
+      <div className="flex items-center gap-1 text-zinc-500 shrink-0">
         <button 
           onClick={onBack} 
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors disabled:opacity-30"
@@ -227,10 +227,10 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
       </div>
 
       {/* Right Section - Actions */}
-      <div className="flex items-center justify-end space-x-2 w-48 text-zinc-500">
+      <div className="flex items-center justify-end gap-2 min-w-fit text-zinc-500">
         <button
           onClick={() => onNavigate('serendib://extensions')}
-          className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden sm:block"
+          className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden md:block"
           title="Extensions"
         >
           <Puzzle size={18} strokeWidth={1.5} />
@@ -238,7 +238,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
         <button
           onClick={() => onNavigate('serendib://downloads')}
-          className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden sm:block"
+          className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden md:block"
           title="Downloads"
         >
           <Download size={18} strokeWidth={1.5} />
@@ -258,7 +258,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
         {/* Profile */}
         <button
-          className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 border border-white/10"
+          className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 border border-white/10 overflow-hidden shrink-0"
           title="Profile"
         >
           <img 
