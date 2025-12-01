@@ -727,6 +727,184 @@ ipcMain.handle('offline-get-image-data', async (event, filePath) => {
     }
 });
 
+// ============================================================================
+// Password Manager Secure Storage
+// ============================================================================
+
+const crypto = require('crypto');
+
+// Get the passwords directory path
+function getPasswordsDir() {
+    return path.join(app.getPath('userData'), 'passwords');
+}
+
+// Ensure passwords directory exists
+async function ensurePasswordsDir() {
+    const dir = getPasswordsDir();
+    try {
+        await fs.mkdir(dir, { recursive: true });
+    } catch (error) {
+        if (error.code !== 'EEXIST') throw error;
+    }
+    return dir;
+}
+
+// Get the vault file path
+function getVaultPath() {
+    return path.join(getPasswordsDir(), 'vault.enc');
+}
+
+// Get the vault settings file path
+function getVaultSettingsPath() {
+    return path.join(getPasswordsDir(), 'vault-settings.json');
+}
+
+// Save encrypted vault data
+ipcMain.handle('password-save-vault', async (event, encryptedData) => {
+    try {
+        await ensurePasswordsDir();
+        const vaultPath = getVaultPath();
+        await fs.writeFile(vaultPath, encryptedData, 'utf8');
+        console.log('[Password] Vault saved');
+        return { success: true };
+    } catch (error) {
+        console.error('[Password] Save vault error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Load encrypted vault data
+ipcMain.handle('password-load-vault', async () => {
+    try {
+        await ensurePasswordsDir();
+        const vaultPath = getVaultPath();
+        const data = await fs.readFile(vaultPath, 'utf8');
+        return { success: true, data };
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return { success: false, notFound: true };
+        }
+        console.error('[Password] Load vault error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Save vault settings (salt, verification hash, etc.)
+ipcMain.handle('password-save-settings', async (event, settings) => {
+    try {
+        await ensurePasswordsDir();
+        const settingsPath = getVaultSettingsPath();
+        await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
+        console.log('[Password] Vault settings saved');
+        return { success: true };
+    } catch (error) {
+        console.error('[Password] Save settings error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Load vault settings
+ipcMain.handle('password-load-settings', async () => {
+    try {
+        await ensurePasswordsDir();
+        const settingsPath = getVaultSettingsPath();
+        const data = await fs.readFile(settingsPath, 'utf8');
+        return { success: true, settings: JSON.parse(data) };
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return { success: false, notFound: true };
+        }
+        console.error('[Password] Load settings error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Delete vault completely
+ipcMain.handle('password-delete-vault', async () => {
+    try {
+        const dir = await ensurePasswordsDir();
+        const vaultPath = getVaultPath();
+        const settingsPath = getVaultSettingsPath();
+        
+        try { await fs.unlink(vaultPath); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+        try { await fs.unlink(settingsPath); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+        
+        console.log('[Password] Vault deleted');
+        return { success: true };
+    } catch (error) {
+        console.error('[Password] Delete vault error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Check if vault exists
+ipcMain.handle('password-vault-exists', async () => {
+    try {
+        const settingsPath = getVaultSettingsPath();
+        await fs.access(settingsPath);
+        return { exists: true };
+    } catch (error) {
+        return { exists: false };
+    }
+});
+
+// Generate secure random bytes (for IV/salt)
+ipcMain.handle('password-generate-random', (event, length) => {
+    return crypto.randomBytes(length).toString('base64');
+});
+
+// Export passwords (encrypted) to file
+ipcMain.handle('password-export', async (event, encryptedData, defaultFilename) => {
+    try {
+        const result = await dialog.showSaveDialog(mainWindow, {
+            title: 'Export Passwords',
+            defaultPath: `${defaultFilename || 'passwords-export'}.serendib-passwords`,
+            filters: [
+                { name: 'Serendib Passwords', extensions: ['serendib-passwords'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        });
+        
+        if (result.canceled || !result.filePath) {
+            return { success: false, canceled: true };
+        }
+        
+        await fs.writeFile(result.filePath, encryptedData, 'utf8');
+        console.log(`[Password] Exported to: ${result.filePath}`);
+        return { success: true, filePath: result.filePath };
+    } catch (error) {
+        console.error('[Password] Export error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Import passwords from file
+ipcMain.handle('password-import', async () => {
+    try {
+        const result = await dialog.showOpenDialog(mainWindow, {
+            title: 'Import Passwords',
+            filters: [
+                { name: 'Serendib Passwords', extensions: ['serendib-passwords'] },
+                { name: 'CSV', extensions: ['csv'] },
+                { name: 'All Files', extensions: ['*'] }
+            ],
+            properties: ['openFile']
+        });
+        
+        if (result.canceled || result.filePaths.length === 0) {
+            return { success: false, canceled: true };
+        }
+        
+        const filePath = result.filePaths[0];
+        const content = await fs.readFile(filePath, 'utf8');
+        console.log(`[Password] Imported from: ${filePath}`);
+        return { success: true, filePath, content };
+    } catch (error) {
+        console.error('[Password] Import error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
 app.whenReady().then(() => {
     createWindow();
 
