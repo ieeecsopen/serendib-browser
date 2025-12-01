@@ -1,7 +1,7 @@
 /**
  * Label Component (shadcn-style)
  * 
- * A label for form elements.
+ * A label for form elements. Theme-aware.
  */
 
 import React from 'react';
@@ -11,10 +11,11 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 export const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
-  ({ className = '', ...props }, ref) => (
+  ({ className = '', style, ...props }, ref) => (
     <label
       ref={ref}
-      className={`text-sm font-medium leading-none text-zinc-200 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+      className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`}
+      style={{ color: 'var(--text-primary)', ...style }}
       {...props}
     />
   )

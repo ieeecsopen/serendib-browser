@@ -2,6 +2,7 @@
  * Card Component (shadcn-style)
  * 
  * A card container with header, content, and footer sections.
+ * Theme-aware using CSS variables.
  */
 
 import React from 'react';
@@ -10,10 +11,16 @@ import React from 'react';
 export const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className = '', ...props }, ref) => (
+>(({ className = '', style, ...props }, ref) => (
   <div
     ref={ref}
-    className={`rounded-xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-sm ${className}`}
+    className={`rounded-xl shadow-sm ${className}`}
+    style={{ 
+      backgroundColor: 'var(--bg-secondary)', 
+      border: '1px solid var(--border-primary)',
+      color: 'var(--text-primary)',
+      ...style 
+    }}
     {...props}
   />
 ));
@@ -36,10 +43,11 @@ CardHeader.displayName = 'CardHeader';
 export const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
->(({ className = '', ...props }, ref) => (
+>(({ className = '', style, ...props }, ref) => (
   <h3
     ref={ref}
     className={`text-lg font-semibold leading-none tracking-tight ${className}`}
+    style={{ color: 'var(--text-primary)', ...style }}
     {...props}
   />
 ));
@@ -49,10 +57,11 @@ CardTitle.displayName = 'CardTitle';
 export const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
->(({ className = '', ...props }, ref) => (
+>(({ className = '', style, ...props }, ref) => (
   <p
     ref={ref}
-    className={`text-sm text-zinc-400 ${className}`}
+    className={`text-sm ${className}`}
+    style={{ color: 'var(--text-muted)', ...style }}
     {...props}
   />
 ));
