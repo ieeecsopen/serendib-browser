@@ -115,6 +115,16 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Check if current theme is dark
+    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
+    const isDarkTheme = bgColor.startsWith('#0') || bgColor.startsWith('#1') || bgColor.startsWith('rgb(0') || bgColor.startsWith('rgb(5') || bgColor.startsWith('rgb(10');
+    
+    // Don't animate on light themes - just clear the canvas
+    if (!isDarkTheme) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
     let width = canvas.width = canvas.offsetWidth;
     let height = canvas.height = canvas.offsetHeight;
     
@@ -130,7 +140,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     let animationFrameId: number;
 
     const animate = () => {
-      ctx.fillStyle = '#050505';
+      ctx.fillStyle = bgColor || '#050505';
       ctx.fillRect(0, 0, width, height);
       
       blobs.forEach(blob => {
@@ -372,7 +382,10 @@ const SidebarAppIcon: React.FC<{
       />
       
       {/* Tooltip */}
-      <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/10">
+      <div 
+        className="absolute left-full ml-3 px-2 py-1 text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
+        style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', border: '1px solid var(--border-secondary)' }}
+      >
         {name}
       </div>
     </button>
@@ -555,12 +568,12 @@ const NewTabPage: React.FC<{
       
       <div className="relative z-10 flex-1 flex overflow-hidden">
         {/* Most Accessed Apps in Sri Lanka - Sidebar */}
-        <div className="hidden lg:flex w-16 flex-col items-center py-6 gap-2 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
+        <div className="hidden lg:flex w-16 flex-col items-center py-6 gap-2 border-r backdrop-blur-[1px]" style={{ borderColor: 'var(--border-secondary)', backgroundColor: 'var(--bg-hover)' }}>
           {/* Serendib Logo */}
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-900/30 mb-2">
             🦁
           </div>
-          <div className="w-8 h-px bg-white/10 mb-2" />
+          <div className="w-8 h-px mb-2" style={{ backgroundColor: 'var(--border-secondary)' }} />
           
           {/* Popular Sri Lankan Apps */}
           <SidebarAppIcon 
@@ -594,7 +607,7 @@ const NewTabPage: React.FC<{
             onNavigate={onNavigate}
           />
           
-          <div className="w-6 h-px bg-white/10 my-1" />
+          <div className="w-6 h-px my-1" style={{ backgroundColor: 'var(--border-secondary)' }} />
           
           {/* Productivity */}
           <SidebarAppIcon 
@@ -636,15 +649,15 @@ const NewTabPage: React.FC<{
               </div>
               <span className="text-xs text-zinc-600 hidden sm:block">ශ්‍රී ලංකාව</span>
             </div>
-            <div className="flex items-center gap-6 text-zinc-400">
-              <button onClick={() => onNavigate('serendib://newtab')} className="hover:text-white transition-colors"><Home size={20} strokeWidth={1.5} /></button>
-              <button className="hover:text-white transition-colors"><Bell size={20} strokeWidth={1.5} /></button>
-              <button onClick={() => onNavigate('serendib://settings')} className="hover:text-white transition-colors"><Sliders size={18} strokeWidth={1.5} /></button>
+            <div className="flex items-center gap-6" style={{ color: 'var(--text-muted)' }}>
+              <button onClick={() => onNavigate('serendib://newtab')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Home size={20} strokeWidth={1.5} /></button>
+              <button className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Bell size={20} strokeWidth={1.5} /></button>
+              <button onClick={() => onNavigate('serendib://settings')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Sliders size={18} strokeWidth={1.5} /></button>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right hidden md:block">
-                <div className="text-xs text-zinc-500">{currentTime.toLocaleDateString('en-LK', { weekday: 'long' })}</div>
-                <div className="text-sm font-medium text-zinc-300">{currentTime.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' })}</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{currentTime.toLocaleDateString('en-LK', { weekday: 'long' })}</div>
+                <div className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{currentTime.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' })}</div>
               </div>
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 border-2 border-amber-500/30 overflow-hidden cursor-pointer hover:border-amber-400 transition-colors flex items-center justify-center text-white font-semibold">
                 S
@@ -655,8 +668,8 @@ const NewTabPage: React.FC<{
           <div className="flex-1 flex flex-col items-center pt-4 pb-24 px-8 w-full max-w-7xl mx-auto">
             {/* Greeting */}
             <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <h1 className="text-3xl md:text-4xl font-light text-white/90 mb-2">{greeting}</h1>
-              <p className="text-zinc-500 text-sm">Welcome to Serendib - The Pearl of the Indian Ocean</p>
+              <h1 className="text-3xl md:text-4xl font-light mb-2" style={{ color: 'var(--text-primary)' }}>{greeting}</h1>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Welcome to Serendib - The Pearl of the Indian Ocean</p>
             </div>
 
             {/* Search Bar - 21st.dev inspired with enhanced glow */}
@@ -667,20 +680,21 @@ const NewTabPage: React.FC<{
               {/* Inner glow */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600/40 via-orange-500/30 to-amber-600/40 rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
               
-              <div className="relative bg-black/40 backdrop-blur-xl border border-white/[0.08] group-focus-within:border-amber-500/40 rounded-2xl transition-all duration-300 overflow-hidden">
+              <div className="relative backdrop-blur-xl rounded-2xl transition-all duration-300 overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
                 {/* Shimmer effect */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 </div>
                 
                 <div className="relative flex items-center">
-                  <div className="pl-5 text-zinc-500">
+                  <div className="pl-5" style={{ color: 'var(--text-muted)' }}>
                     <Search size={20} />
                   </div>
                   <input
                     type="text"
                     placeholder="සොයන්න... Search Google or enter URL"
-                    className="flex-1 bg-transparent py-4 px-4 text-lg text-white placeholder:text-zinc-500 focus:outline-none"
+                    className="flex-1 bg-transparent py-4 px-4 text-lg focus:outline-none"
+                    style={{ color: 'var(--text-primary)' }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         onNavigate(e.currentTarget.value);
@@ -698,10 +712,10 @@ const NewTabPage: React.FC<{
             {/* Quick Links - Enhanced 21st.dev style with real logos */}
             <div className="w-full max-w-3xl mb-12">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-xs font-semibold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                   <Sparkles size={12} className="text-amber-500" /> Quick Access
                 </h2>
-                <button className="text-xs text-zinc-600 hover:text-amber-500 transition-colors flex items-center gap-1 group">
+                <button className="text-xs transition-colors flex items-center gap-1 group" style={{ color: 'var(--text-muted)' }}>
                   <Plus size={12} /> Add Site
                 </button>
               </div>
@@ -710,7 +724,8 @@ const NewTabPage: React.FC<{
                   <button
                     key={i}
                     onClick={() => onNavigate(link.url)}
-                    className="group relative flex flex-col items-center gap-2.5 p-3 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    className="group relative flex flex-col items-center gap-2.5 p-3 rounded-2xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    style={{ backgroundColor: 'var(--bg-hover)', border: '1px solid var(--border-secondary)' }}
                   >
                     {/* Glow effect on hover */}
                     <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 blur-xl`} />
@@ -735,7 +750,7 @@ const NewTabPage: React.FC<{
                         }}
                       />
                     </div>
-                    <span className="relative text-[10px] text-zinc-500 group-hover:text-white transition-colors truncate w-full text-center font-medium">{link.name}</span>
+                    <span className="relative text-[10px] transition-colors truncate w-full text-center font-medium" style={{ color: 'var(--text-muted)' }}>{link.name}</span>
                   </button>
                 ))}
               </div>
@@ -744,7 +759,7 @@ const NewTabPage: React.FC<{
             {/* Featured News - Live Feed */}
             <div className="w-full">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-sm font-semibold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                   <Newspaper size={14} className="text-amber-500" /> Featured News
                   {newsLoading && (
                     <span className="ml-2 w-3 h-3 rounded-full border-2 border-amber-500/30 border-t-amber-500 animate-spin" />
@@ -764,18 +779,19 @@ const NewTabPage: React.FC<{
                   {[...Array(5)].map((_, i) => (
                     <div 
                       key={i} 
-                      className={`rounded-2xl bg-white/[0.02] border border-white/[0.08] animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                      className={`rounded-2xl animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                      style={{ backgroundColor: 'var(--bg-hover)', border: '1px solid var(--border-secondary)' }}
                     >
                       <div className="h-full flex flex-col justify-end p-5">
-                        <div className="h-3 bg-zinc-800 rounded w-16 mb-2" />
-                        <div className="h-5 bg-zinc-800 rounded w-3/4 mb-2" />
-                        <div className="h-3 bg-zinc-800 rounded w-1/2" />
+                        <div className="h-3 rounded w-16 mb-2" style={{ backgroundColor: 'var(--border-primary)' }} />
+                        <div className="h-5 rounded w-3/4 mb-2" style={{ backgroundColor: 'var(--border-primary)' }} />
+                        <div className="h-3 rounded w-1/2" style={{ backgroundColor: 'var(--border-primary)' }} />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : newsError ? (
-                <div className="text-center py-12 text-zinc-500">
+                <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
                   <Newspaper size={32} className="mx-auto mb-3 opacity-50" />
                   <p className="text-sm">Unable to load news</p>
                   <button 
@@ -827,16 +843,16 @@ const NewTabPage: React.FC<{
                           )}
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <span className={`text-[9px] font-bold uppercase tracking-wider drop-shadow-md ${categoryColors[article.category || 'default'] || categoryColors.default}`}>
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 drop-shadow-md">
                                 {article.source.name}
                               </span>
-                              <span className="text-[9px] text-zinc-400">• {timeAgo}</span>
+                              <span className="text-[9px] text-zinc-300 drop-shadow-md">• {timeAgo}</span>
                             </div>
-                            <h3 className={`font-bold text-white group-hover:text-amber-100 transition-colors drop-shadow-lg line-clamp-2 ${isMainArticle ? 'text-xl md:text-2xl mb-2' : 'text-sm'}`}>
+                            <h3 className={`font-bold text-white transition-colors drop-shadow-lg line-clamp-2 ${isMainArticle ? 'text-xl md:text-2xl mb-2' : 'text-sm'}`}>
                               {article.title}
                             </h3>
                             {isMainArticle && article.description && (
-                              <p className="text-sm text-zinc-300 line-clamp-2 drop-shadow-md">
+                              <p className="text-sm text-zinc-200 line-clamp-2 drop-shadow-md">
                                 {article.description}
                               </p>
                             )}
@@ -851,7 +867,13 @@ const NewTabPage: React.FC<{
 
             {/* Ceylon Tea CTA Section - 21st.dev inspired with shimmer effect */}
             <div className="w-full mt-10 group">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950/60 via-green-900/40 to-emerald-950/60 border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-500">
+              <div 
+                className="relative overflow-hidden rounded-2xl p-6 transition-all duration-500"
+                style={{ 
+                  backgroundColor: 'var(--bg-secondary)', 
+                  border: '1px solid var(--border-primary)'
+                }}
+              >
                 {/* Animated gradient shine */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -867,12 +889,12 @@ const NewTabPage: React.FC<{
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-xl font-bold text-white">World Famous Ceylon Tea</h3>
-                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase tracking-wider rounded-full border border-emerald-500/30">
+                      <h3 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>World Famous Ceylon Tea</h3>
+                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-600 text-[9px] font-bold uppercase tracking-wider rounded-full border border-emerald-500/30">
                         #1 Quality
                       </span>
                     </div>
-                    <p className="text-sm text-zinc-400">Explore the lush tea plantations of Nuwara Eliya and taste the finest tea in the world</p>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Explore the lush tea plantations of Nuwara Eliya and taste the finest tea in the world</p>
                   </div>
                   <button 
                     onClick={() => onNavigate('https://www.pureceylontea.com')}
@@ -888,8 +910,8 @@ const NewTabPage: React.FC<{
           </div>
 
           {/* Footer */}
-          <footer className="px-8 py-4 border-t border-white/5 text-center">
-            <p className="text-[10px] text-zinc-600">
+          <footer className="px-8 py-4 text-center" style={{ borderTop: '1px solid var(--border-secondary)' }}>
+            <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
               Serendib Browser • Made with ❤️ in Sri Lanka • <span className="text-amber-600">ජය ශ්‍රී ලංකා</span>
             </p>
           </footer>
@@ -926,17 +948,25 @@ const BentoCard: React.FC<{
     purple: 'group-hover:border-purple-500/40',
   };
 
+  // Check if dark theme
+  const isDarkTheme = typeof document !== 'undefined' && 
+    (getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim().startsWith('#0') ||
+     getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim().startsWith('#1'));
+
   return (
     <div
       onClick={onClick}
       className={`
         group relative rounded-2xl overflow-hidden cursor-pointer
-        bg-white/[0.02] backdrop-blur-sm
-        border border-white/[0.08] ${borderColors[glowColor]}
+        backdrop-blur-sm
+        ${borderColors[glowColor]}
         transition-all duration-500 ease-out
         hover:-translate-y-1 hover:shadow-2xl ${glowColors[glowColor]}
         ${className}
       `}
+      style={{
+        border: '1px solid var(--border-primary)'
+      }}
     >
       {/* Background Image */}
       {imageUrl && (
@@ -946,10 +976,15 @@ const BentoCard: React.FC<{
             alt="" 
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
-          {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+          {/* Dark overlay for text readability - keeps image visible */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"
+          />
         </div>
       )}
+      
+      {/* Dark base background for all cards to ensure white text visibility */}
+      <div className="absolute inset-0 bg-zinc-900" style={{ zIndex: -1 }} />
       
       {/* Animated gradient background (shown if no image) */}
       {!imageUrl && (

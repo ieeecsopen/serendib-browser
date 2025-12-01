@@ -234,11 +234,12 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
       <div className="flex-1 flex justify-center">
         <div className="w-full max-w-2xl relative group">
           <div
-            className={`relative flex items-center transition-all duration-300 ${
-              isFocused
-                ? 'bg-white/10 ring-1 ring-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
-                : 'bg-white/5 hover:bg-white/10'
-            } rounded-xl h-11`}
+            className={`relative flex items-center transition-all duration-300 rounded-xl h-11`}
+            style={{
+              backgroundColor: isFocused ? 'var(--bg-tertiary)' : 'var(--bg-secondary)',
+              border: '1px solid var(--border-primary)',
+              boxShadow: isFocused ? '0 0 0 2px var(--accent-muted)' : 'none'
+            }}
           >
             {/* Leading Icon & Container Indicator */}
             <div className="pl-3 pr-2 flex items-center gap-2">
