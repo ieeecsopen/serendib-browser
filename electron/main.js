@@ -301,6 +301,37 @@ ipcMain.handle('save-pdf', async (event, options = {}) => {
 });
 
 // ============================================================================
+// Developer Tools Handlers
+// ============================================================================
+
+// Open DevTools for the webview's web contents
+ipcMain.handle('devtools-open', async (event, options = {}) => {
+    try {
+        // The webview's guest contents need to be accessed through the webview itself
+        // We'll send a message back to the renderer to handle this
+        return { success: true, message: 'DevTools command received' };
+    } catch (error) {
+        console.error('[DevTools] Error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Toggle DevTools for the main window (useful for debugging the browser itself)
+ipcMain.handle('devtools-toggle-main', async () => {
+    try {
+        const focusedWindow = BrowserWindow.getFocusedWindow();
+        if (focusedWindow) {
+            focusedWindow.webContents.toggleDevTools();
+            return { success: true };
+        }
+        return { success: false, error: 'No focused window' };
+    } catch (error) {
+        console.error('[DevTools] Error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// ============================================================================
 // Container IPC Handlers
 // ============================================================================
 

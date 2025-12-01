@@ -72,6 +72,10 @@ export interface ActiveWebview {
   zoomIn?: () => void;
   zoomOut?: () => void;
   resetZoom?: () => void;
+  // DevTools methods
+  openDevTools?: () => void;
+  closeDevTools?: () => void;
+  isDevToolsOpened?: () => boolean;
 }
 
 declare global {

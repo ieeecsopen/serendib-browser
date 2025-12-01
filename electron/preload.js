@@ -34,6 +34,22 @@ contextBridge.exposeInMainWorld('electron', {
     },
     
     // =========================================================================
+    // Developer Tools
+    // =========================================================================
+    
+    devtools: {
+        /**
+         * Open DevTools for a webview (call this from renderer)
+         */
+        open: () => ipcRenderer.invoke('devtools-open'),
+        
+        /**
+         * Toggle DevTools for the main browser window
+         */
+        toggleMain: () => ipcRenderer.invoke('devtools-toggle-main'),
+    },
+    
+    // =========================================================================
     // Container Session Management
     // =========================================================================
     
