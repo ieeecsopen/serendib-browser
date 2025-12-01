@@ -113,7 +113,7 @@ async function decryptData(encryptedData: string, key: CryptoKey): Promise<strin
   const data = combined.slice(12);
 
   const decryptedBuffer = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv },
+    { name: 'AES-GCM', iv: iv.buffer as ArrayBuffer },
     key,
     data
   );
