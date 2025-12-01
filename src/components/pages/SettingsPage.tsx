@@ -737,7 +737,12 @@ const AboutSection: React.FC = () => (
 export const SettingsPage: React.FC<SettingsPageProps> = ({ 
   settings, 
   onUpdateSetting,
-  onOpenPasswordManager
+  onOpenPasswordManager,
+  sitePermissionsMap = {},
+  defaultPermissions = DEFAULT_PERMISSIONS,
+  onUpdateDefaultPermission,
+  onResetSitePermissions,
+  onClearAllSitePermissions,
 }) => {
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
 
@@ -747,6 +752,16 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         return <GeneralSection settings={settings} onUpdateSetting={onUpdateSetting} />;
       case 'privacy':
         return <PrivacySection settings={settings} onUpdateSetting={onUpdateSetting} />;
+      case 'permissions':
+        return (
+          <PermissionsSection
+            sitePermissionsMap={sitePermissionsMap}
+            defaultPermissions={defaultPermissions}
+            onUpdateDefaultPermission={onUpdateDefaultPermission}
+            onResetSitePermissions={onResetSitePermissions}
+            onClearAllSitePermissions={onClearAllSitePermissions}
+          />
+        );
       case 'passwords':
         return <PasswordsSection onOpenPasswordManager={onOpenPasswordManager} />;
       case 'performance':
