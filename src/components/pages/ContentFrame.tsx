@@ -50,6 +50,8 @@ interface ContentFrameProps {
   onTabUrlChange: (tabId: string, url: string) => void;
   onTabLoadingChange: (tabId: string, isLoading: boolean) => void;
   onTabFaviconChange: (tabId: string, favicon: string) => void;
+  onPasswordFormDetected?: (url: string, hasCredentials: boolean) => void;
+  onCredentialSubmitted?: (url: string, username: string, password: string) => void;
 }
 
 // ============================================================================
