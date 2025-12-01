@@ -202,6 +202,39 @@ export const WebView: React.FC<WebViewProps> = ({
     }
   }, []);
 
+  // Zoom methods
+  const getZoomFactor = useCallback(() => {
+    const webview = webviewRef.current as any;
+    return webview?.getZoomFactor?.() || 1.0;
+  }, []);
+
+  const setZoomFactor = useCallback((factor: number) => {
+    const webview = webviewRef.current as any;
+    if (!webview) return;
+    
+    const clampedFactor = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, factor));
+    webview.setZoomFactor(clampedFactor);
+    onZoomChange?.(tab.id, clampedFactor);
+  }, [tab.id, onZoomChange]);
+
+  const zoomIn = useCallback(() => {
+    const current = getZoomFactor();
+    // Find next zoom level
+    const nextLevel = ZOOM_PRESETS.find(z => z > current + 0.01) || MAX_ZOOM;
+    setZoomFactor(nextLevel);
+  }, [getZoomFactor, setZoomFactor]);
+
+  const zoomOut = useCallback(() => {
+    const current = getZoomFactor();
+    // Find previous zoom level
+    const prevLevel = [...ZOOM_PRESETS].reverse().find(z => z < current - 0.01) || MIN_ZOOM;
+    setZoomFactor(prevLevel);
+  }, [getZoomFactor, setZoomFactor]);
+
+  const resetZoom = useCallback(() => {
+    setZoomFactor(1.0);
+  }, [setZoomFactor]);
+
   // Event Handlers
   useEffect(() => {
     const webview = webviewRef.current as any;
