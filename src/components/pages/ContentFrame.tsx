@@ -567,35 +567,30 @@ const NewTabPage: React.FC<{
             name="WhatsApp" 
             url="https://web.whatsapp.com" 
             logo="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-            fallbackColor="from-green-500 to-green-600"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
             name="Facebook" 
             url="https://www.facebook.com" 
             logo="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
-            fallbackColor="from-blue-600 to-blue-700"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
             name="YouTube" 
             url="https://www.youtube.com" 
             logo="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"
-            fallbackColor="from-red-600 to-red-700"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
             name="TikTok" 
             url="https://www.tiktok.com" 
             logo="https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png"
-            fallbackColor="from-black to-zinc-800"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
             name="Instagram" 
             url="https://www.instagram.com" 
             logo="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"
-            fallbackColor="from-purple-600 via-pink-500 to-orange-400"
             onNavigate={onNavigate}
           />
           
@@ -606,14 +601,12 @@ const NewTabPage: React.FC<{
             name="Dialog" 
             url="https://www.dialog.lk" 
             logo="https://www.dialog.lk/favicon.ico"
-            fallbackColor="from-red-600 to-orange-500"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
             name="Mobitel" 
             url="https://www.mobitel.lk" 
             logo="https://www.mobitel.lk/sites/default/files/favicon.ico"
-            fallbackColor="from-green-600 to-green-700"
             onNavigate={onNavigate}
           />
           
@@ -622,14 +615,12 @@ const NewTabPage: React.FC<{
               name="Gmail" 
               url="https://mail.google.com" 
               logo="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
-              fallbackColor="from-red-500 to-yellow-500"
               onNavigate={onNavigate}
             />
             <SidebarAppIcon 
               name="Google" 
               url="https://www.google.com" 
               logo="https://www.google.com/favicon.ico"
-              fallbackColor="from-blue-500 to-green-500"
               onNavigate={onNavigate}
             />
           </div>
