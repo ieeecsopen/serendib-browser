@@ -12,6 +12,7 @@ import { FindBar } from '../ui/FindBar';
 import { DownloadsPage } from './DownloadsPage';
 import { ExtensionsPage } from './ExtensionsPage';
 import { SettingsPage } from './SettingsPage';
+import { PasswordManagerPage } from './PasswordManagerPage';
 import { WebView } from '../browser/WebView';
 import { 
   ShieldAlert, Clock, Trash2, Check, ArrowRight, Plus, DownloadCloud, 
@@ -158,6 +159,11 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   // Extensions Page
   if (url === 'serendib://extensions') {
     return <ExtensionsPage extensions={extensions} onToggle={onToggleExtension} onRemove={onRemoveExtension} />;
+  }
+
+  // Password Manager Page
+  if (url === 'serendib://passwords') {
+    return <PasswordManagerPage onNavigate={onNavigate} />;
   }
 
   // New Tab Page

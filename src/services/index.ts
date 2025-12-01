@@ -61,3 +61,47 @@ export {
   importPagesFromJson,
   getStorageStats,
 } from './offline';
+
+// Password Manager
+export {
+  // Vault management
+  setupVault,
+  unlockVault,
+  lockVault,
+  isVaultSetup,
+  isVaultUnlocked,
+  getVaultSettings,
+  // Credential management
+  saveCredential,
+  updateCredential,
+  deleteCredential,
+  getAllCredentials,
+  decryptPassword,
+  getCredentialsForDomain,
+  searchCredentials,
+  recordUsage,
+  // Autofill
+  getAutofillSuggestions,
+  // Password utilities
+  generatePassword,
+  analyzePasswordStrength,
+  getPasswordStrengthColor,
+  getPasswordStrengthLabel,
+  extractDomain,
+  getPasswordStats,
+  exportCredentials,
+} from './passwords';
+
+// Autofill
+export {
+  getAutofillScript,
+  getAutofillFillScript,
+  getPasswordFieldCheckScript,
+  setPendingCredential,
+  getPendingCredential,
+  clearPendingCredential,
+  savePendingCredential,
+  credentialExists,
+  getSuggestionsForUrl,
+  getSavePromptData,
+} from './autofill';
