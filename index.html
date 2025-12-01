@@ -33,7 +33,41 @@
         -webkit-app-region: no-drag;
       }
       
-      /* Custom Scrollbar Styles - Dark Theme */
+      /* Theme-aware text colors */
+      .theme-text-primary { color: var(--text-primary); }
+      .theme-text-secondary { color: var(--text-secondary); }
+      .theme-text-muted { color: var(--text-muted); }
+      
+      /* Theme-aware backgrounds */
+      .theme-bg-primary { background-color: var(--bg-primary); }
+      .theme-bg-secondary { background-color: var(--bg-secondary); }
+      .theme-bg-tertiary { background-color: var(--bg-tertiary); }
+      .theme-bg-hover { background-color: var(--bg-hover); }
+      
+      /* Theme-aware borders */
+      .theme-border-primary { border-color: var(--border-primary); }
+      .theme-border-secondary { border-color: var(--border-secondary); }
+      
+      /* Accent colors */
+      .theme-accent { color: var(--accent); }
+      .theme-bg-accent { background-color: var(--accent); }
+      
+      /* Hover states */
+      .hover\\:theme-bg-hover:hover { background-color: var(--bg-hover); }
+      .hover\\:theme-text-primary:hover { color: var(--text-primary); }
+      
+      /* Light mode scrollbar */
+      .light::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .light::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      .light * {
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+      }
+      
+      /* Custom Scrollbar Styles - Dark Theme (default) */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -66,7 +100,7 @@
         background: rgba(255, 255, 255, 0.35);
       }
       /* Firefox scrollbar */
-      * {
+      .dark * {
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
       }
