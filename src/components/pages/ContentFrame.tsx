@@ -93,6 +93,12 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   onPasswordFormDetected,
   onCredentialSubmitted,
   onTabZoomChange,
+  // Permissions
+  sitePermissionsMap,
+  defaultPermissions,
+  onUpdateDefaultPermission,
+  onResetSitePermissions,
+  onClearAllSitePermissions,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -237,6 +243,11 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
         settings={settings}
         onUpdateSetting={onUpdateSetting}
         onOpenPasswordManager={() => onNavigate('serendib://passwords')}
+        sitePermissionsMap={sitePermissionsMap}
+        defaultPermissions={defaultPermissions}
+        onUpdateDefaultPermission={onUpdateDefaultPermission}
+        onResetSitePermissions={onResetSitePermissions}
+        onClearAllSitePermissions={onClearAllSitePermissions}
       />
     );
   }
