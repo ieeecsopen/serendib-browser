@@ -96,11 +96,14 @@ export const WebView: React.FC<WebViewProps> = ({
   onLoadingChange,
   onFaviconChange,
   onNavigate,
+  onPasswordFormDetected,
+  onCredentialSubmitted,
 }) => {
   const webviewRef = useRef<HTMLElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [partition, setPartition] = useState<string | null>(null);
+  const [autofillInjected, setAutofillInjected] = useState(false);
 
   // Get container partition on mount or when container changes
   useEffect(() => {
