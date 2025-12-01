@@ -438,7 +438,9 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
     onRenameTab, 
     onCloseTab, 
     onChangeTabContainer,
-    onMoveTabToWorkspace 
+    onMoveTabToWorkspace,
+    onTogglePinTab,
+    onToggleMuteTab,
   }, ref) => {
     
     const tab = tabs.find(t => t.id === contextMenu.tabId);
@@ -452,6 +454,22 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
       >
         {/* Tab Actions */}
         <div className="pb-1.5 mb-1.5 border-b border-white/5 space-y-0.5">
+          {/* Pin/Unpin */}
+          {onTogglePinTab && (
+            <ContextMenuItem 
+              icon={tab.isPinned ? <PinOff size={12} /> : <Pin size={12} />} 
+              label={tab.isPinned ? "Unpin Tab" : "Pin Tab"}
+              onClick={() => { onTogglePinTab(tab.id); onClose(); }}
+            />
+          )}
+          {/* Mute/Unmute */}
+          {onToggleMuteTab && tab.isPlayingAudio && (
+            <ContextMenuItem 
+              icon={tab.isMuted ? <Volume2 size={12} /> : <VolumeX size={12} />} 
+              label={tab.isMuted ? "Unmute Tab" : "Mute Tab"}
+              onClick={() => { onToggleMuteTab(tab.id); onClose(); }}
+            />
+          )}
           <ContextMenuItem 
             icon={<Edit3 size={12} />} 
             label="Rename Tab"
