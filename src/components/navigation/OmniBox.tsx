@@ -311,16 +311,65 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
               </div>
             </div>
 
+            {/* Private Mode Indicator */}
+            {isPrivateMode && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 text-[10px] font-semibold mr-2">
+                <EyeOff size={10} />
+                <span>Private</span>
+              </div>
+            )}
+
             <input
+              ref={inputRef}
               type="text"
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                setShowAutocomplete(e.target.value.length > 0);
+                setAutocompleteIndex(0);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setShowAutocomplete(false);
+                  return;
+                }
+                if (showAutocomplete) {
+                  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    // Navigation handled by autocomplete component
+                    return;
+                  }
+                }
+                handleKeyDown(e);
+              }}
+              onFocus={() => {
+                setIsFocused(true);
+                if (inputValue.length > 0) setShowAutocomplete(true);
+              }}
+              onBlur={() => {
+                setIsFocused(false);
+                // Delay hiding to allow click on autocomplete item
+                setTimeout(() => setShowAutocomplete(false), 200);
+              }}
               className="flex-1 w-full bg-transparent border-none text-xs text-white py-2 focus:outline-none placeholder:text-zinc-600 font-sans tracking-wide"
               placeholder="Search or enter website"
             />
+
+            {/* Autocomplete Dropdown */}
+            {showAutocomplete && inputValue.length > 0 && (
+              <AddressBarAutocomplete
+                query={inputValue}
+                history={history}
+                bookmarks={bookmarks}
+                onSelect={(suggestion) => {
+                  setInputValue(suggestion.url);
+                  onNavigate(suggestion.url);
+                  setShowAutocomplete(false);
+                  inputRef.current?.blur();
+                }}
+                onClose={() => setShowAutocomplete(false)}
+              />
+            )}
 
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
