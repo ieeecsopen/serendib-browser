@@ -14,7 +14,7 @@ import {
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
-  Shield
+  Shield, Code
 } from 'lucide-react';
 
 // ============================================================================
@@ -449,6 +449,17 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
                   const electron = (window as any).electron;
                   if (electron?.print?.savePDF) {
                     await electron.print.savePDF({ showInFolder: true });
+                  }
+                })} 
+              />
+              <MenuItem 
+                icon={<Code size={16} />} 
+                label="Developer Tools" 
+                shortcut="F12"
+                onClick={() => onAction(() => {
+                  const webview = (window as any).__activeWebview;
+                  if (webview?.openDevTools) {
+                    webview.openDevTools();
                   }
                 })} 
               />

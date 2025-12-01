@@ -654,6 +654,25 @@ const ShortcutsSection: React.FC = () => (
         <ShortcutItem keys={['Ctrl', 'Shift', 'S']} action="Save Snapshot" />
         <Separator />
         <ShortcutItem keys={['Ctrl', 'D']} action="Save for Offline" />
+        <Separator />
+        <ShortcutItem keys={['Ctrl', 'P']} action="Print Page" />
+        <Separator />
+        <ShortcutItem keys={['F12']} action="Developer Tools" />
+        <Separator />
+        <ShortcutItem keys={['Ctrl', 'Shift', 'I']} action="Inspect Element" />
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Zoom</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-0">
+        <ShortcutItem keys={['Ctrl', '+']} action="Zoom In" />
+        <Separator />
+        <ShortcutItem keys={['Ctrl', '-']} action="Zoom Out" />
+        <Separator />
+        <ShortcutItem keys={['Ctrl', '0']} action="Reset Zoom" />
       </CardContent>
     </Card>
 

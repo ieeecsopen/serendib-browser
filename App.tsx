@@ -135,6 +135,22 @@ const App: React.FC = () => {
           electron.print.printPage();
         }
       }
+      // Developer Tools shortcut (F12)
+      if (e.key === 'F12') {
+        e.preventDefault();
+        const webview = (window as any).__activeWebview;
+        if (webview?.openDevTools) {
+          webview.openDevTools();
+        }
+      }
+      // Inspect element shortcut (Ctrl+Shift+I)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+        const webview = (window as any).__activeWebview;
+        if (webview?.openDevTools) {
+          webview.openDevTools();
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);

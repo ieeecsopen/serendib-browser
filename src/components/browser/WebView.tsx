@@ -365,6 +365,10 @@ export const WebView: React.FC<WebViewProps> = ({
         zoomIn,
         zoomOut,
         resetZoom,
+        // DevTools methods
+        openDevTools: () => webview?.openDevTools?.(),
+        closeDevTools: () => webview?.closeDevTools?.(),
+        isDevToolsOpened: () => webview?.isDevToolsOpened?.() || false,
       };
     }
   }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials, getZoomFactor, setZoomFactor, zoomIn, zoomOut, resetZoom]);
