@@ -2,6 +2,8 @@
  * Default values and configurations
  */
 
+import type { DefaultPermissions } from '../types';
+
 export const DEFAULT_HOME_URL = 'serendib://newtab';
 
 export const DEFAULT_USER_AGENT = 
@@ -16,3 +18,15 @@ export const INTERNAL_URLS = {
   EXTENSIONS: 'serendib://extensions',
   OFFLINE: 'serendib://offline',
 } as const;
+
+/** Default permission settings for all sites */
+export const DEFAULT_PERMISSIONS: DefaultPermissions = {
+  camera: 'ask',
+  microphone: 'ask',
+  location: 'ask',
+  notifications: 'ask',
+  'clipboard-read': 'ask',
+  'clipboard-write': 'allow',
+  autoplay: 'allow',
+  popups: 'block',
+};
