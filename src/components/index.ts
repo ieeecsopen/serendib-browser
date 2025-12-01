@@ -26,3 +26,6 @@ export { ExtensionsPage } from './pages/ExtensionsPage';
 
 // AI Components
 export { AIPanel } from './ai/AIPanel';
+
+// Snapshot Components
+export { SnapshotManager } from './snapshots/SnapshotManager';

@@ -15,7 +15,8 @@ import { WebView } from '../browser/WebView';
 import { 
   ShieldAlert, Clock, Trash2, Check, ArrowRight, Plus, DownloadCloud, 
   FileText, WifiOff, RefreshCcw, Bell, Home, Search, PlusSquare, 
-  Sliders, Twitter, Instagram, Disc, Dribbble, Hexagon 
+  Sliders, Twitter, Instagram, Disc, Dribbble, Hexagon, BookOpen,
+  Tag, Calendar, User, ExternalLink, FolderOpen, HardDrive
 } from 'lucide-react';
 
 // ============================================================================
@@ -438,60 +439,246 @@ const OfflineListPage: React.FC<{
   onSync: () => void;
   onDelete: (id: string) => void;
   onNavigate: (url: string) => void;
-}> = ({ offlinePages, isSyncing, onSync, onDelete, onNavigate }) => (
-  <div className="flex-1 bg-black p-8 md:p-12 overflow-y-auto font-sans">
-    <div className="max-w-4xl mx-auto space-y-8">
-      <header className="flex items-center justify-between pb-6 border-b border-zinc-900">
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3 text-white">
-          <DownloadCloud className="w-6 h-6" /> Reading List
-        </h1>
-        <button
-          onClick={onSync}
-          className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-md transition-colors"
-        >
-          <RefreshCcw size={12} className={isSyncing ? 'animate-spin' : ''} />
-          {isSyncing ? 'Syncing...' : 'Sync Now'}
-        </button>
-      </header>
+}> = ({ offlinePages, isSyncing, onSync, onDelete, onNavigate }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {offlinePages.length === 0 ? (
-          <div className="col-span-full py-20 text-center text-zinc-600">
-            <WifiOff size={48} className="mx-auto mb-4 opacity-20" />
-            <p>No offline pages saved.</p>
-            <p className="text-xs mt-2">Click the download icon in the address bar to save pages.</p>
+  // Get all unique tags
+  const allTags = Array.from(new Set(offlinePages.flatMap(p => p.tags || [])));
+
+  // Filter pages
+  const filteredPages = offlinePages.filter(page => {
+    const matchesSearch = !searchQuery || 
+      page.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      page.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      page.author?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTag = !selectedTag || page.tags?.includes(selectedTag);
+    return matchesSearch && matchesTag;
+  });
+
+  // Stats
+  const totalPages = offlinePages.length;
+  const syncedCount = offlinePages.filter(p => p.synced).length;
+
+  const handleOpenFolder = async () => {
+    if ((window as any).electron?.offline?.openFolder) {
+      await (window as any).electron.offline.openFolder();
+    }
+  };
+
+  return (
+    <div className="flex-1 bg-black p-8 md:p-12 overflow-y-auto font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-900">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3 text-white">
+              <DownloadCloud className="w-6 h-6" /> Reading List
+            </h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              {totalPages} articles saved • {syncedCount} synced
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleOpenFolder}
+              className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 rounded-md transition-colors"
+              title="Open folder"
+            >
+              <FolderOpen size={14} />
+            </button>
+            <button
+              onClick={onSync}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-900 rounded-md transition-colors"
+            >
+              <RefreshCcw size={12} className={isSyncing ? 'animate-spin' : ''} />
+              {isSyncing ? 'Syncing...' : 'Sync'}
+            </button>
+          </div>
+        </header>
+
+        {/* Search and Filters */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search articles..."
+              className="w-full pl-10 pr-4 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-600"
+            />
+          </div>
+          {allTags.length > 0 && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+              <button
+                onClick={() => setSelectedTag(null)}
+                className={`px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors ${
+                  !selectedTag ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 hover:text-white'
+                }`}
+              >
+                All
+              </button>
+              {allTags.map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                    selectedTag === tag ? 'bg-blue-500 text-white' : 'bg-zinc-900 text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Tag size={10} />
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        {filteredPages.length === 0 ? (
+          <div className="py-20 text-center text-zinc-600">
+            {offlinePages.length === 0 ? (
+              <>
+                <WifiOff size={48} className="mx-auto mb-4 opacity-20" />
+                <p className="text-lg font-medium text-zinc-400">No offline pages saved</p>
+                <p className="text-sm mt-2">Click the download icon in the address bar to save pages.</p>
+              </>
+            ) : (
+              <>
+                <Search size={48} className="mx-auto mb-4 opacity-20" />
+                <p>No articles match your search</p>
+              </>
+            )}
           </div>
         ) : (
-          offlinePages.map(page => (
-            <div key={page.id} className="group relative bg-zinc-950 border border-zinc-900 rounded-xl p-5 hover:border-zinc-700 transition-all flex flex-col justify-between h-48">
-              <div>
-                <h3
-                  className="text-lg font-medium text-zinc-200 hover:text-white mb-2 line-clamp-2 cursor-pointer"
-                  onClick={() => onNavigate(`serendib://read/${page.id}`)}
-                >
-                  {page.title}
-                </h3>
-                <p className="text-sm text-zinc-500 line-clamp-3">{page.excerpt}</p>
-              </div>
-              <div className="flex items-center justify-between mt-4 border-t border-zinc-900 pt-3">
-                <div className="flex items-center gap-3 text-[10px] text-zinc-600 font-mono">
-                  <span>{new Date(page.savedAt).toLocaleDateString()}</span>
-                  <span>{page.size}</span>
-                  <span className={page.synced ? 'text-green-500' : 'text-amber-500'}>
-                    {page.synced ? 'Synced' : 'Local Only'}
-                  </span>
-                </div>
-                <button onClick={() => onDelete(page.id)} className="text-zinc-600 hover:text-red-500 transition-colors p-1">
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPages.map(page => (
+              <OfflinePageCard
+                key={page.id}
+                page={page}
+                onRead={() => onNavigate(`serendib://read/${page.id}`)}
+                onDelete={() => onDelete(page.id)}
+                onOpenOriginal={() => onNavigate(page.url)}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+// Offline Page Card Component
+const OfflinePageCard: React.FC<{
+  page: OfflinePage;
+  onRead: () => void;
+  onDelete: () => void;
+  onOpenOriginal: () => void;
+}> = ({ page, onRead, onDelete, onOpenOriginal }) => {
+  const formattedDate = new Date(page.savedAt).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: page.savedAt < Date.now() - 365 * 24 * 60 * 60 * 1000 ? 'numeric' : undefined,
+  });
+
+  return (
+    <div className="group relative bg-zinc-950 border border-zinc-900 rounded-xl overflow-hidden hover:border-zinc-700 transition-all flex flex-col">
+      {/* Hero image if available */}
+      {page.heroImage && (
+        <div 
+          className="h-32 bg-zinc-900 bg-cover bg-center"
+          style={{ backgroundImage: `url(${page.heroImage})` }}
+        />
+      )}
+      
+      <div className="p-5 flex-1 flex flex-col">
+        {/* Site name */}
+        {page.siteName && (
+          <div className="flex items-center gap-2 mb-2">
+            {page.favicon && (
+              <img src={page.favicon} alt="" className="w-4 h-4 rounded" />
+            )}
+            <span className="text-xs text-zinc-500 font-medium">{page.siteName}</span>
+          </div>
+        )}
+        
+        {/* Title */}
+        <h3
+          className="text-base font-semibold text-zinc-200 hover:text-white mb-2 line-clamp-2 cursor-pointer"
+          onClick={onRead}
+        >
+          {page.title}
+        </h3>
+        
+        {/* Excerpt */}
+        <p className="text-sm text-zinc-500 line-clamp-2 mb-4 flex-1">{page.excerpt}</p>
+        
+        {/* Meta info */}
+        <div className="flex items-center gap-3 text-[11px] text-zinc-600 mb-3">
+          {page.author && (
+            <span className="flex items-center gap-1">
+              <User size={10} />
+              {page.author}
+            </span>
+          )}
+          {page.readingTime && (
+            <span className="flex items-center gap-1">
+              <BookOpen size={10} />
+              {page.readingTime} min
+            </span>
+          )}
+          <span className="flex items-center gap-1">
+            <Calendar size={10} />
+            {formattedDate}
+          </span>
+        </div>
+        
+        {/* Tags */}
+        {page.tags && page.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {page.tags.slice(0, 3).map(tag => (
+              <span key={tag} className="px-2 py-0.5 bg-zinc-900 text-zinc-500 text-[10px] rounded-full">
+                {tag}
+              </span>
+            ))}
+            {page.tags.length > 3 && (
+              <span className="px-2 py-0.5 text-zinc-600 text-[10px]">+{page.tags.length - 3}</span>
+            )}
+          </div>
+        )}
+        
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-zinc-900">
+          <div className="flex items-center gap-2 text-[10px] text-zinc-600 font-mono">
+            <HardDrive size={10} />
+            <span>{page.size}</span>
+            <span className={page.synced ? 'text-green-500' : 'text-amber-500'}>
+              • {page.synced ? 'Synced' : 'Local'}
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={onOpenOriginal}
+              className="p-1.5 text-zinc-600 hover:text-blue-400 transition-colors rounded"
+              title="Open original"
+            >
+              <ExternalLink size={14} />
+            </button>
+            <button 
+              onClick={onDelete}
+              className="p-1.5 text-zinc-600 hover:text-red-400 transition-colors rounded"
+              title="Delete"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const OfflineReaderPage: React.FC<{
   page: OfflinePage | undefined;
@@ -499,6 +686,9 @@ const OfflineReaderPage: React.FC<{
   onCloseFindBar: () => void;
   onNavigate: (url: string) => void;
 }> = ({ page, showFindBar, onCloseFindBar, onNavigate }) => {
+  const [fontSize, setFontSize] = useState(18);
+  const [theme, setTheme] = useState<'dark' | 'sepia' | 'light'>('dark');
+
   if (!page) {
     return (
       <div className="flex-1 bg-black flex flex-col items-center justify-center p-8 text-center text-zinc-500">
@@ -511,16 +701,168 @@ const OfflineReaderPage: React.FC<{
     );
   }
 
+  const themeStyles = {
+    dark: 'bg-[#111] text-zinc-300',
+    sepia: 'bg-[#f4ecd8] text-[#433422]',
+    light: 'bg-white text-zinc-800',
+  };
+
+  const formattedDate = page.publishedDate 
+    ? new Date(page.publishedDate).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    : new Date(page.savedAt).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+
   return (
-    <div className="flex-1 bg-[#111] text-zinc-300 p-8 md:p-12 overflow-y-auto font-serif leading-relaxed relative">
+    <div className={`flex-1 ${themeStyles[theme]} overflow-y-auto font-serif leading-relaxed relative`}>
       <FindBar isOpen={showFindBar} onClose={onCloseFindBar} />
-      <div className="max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <button onClick={() => onNavigate('serendib://offline')} className="mb-8 flex items-center gap-2 text-xs font-sans text-zinc-500 hover:text-zinc-300 transition-colors">
-          <ArrowRight size={12} className="rotate-180" /> Back to list
-        </button>
-        <div dangerouslySetInnerHTML={{ __html: page.content }} />
-        <div className="mt-16 pt-8 border-t border-zinc-900 text-center">
-          <p className="text-xs font-sans text-zinc-600">End of saved content</p>
+      
+      {/* Reader toolbar */}
+      <div className="sticky top-0 z-10 bg-inherit border-b border-current/10">
+        <div className="max-w-2xl mx-auto px-8 py-3 flex items-center justify-between">
+          <button 
+            onClick={() => onNavigate('serendib://offline')} 
+            className="flex items-center gap-2 text-sm opacity-60 hover:opacity-100 transition-opacity font-sans"
+          >
+            <ArrowRight size={14} className="rotate-180" /> Reading List
+          </button>
+          
+          <div className="flex items-center gap-4">
+            {/* Font size controls */}
+            <div className="flex items-center gap-2 text-sm font-sans">
+              <button 
+                onClick={() => setFontSize(f => Math.max(14, f - 2))}
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-current/10 transition-colors"
+              >
+                A-
+              </button>
+              <span className="text-xs opacity-50">{fontSize}</span>
+              <button 
+                onClick={() => setFontSize(f => Math.min(24, f + 2))}
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-current/10 transition-colors"
+              >
+                A+
+              </button>
+            </div>
+            
+            {/* Theme toggle */}
+            <div className="flex items-center gap-1 font-sans">
+              <button
+                onClick={() => setTheme('dark')}
+                className={`w-6 h-6 rounded-full bg-zinc-900 border-2 ${theme === 'dark' ? 'border-blue-500' : 'border-transparent'}`}
+                title="Dark"
+              />
+              <button
+                onClick={() => setTheme('sepia')}
+                className={`w-6 h-6 rounded-full bg-[#f4ecd8] border-2 ${theme === 'sepia' ? 'border-blue-500' : 'border-transparent'}`}
+                title="Sepia"
+              />
+              <button
+                onClick={() => setTheme('light')}
+                className={`w-6 h-6 rounded-full bg-white border-2 ${theme === 'light' ? 'border-blue-500' : 'border-zinc-300'}`}
+                title="Light"
+              />
+            </div>
+            
+            {/* Open original */}
+            <button
+              onClick={() => onNavigate(page.url)}
+              className="flex items-center gap-1.5 text-xs font-sans opacity-60 hover:opacity-100 transition-opacity"
+              title="Open original"
+            >
+              <ExternalLink size={12} />
+              Original
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="max-w-2xl mx-auto px-8 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Article header */}
+        <header className="mb-10">
+          {page.siteName && (
+            <div className="flex items-center gap-2 mb-4">
+              {page.favicon && (
+                <img src={page.favicon} alt="" className="w-5 h-5 rounded" />
+              )}
+              <span className="text-sm font-sans font-medium opacity-70">{page.siteName}</span>
+            </div>
+          )}
+          
+          <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+            {page.title}
+          </h1>
+          
+          <div className="flex flex-wrap items-center gap-4 text-sm font-sans opacity-60">
+            {page.author && (
+              <span className="flex items-center gap-1.5">
+                <User size={14} />
+                {page.author}
+              </span>
+            )}
+            <span className="flex items-center gap-1.5">
+              <Calendar size={14} />
+              {formattedDate}
+            </span>
+            {page.readingTime && (
+              <span className="flex items-center gap-1.5">
+                <BookOpen size={14} />
+                {page.readingTime} min read
+              </span>
+            )}
+            {page.wordCount && (
+              <span className="opacity-50">
+                {page.wordCount.toLocaleString()} words
+              </span>
+            )}
+          </div>
+          
+          {page.tags && page.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {page.tags.map(tag => (
+                <span key={tag} className="px-2.5 py-1 bg-current/10 text-xs font-sans rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+        
+        {/* Hero image */}
+        {page.heroImage && (
+          <div className="mb-10 -mx-8">
+            <img 
+              src={page.heroImage} 
+              alt="" 
+              className="w-full h-auto rounded-lg"
+            />
+          </div>
+        )}
+        
+        {/* Article content */}
+        <div 
+          className="prose prose-lg max-w-none"
+          style={{ fontSize: `${fontSize}px` }}
+          dangerouslySetInnerHTML={{ __html: page.content }} 
+        />
+        
+        {/* Footer */}
+        <div className="mt-16 pt-8 border-t border-current/10 text-center font-sans">
+          <p className="text-xs opacity-40">
+            Saved for offline reading on {new Date(page.savedAt).toLocaleDateString()}
+          </p>
+          <button
+            onClick={() => onNavigate(page.url)}
+            className="mt-4 text-sm text-blue-500 hover:underline"
+          >
+            View original article →
+          </button>
         </div>
       </div>
     </div>

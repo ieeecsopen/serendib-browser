@@ -1,4 +1,52 @@
 // Type declarations for Electron preload API
+
+export interface SnapshotFileInfo {
+  filename: string;
+  filePath: string;
+  size: number;
+  createdAt: number;
+  modifiedAt: number;
+}
+
+export interface SnapshotAPI {
+  saveToFile: (filename: string, content: string) => Promise<{ success: boolean; filePath?: string; error?: string }>;
+  loadFromFile: (filePath: string) => Promise<{ success: boolean; content?: string; error?: string }>;
+  listFiles: () => Promise<{ success: boolean; snapshots: SnapshotFileInfo[]; error?: string }>;
+  deleteFile: (filePath: string) => Promise<{ success: boolean; error?: string }>;
+  exportWithDialog: (defaultFilename: string, content: string) => Promise<{ success: boolean; filePath?: string; canceled?: boolean; error?: string }>;
+  importWithDialog: () => Promise<{ success: boolean; filePath?: string; content?: string; canceled?: boolean; error?: string }>;
+  getDir: () => Promise<string>;
+  openFolder: () => Promise<{ success: boolean }>;
+}
+
+export interface OfflineAPI {
+  fetchPage: (url: string) => Promise<{ success: boolean; html?: string; contentType?: string; url?: string; error?: string }>;
+  fetchImage: (imageUrl: string, pageId: string) => Promise<{ success: boolean; localPath?: string; filename?: string; size?: number; originalUrl?: string; error?: string }>;
+  savePage: (pageId: string, content: string) => Promise<{ success: boolean; filePath?: string; error?: string }>;
+  loadPage: (pageId: string) => Promise<{ success: boolean; content?: string; notFound?: boolean; error?: string }>;
+  deletePage: (pageId: string) => Promise<{ success: boolean; error?: string }>;
+  getStats: () => Promise<{ success: boolean; pageCount?: number; imageCount?: number; totalSize?: number; offlineDir?: string; imagesDir?: string; error?: string }>;
+  openFolder: () => Promise<{ success: boolean }>;
+  getImageData: (filePath: string) => Promise<{ success: boolean; dataUrl?: string; error?: string }>;
+}
+
+export interface ContainerAPI {
+  getPartition: (containerId: string, isDisposable?: boolean) => Promise<string>;
+  clear: (containerId: string) => Promise<{ success: boolean; error?: string }>;
+  destroy: (containerId: string) => Promise<{ success: boolean; error?: string }>;
+  getStats: (containerId: string) => Promise<{ 
+    containerId: string; 
+    isDisposable: boolean; 
+    cookieCount: number; 
+    cacheSize: number; 
+    cacheSizeFormatted: string 
+  } | null>;
+  listActive: () => Promise<{ id: string; partition: string; isDisposable: boolean }[]>;
+  clearAllDisposable: () => Promise<{ containerId: string; success: boolean; error?: string }[]>;
+  getCookies: (containerId: string, filter?: object) => Promise<{ success: boolean; cookies?: any[]; error?: string }>;
+  removeCookie: (containerId: string, url: string, name: string) => Promise<{ success: boolean; error?: string }>;
+}
+
 export interface ElectronAPI {
   minimize: () => Promise<void>;
   maximize: () => Promise<void>;
@@ -16,9 +64,18 @@ export interface ElectronAPI {
   } | null>;
   downloadUrl: (url: string) => Promise<void>;
   
-  // Container session management
+  // Container session management (modern API)
+  container: ContainerAPI;
+  
+  // Container session management (legacy)
   getContainerSession: (containerId: string) => Promise<string>;
   clearContainerSession: (containerId: string) => Promise<{ success: boolean; error?: string }>;
+  
+  // Snapshot file operations
+  snapshot: SnapshotAPI;
+  
+  // Offline page operations
+  offline: OfflineAPI;
   
   // IPC communication
   send: (channel: string, data: unknown) => void;

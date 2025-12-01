@@ -80,6 +80,128 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.invoke('container-remove-cookie', containerId, url, name),
     },
     
+    // =========================================================================
+    // Snapshot File Operations
+    // =========================================================================
+    
+    snapshot: {
+        /**
+         * Save snapshot to the app's snapshot directory
+         * @param {string} filename - Filename (without extension)
+         * @param {string} content - Snapshot JSON content
+         */
+        saveToFile: (filename, content) =>
+            ipcRenderer.invoke('snapshot-save-to-file', filename, content),
+        
+        /**
+         * Load snapshot from a specific file path
+         * @param {string} filePath - Full path to snapshot file
+         */
+        loadFromFile: (filePath) =>
+            ipcRenderer.invoke('snapshot-load-from-file', filePath),
+        
+        /**
+         * List all saved snapshot files
+         */
+        listFiles: () =>
+            ipcRenderer.invoke('snapshot-list-files'),
+        
+        /**
+         * Delete a snapshot file
+         * @param {string} filePath - Full path to snapshot file
+         */
+        deleteFile: (filePath) =>
+            ipcRenderer.invoke('snapshot-delete-file', filePath),
+        
+        /**
+         * Export snapshot with save dialog
+         * @param {string} defaultFilename - Default filename
+         * @param {string} content - Snapshot JSON content
+         */
+        exportWithDialog: (defaultFilename, content) =>
+            ipcRenderer.invoke('snapshot-export-dialog', defaultFilename, content),
+        
+        /**
+         * Import snapshot with open dialog
+         */
+        importWithDialog: () =>
+            ipcRenderer.invoke('snapshot-import-dialog'),
+        
+        /**
+         * Get the snapshots directory path
+         */
+        getDir: () =>
+            ipcRenderer.invoke('snapshot-get-dir'),
+        
+        /**
+         * Open snapshots folder in file explorer
+         */
+        openFolder: () =>
+            ipcRenderer.invoke('snapshot-open-folder'),
+    },
+    
+    // =========================================================================
+    // Offline Pages Operations
+    // =========================================================================
+    
+    offline: {
+        /**
+         * Fetch a page's HTML content for offline saving
+         * @param {string} url - URL to fetch
+         */
+        fetchPage: (url) =>
+            ipcRenderer.invoke('offline-fetch-page', url),
+        
+        /**
+         * Fetch and save an image
+         * @param {string} imageUrl - Image URL to fetch
+         * @param {string} pageId - Parent page ID
+         */
+        fetchImage: (imageUrl, pageId) =>
+            ipcRenderer.invoke('offline-fetch-image', imageUrl, pageId),
+        
+        /**
+         * Save offline page content to file
+         * @param {string} pageId - Page ID
+         * @param {string} content - HTML content
+         */
+        savePage: (pageId, content) =>
+            ipcRenderer.invoke('offline-save-page', pageId, content),
+        
+        /**
+         * Load offline page content from file
+         * @param {string} pageId - Page ID
+         */
+        loadPage: (pageId) =>
+            ipcRenderer.invoke('offline-load-page', pageId),
+        
+        /**
+         * Delete offline page and associated files
+         * @param {string} pageId - Page ID
+         */
+        deletePage: (pageId) =>
+            ipcRenderer.invoke('offline-delete-page', pageId),
+        
+        /**
+         * Get offline storage statistics
+         */
+        getStats: () =>
+            ipcRenderer.invoke('offline-get-stats'),
+        
+        /**
+         * Open offline folder in file explorer
+         */
+        openFolder: () =>
+            ipcRenderer.invoke('offline-open-folder'),
+        
+        /**
+         * Get image as data URL
+         * @param {string} filePath - Path to image file
+         */
+        getImageData: (filePath) =>
+            ipcRenderer.invoke('offline-get-image-data', filePath),
+    },
+    
     // Legacy container methods (for backward compatibility)
     getContainerSession: (containerId) => 
         ipcRenderer.invoke('container-get-partition', containerId, false),
@@ -121,7 +243,23 @@ contextBridge.exposeInMainWorld('electron', {
             'container-list-active',
             'container-clear-all-disposable',
             'container-get-cookies',
-            'container-remove-cookie'
+            'container-remove-cookie',
+            'snapshot-save-to-file',
+            'snapshot-load-from-file',
+            'snapshot-list-files',
+            'snapshot-delete-file',
+            'snapshot-export-dialog',
+            'snapshot-import-dialog',
+            'snapshot-get-dir',
+            'snapshot-open-folder',
+            'offline-fetch-page',
+            'offline-fetch-image',
+            'offline-save-page',
+            'offline-load-page',
+            'offline-delete-page',
+            'offline-get-stats',
+            'offline-open-folder',
+            'offline-get-image-data'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

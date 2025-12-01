@@ -6,9 +6,11 @@ import { AIPanel } from './src/components/ai/AIPanel';
 import { ToastContainer } from './src/components/ui/ToastContainer';
 import { WindowControls } from './src/components/layout/WindowControls';
 import { ContentFrame } from './src/components/pages/ContentFrame';
-import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification } from './src/types';
+import { SnapshotManager } from './src/components/snapshots/SnapshotManager';
+import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification, WorkspaceSnapshot, SnapshotImportOptions } from './src/types';
 import { ThemeMode } from './src/types/settings';
 import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS } from './src/constants';
+import { snapshotTabsToTabs, snapshotWorkspacesToWorkspaces, snapshotContainersToContainers } from './src/services/snapshot';
 import { Minimize2, Plus, X } from 'lucide-react';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -43,6 +45,9 @@ const App: React.FC = () => {
   // Focus Mode State
   const [isFocusMode, setIsFocusMode] = useState(false);
   
+  // Snapshot Manager State
+  const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false);
+  
   const [settings, setSettings] = useState<BrowserSettings>({
     homeUrl: DEFAULT_HOME_URL,
     searchEngine: 'DuckDuckGo',
@@ -73,6 +78,11 @@ const App: React.FC = () => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
         setShowFindBar(prev => !prev);
+      }
+      // Ctrl/Cmd + Shift + S to open Snapshot Manager
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        setIsSnapshotManagerOpen(prev => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -293,28 +303,77 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSaveOffline = () => {
+  const handleSaveOffline = async () => {
     if (!activeTab || activeTab.url.startsWith('serendib://')) return;
     if (isCurrentPageSaved) return;
 
     updateTab(activeTabId, { isLoading: true });
 
-    setTimeout(() => {
+    try {
+      // Check if we're in Electron environment
+      const electron = (window as any).electron;
+      
+      if (electron?.offline?.fetchPage) {
+        // Fetch page content via Electron
+        const result = await electron.offline.fetchPage(activeTab.url);
+        
+        if (result.success && result.html) {
+          // Use the offline service to extract and create the page
+          const { createOfflinePageFromHtml, saveOfflinePage } = await import('./src/services/offline');
+          
+          const page = createOfflinePageFromHtml(activeTab.url, result.html, {
+            useReaderMode: true,
+            includeImages: false, // Can be enabled later
+          });
+          
+          // Override title with the tab title if available
+          if (activeTab.title && activeTab.title !== 'New Tab') {
+            page.title = activeTab.title;
+          }
+          
+          // Add favicon if available
+          if (activeTab.favicon) {
+            page.favicon = activeTab.favicon;
+          }
+          
+          // Save to localStorage
+          saveOfflinePage(page);
+          
+          // Also save HTML content to file system for larger content
+          await electron.offline.savePage(page.id, page.content);
+          
+          setOfflinePages(prev => [page, ...prev.filter(p => p.url !== page.url)]);
+          addNotification('Page Saved', `"${page.title}" is now available offline.`, 'success');
+        } else {
+          throw new Error(result.error || 'Failed to fetch page');
+        }
+      } else {
+        // Fallback for non-Electron environment (demo mode)
         const newPage: OfflinePage = {
           id: generateId(),
           title: activeTab.title,
           url: activeTab.url,
           excerpt: `Saved version of ${activeTab.title}.`,
-          content: `<article class="prose dark:prose-invert max-w-none"><h1 class="text-4xl font-bold mb-4">${activeTab.title}</h1><p>Offline content saved.</p></article>`,
+          content: `<article class="prose dark:prose-invert max-w-none"><h1 class="text-4xl font-bold mb-4">${activeTab.title}</h1><p>This page was saved for offline reading. In the full Electron app, the complete article content would be extracted and displayed here.</p></article>`,
           savedAt: Date.now(),
           synced: false,
-          size: '0.8 MB'
+          size: '0.1 MB',
+          favicon: activeTab.favicon,
+          siteName: new URL(activeTab.url).hostname,
+          readingTime: 1,
+          wordCount: 50,
+          syncStatus: 'local-only',
         };
         
         setOfflinePages(prev => [newPage, ...prev]);
-        updateTab(activeTabId, { isLoading: false });
-        addNotification('Page Saved', 'Content available in offline reading list.', 'success');
-    }, 1000);
+        addNotification('Page Saved (Demo)', 'Content available in offline reading list.', 'success');
+      }
+    } catch (error) {
+      console.error('Failed to save offline:', error);
+      addNotification('Save Failed', 'Could not save page for offline reading.', 'error');
+    } finally {
+      updateTab(activeTabId, { isLoading: false });
+    }
   };
 
   const handleCreateWorkspace = () => {
@@ -458,6 +517,77 @@ const App: React.FC = () => {
     addNotification('Extension Removed', 'Extension has been uninstalled.', 'info');
   };
 
+  // --- Snapshot Restore Handler ---
+  const handleRestoreSnapshot = (snapshot: WorkspaceSnapshot, options: SnapshotImportOptions) => {
+    const mergeMode = options.mergeMode || 'merge';
+    
+    // Convert snapshot data to regular types
+    const newTabs = snapshotTabsToTabs(snapshot.tabs);
+    const newWorkspaces = snapshotWorkspacesToWorkspaces(snapshot.workspaces);
+    
+    // Handle containers if present
+    if (snapshot.containers) {
+      const newContainers = snapshotContainersToContainers(snapshot.containers);
+      if (mergeMode === 'replace') {
+        // Keep default container, add new ones
+        setContainers([containers[0], ...newContainers.filter(c => c.id !== 'cont-default')]);
+      } else {
+        // Merge: add containers that don't exist
+        setContainers(prev => {
+          const existingIds = new Set(prev.map(c => c.id));
+          const toAdd = newContainers.filter(c => !existingIds.has(c.id));
+          return [...prev, ...toAdd];
+        });
+      }
+    }
+    
+    // Handle workspaces
+    if (mergeMode === 'replace') {
+      setWorkspaces(newWorkspaces);
+    } else {
+      // Merge: add workspaces with new IDs
+      setWorkspaces(prev => [...prev, ...newWorkspaces]);
+    }
+    
+    // Handle tabs
+    if (mergeMode === 'replace') {
+      setTabs(newTabs);
+      if (newTabs.length > 0) {
+        setActiveTabId(newTabs[0].id);
+        setActiveWorkspaceId(newTabs[0].workspaceId);
+      }
+    } else {
+      // Merge: add tabs to current workspace
+      const mappedTabs = newTabs.map(t => ({
+        ...t,
+        workspaceId: activeWorkspaceId
+      }));
+      setTabs(prev => [...prev, ...mappedTabs]);
+    }
+    
+    // Handle bookmarks if present
+    if (snapshot.bookmarks) {
+      if (mergeMode === 'replace') {
+        setBookmarks(snapshot.bookmarks);
+      } else {
+        // Merge: add bookmarks that don't exist (by URL)
+        setBookmarks(prev => {
+          const existingUrls = new Set(prev.map(b => b.url));
+          const toAdd = snapshot.bookmarks!.filter(b => !existingUrls.has(b.url));
+          return [...prev, ...toAdd];
+        });
+      }
+    }
+    
+    // Handle settings if present
+    if (snapshot.settings) {
+      setSettings(prev => ({
+        ...prev,
+        ...snapshot.settings
+      }));
+    }
+  };
+
   const showVerticalTabs = !isFocusMode && settings.verticalTabs;
   const showHorizontalTabs = !isFocusMode && !settings.verticalTabs;
 
@@ -542,6 +672,7 @@ const App: React.FC = () => {
             onToggleFocus={() => setIsFocusMode(true)}
             onSaveOffline={handleSaveOffline}
             isOfflineSaved={isCurrentPageSaved}
+            onOpenSnapshots={() => setIsSnapshotManagerOpen(true)}
           />
         )}
         
@@ -582,6 +713,21 @@ const App: React.FC = () => {
           <ToastContainer 
             notifications={notifications} 
             onDismiss={(id) => setNotifications(prev => prev.filter(n => n.id !== id))} 
+          />
+
+          {/* Snapshot Manager Modal */}
+          <SnapshotManager
+            isOpen={isSnapshotManagerOpen}
+            onClose={() => setIsSnapshotManagerOpen(false)}
+            tabs={tabs}
+            workspaces={workspaces}
+            activeWorkspaceId={activeWorkspaceId}
+            activeTabId={activeTabId}
+            containers={containers}
+            bookmarks={bookmarks}
+            settings={settings}
+            onRestoreSnapshot={handleRestoreSnapshot}
+            onNotification={addNotification}
           />
 
           {isFocusMode && (

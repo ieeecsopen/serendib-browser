@@ -11,7 +11,7 @@ import { SiteInfoPopup } from '../ui/SiteInfoPopup';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
-  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal 
+  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera 
 } from 'lucide-react';
 
 // ============================================================================
@@ -37,6 +37,7 @@ interface OmniBoxProps {
   onToggleFocus: () => void;
   onSaveOffline: () => void;
   isOfflineSaved: boolean;
+  onOpenSnapshots?: () => void;
 }
 
 // ============================================================================
@@ -75,6 +76,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   onToggleBookmark,
   onSaveOffline,
   isOfflineSaved,
+  onOpenSnapshots,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -275,6 +277,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
           onNewDisposableTab={onNewDisposableTab}
           onNewTabInContainer={onNewTabInContainer}
           onNavigate={onNavigate}
+          onOpenSnapshots={onOpenSnapshots}
         />
       </div>
     </div>
@@ -294,10 +297,11 @@ interface MainMenuProps {
   onNewDisposableTab: () => void;
   onNewTabInContainer: (containerId: string) => void;
   onNavigate: (url: string) => void;
+  onOpenSnapshots?: () => void;
 }
 
 const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
-  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNavigate }, ref) => {
+  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNavigate, onOpenSnapshots }, ref) => {
     
     const getContainerIconForMenu = (iconName: string) => {
       switch (iconName) {
@@ -335,6 +339,11 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
 
             {/* Quick Links */}
             <div className="px-1 space-y-0.5">
+              <MenuItem 
+                icon={<Camera size={16} />} 
+                label="Workspace Snapshots" 
+                onClick={() => onAction(() => onOpenSnapshots?.())} 
+              />
               <MenuItem 
                 icon={<DownloadCloud size={16} />} 
                 label="Reading List" 

@@ -58,6 +58,54 @@ export interface OfflinePage {
   savedAt: number;
   synced: boolean;
   size: string;
+  /** Original page favicon */
+  favicon?: string;
+  /** Author of the article (if extracted) */
+  author?: string;
+  /** Publication date (if extracted) */
+  publishedDate?: string;
+  /** Site name */
+  siteName?: string;
+  /** Reading time in minutes */
+  readingTime?: number;
+  /** Word count */
+  wordCount?: number;
+  /** Main image URL (saved locally) */
+  heroImage?: string;
+  /** All saved images (local paths) */
+  images?: OfflineImage[];
+  /** Tags for organization */
+  tags?: string[];
+  /** Last accessed timestamp */
+  lastAccessedAt?: number;
+  /** Sync status */
+  syncStatus?: 'pending' | 'synced' | 'failed' | 'local-only';
+  /** Device that created this page */
+  deviceId?: string;
+}
+
+/** Offline image reference */
+export interface OfflineImage {
+  id: string;
+  originalUrl: string;
+  localPath: string;
+  width?: number;
+  height?: number;
+  size: number;
+}
+
+/** Options for saving offline pages */
+export interface OfflineSaveOptions {
+  /** Include images */
+  includeImages?: boolean;
+  /** Maximum number of images to save */
+  maxImages?: number;
+  /** Maximum image size in bytes (skip larger images) */
+  maxImageSize?: number;
+  /** Use reader mode extraction */
+  useReaderMode?: boolean;
+  /** Custom tags */
+  tags?: string[];
 }
 
 /** Download item */
