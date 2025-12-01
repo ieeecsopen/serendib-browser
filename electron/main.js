@@ -188,6 +188,25 @@ ipcMain.handle('window-is-maximized', () => {
     return mainWindow ? mainWindow.isMaximized() : false;
 });
 
+// Full screen handlers
+ipcMain.handle('window-toggle-fullscreen', () => {
+    if (mainWindow) {
+        mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        return mainWindow.isFullScreen();
+    }
+    return false;
+});
+
+ipcMain.handle('window-is-fullscreen', () => {
+    return mainWindow ? mainWindow.isFullScreen() : false;
+});
+
+ipcMain.handle('window-exit-fullscreen', () => {
+    if (mainWindow && mainWindow.isFullScreen()) {
+        mainWindow.setFullScreen(false);
+    }
+});
+
 // Browser navigation handlers
 ipcMain.handle('navigate-to', (event, url) => {
     // This could be used for additional navigation logic
