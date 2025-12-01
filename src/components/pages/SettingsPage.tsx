@@ -16,7 +16,7 @@ import {
   Settings, Globe, Shield, Zap, Palette, Bell, 
   Languages, Search, Monitor, HardDrive, Eye, 
   Lock, Wifi, Database, RefreshCw, ChevronRight,
-  Keyboard, Info, Download, Trash2
+  Keyboard, Info, Download, Trash2, Key
 } from 'lucide-react';
 
 interface SettingsPageProps {
