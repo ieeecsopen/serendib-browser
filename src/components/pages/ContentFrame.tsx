@@ -370,7 +370,7 @@ const NewTabPage: React.FC<{
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-primary))' }} />
       
-      <div className="relative z-10 flex-1 flex">
+      <div className="relative z-10 flex-1 flex overflow-hidden">
         {/* Sri Lankan Cultural Sidebar */}
         <div className="hidden lg:flex w-16 flex-col items-center py-8 gap-6 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
           {/* Lion Logo - Sri Lankan National Symbol */}
@@ -397,7 +397,7 @@ const NewTabPage: React.FC<{
         </div>
 
         {/* Center Content */}
-        <div className="flex-1 flex flex-col relative overflow-y-auto">
+        <div className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
           {/* Header */}
           <header className="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
@@ -513,10 +513,8 @@ const NewTabPage: React.FC<{
                   className="md:col-span-2 md:row-span-2"
                   gradient="from-amber-600/20 via-orange-900/40 to-black"
                   glowColor="amber"
+                  imageUrl="https://images.unsplash.com/photo-1586613835341-e03a4fedbd99?w=800&q=80"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
-                    <span className="text-[120px]">🦁</span>
-                  </div>
                   <div className="relative z-10 h-full flex flex-col justify-between p-6">
                     <div>
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-amber-500/30">
@@ -524,13 +522,13 @@ const NewTabPage: React.FC<{
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-amber-100 transition-colors">
+                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-amber-100 transition-colors drop-shadow-lg">
                         Sigiriya Lion Rock
                       </h3>
-                      <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
+                      <p className="text-sm text-zinc-300 mb-3 line-clamp-2 drop-shadow-md">
                         Ancient rock fortress and palace ruins, rising 200m above the surrounding plains
                       </p>
-                      <div className="flex items-center gap-4 text-xs text-zinc-500">
+                      <div className="flex items-center gap-4 text-xs text-zinc-300">
                         <span className="flex items-center gap-1"><MapPin size={12} /> Matale</span>
                         <span className="flex items-center gap-1"><Clock size={12} /> 2h from Colombo</span>
                       </div>
@@ -544,16 +542,14 @@ const NewTabPage: React.FC<{
                   className="md:col-span-1"
                   gradient="from-rose-600/20 via-pink-900/40 to-black"
                   glowColor="rose"
+                  imageUrl="https://images.unsplash.com/photo-1625736300986-c08c605cc818?w=600&q=80"
                 >
-                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
-                    🛕
-                  </div>
                   <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-rose-400 uppercase tracking-wider mb-1">Culture</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-rose-100 transition-colors">
+                    <span className="text-[9px] font-bold text-rose-300 uppercase tracking-wider mb-1 drop-shadow-md">Culture</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-rose-100 transition-colors drop-shadow-lg">
                       Temple of the Tooth
                     </h3>
-                    <p className="text-[11px] text-zinc-500 mt-1">Sacred Buddhist temple in Kandy</p>
+                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Sacred Buddhist temple in Kandy</p>
                   </div>
                 </BentoCard>
 
@@ -563,16 +559,14 @@ const NewTabPage: React.FC<{
                   className="md:col-span-1"
                   gradient="from-emerald-600/20 via-green-900/40 to-black"
                   glowColor="emerald"
+                  imageUrl="https://images.unsplash.com/photo-1566766189268-ef9da0bed4c8?w=600&q=80"
                 >
-                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
-                    🌄
-                  </div>
                   <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Nature</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-emerald-100 transition-colors">
+                    <span className="text-[9px] font-bold text-emerald-300 uppercase tracking-wider mb-1 drop-shadow-md">Nature</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-emerald-100 transition-colors drop-shadow-lg">
                       Nine Arch Bridge
                     </h3>
-                    <p className="text-[11px] text-zinc-500 mt-1">Colonial-era railway marvel in Ella</p>
+                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Colonial-era railway marvel in Ella</p>
                   </div>
                 </BentoCard>
 
@@ -582,16 +576,14 @@ const NewTabPage: React.FC<{
                   className="md:col-span-1"
                   gradient="from-sky-600/20 via-blue-900/40 to-black"
                   glowColor="sky"
+                  imageUrl="https://images.unsplash.com/photo-1580364631707-c06e0f545e8c?w=600&q=80"
                 >
-                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
-                    🏰
-                  </div>
                   <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-sky-400 uppercase tracking-wider mb-1">History</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-sky-100 transition-colors">
+                    <span className="text-[9px] font-bold text-sky-300 uppercase tracking-wider mb-1 drop-shadow-md">History</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-sky-100 transition-colors drop-shadow-lg">
                       Galle Fort
                     </h3>
-                    <p className="text-[11px] text-zinc-500 mt-1">Dutch colonial fortification</p>
+                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Dutch colonial fortification</p>
                   </div>
                 </BentoCard>
 
@@ -601,16 +593,14 @@ const NewTabPage: React.FC<{
                   className="md:col-span-1"
                   gradient="from-yellow-600/20 via-amber-900/40 to-black"
                   glowColor="yellow"
+                  imageUrl="https://images.unsplash.com/photo-1602527076644-59e188249ae8?w=600&q=80"
                 >
-                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
-                    🐆
-                  </div>
                   <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-yellow-400 uppercase tracking-wider mb-1">Wildlife</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-yellow-100 transition-colors">
+                    <span className="text-[9px] font-bold text-yellow-300 uppercase tracking-wider mb-1 drop-shadow-md">Wildlife</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-yellow-100 transition-colors drop-shadow-lg">
                       Yala Safari
                     </h3>
-                    <p className="text-[11px] text-zinc-500 mt-1">Highest leopard density in the world</p>
+                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Highest leopard density in the world</p>
                   </div>
                 </BentoCard>
               </div>
