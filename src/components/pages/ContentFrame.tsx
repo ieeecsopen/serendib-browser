@@ -339,6 +339,54 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
 // Sub-Pages
 // ============================================================================
 
+// Helper function to format time ago
+const getTimeAgo = (dateString: string): string => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// Sidebar App Icon Component
+const SidebarAppIcon: React.FC<{
+  name: string;
+  url: string;
+  logo: string;
+  fallbackColor: string;
+  onNavigate: (url: string) => void;
+}> = ({ name, url, logo, fallbackColor, onNavigate }) => {
+  const [imgError, setImgError] = useState(false);
+  
+  return (
+    <button
+      onClick={() => onNavigate(url)}
+      className={`group relative w-10 h-10 rounded-xl bg-gradient-to-br ${fallbackColor} flex items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-200 overflow-hidden`}
+      title={name}
+    >
+      {!imgError ? (
+        <img 
+          src={logo} 
+          alt={name}
+          className="w-6 h-6 object-contain"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span className="text-white font-bold text-sm">{name.charAt(0)}</span>
+      )}
+      
+      {/* Tooltip */}
+      <div className="absolute left-full ml-3 px-2 py-1 bg-zinc-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-white/10">
+        {name}
+      </div>
+    </button>
+  );
+};
+
 // News article type
 interface NewsArticle {
   title: string;
@@ -456,13 +504,56 @@ const NewTabPage: React.FC<{
     return () => clearInterval(newsInterval);
   }, []);
 
+  // Quick links with real favicons/logos
   const quickLinks = [
-    { name: 'News First', url: 'https://www.newsfirst.lk', icon: <Newspaper size={16} />, color: 'from-red-600 to-red-800' },
-    { name: 'Daily Mirror', url: 'https://www.dailymirror.lk', icon: <Newspaper size={16} />, color: 'from-blue-600 to-blue-800' },
-    { name: 'Colombo Stock', url: 'https://www.cse.lk', icon: <TrendingUp size={16} />, color: 'from-green-600 to-green-800' },
-    { name: 'Sri Lanka Tourism', url: 'https://www.srilanka.travel', icon: <Palmtree size={16} />, color: 'from-emerald-600 to-teal-800' },
-    { name: 'Dialog', url: 'https://www.dialog.lk', icon: <Globe2 size={16} />, color: 'from-orange-500 to-red-600' },
-    { name: 'Mobitel', url: 'https://www.mobitel.lk', icon: <Globe2 size={16} />, color: 'from-green-500 to-green-700' },
+    { 
+      name: 'Google', 
+      url: 'https://www.google.com', 
+      logo: 'https://www.google.com/favicon.ico',
+      color: 'from-blue-500 to-green-500' 
+    },
+    { 
+      name: 'YouTube', 
+      url: 'https://www.youtube.com', 
+      logo: 'https://www.youtube.com/favicon.ico',
+      color: 'from-red-600 to-red-700' 
+    },
+    { 
+      name: 'Facebook', 
+      url: 'https://www.facebook.com', 
+      logo: 'https://www.facebook.com/favicon.ico',
+      color: 'from-blue-600 to-blue-700' 
+    },
+    { 
+      name: 'Twitter', 
+      url: 'https://twitter.com', 
+      logo: 'https://abs.twimg.com/favicons/twitter.3.ico',
+      color: 'from-sky-500 to-sky-600' 
+    },
+    { 
+      name: 'WhatsApp', 
+      url: 'https://web.whatsapp.com', 
+      logo: 'https://static.whatsapp.net/rsrc.php/v3/yP/r/rYZqPCBaG70.png',
+      color: 'from-green-500 to-green-600' 
+    },
+    { 
+      name: 'Gmail', 
+      url: 'https://mail.google.com', 
+      logo: 'https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico',
+      color: 'from-red-500 to-yellow-500' 
+    },
+    { 
+      name: 'News First', 
+      url: 'https://www.newsfirst.lk', 
+      logo: 'https://www.newsfirst.lk/favicon.ico',
+      color: 'from-red-600 to-red-800' 
+    },
+    { 
+      name: 'Dialog', 
+      url: 'https://www.dialog.lk', 
+      logo: 'https://www.dialog.lk/favicon.ico',
+      color: 'from-orange-500 to-red-600' 
+    },
   ];
 
   return (
@@ -471,28 +562,84 @@ const NewTabPage: React.FC<{
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-primary))' }} />
       
       <div className="relative z-10 flex-1 flex overflow-hidden">
-        {/* Sri Lankan Cultural Sidebar */}
-        <div className="hidden lg:flex w-16 flex-col items-center py-8 gap-6 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
-          {/* Lion Logo - Sri Lankan National Symbol */}
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-900/30">
+        {/* Most Accessed Apps in Sri Lanka - Sidebar */}
+        <div className="hidden lg:flex w-16 flex-col items-center py-6 gap-2 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
+          {/* Serendib Logo */}
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-900/30 mb-2">
             🦁
           </div>
-          <div className="w-8 h-px bg-white/10" />
-          <button className="p-2 text-zinc-500 hover:text-amber-500 transition-colors" title="Explore Sri Lanka">
-            <Compass size={18} />
-          </button>
-          <button className="p-2 text-zinc-500 hover:text-emerald-500 transition-colors" title="Nature & Wildlife">
-            <Palmtree size={18} />
-          </button>
-          <button className="p-2 text-zinc-500 hover:text-blue-500 transition-colors" title="Beaches">
-            <Waves size={18} />
-          </button>
-          <button className="p-2 text-zinc-500 hover:text-orange-500 transition-colors" title="Hill Country">
-            <Mountain size={18} />
-          </button>
-          <div className="mt-auto space-y-4">
-            <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Instagram size={18} /></button>
-            <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Twitter size={18} /></button>
+          <div className="w-8 h-px bg-white/10 mb-2" />
+          
+          {/* Popular Sri Lankan Apps */}
+          <SidebarAppIcon 
+            name="WhatsApp" 
+            url="https://web.whatsapp.com" 
+            logo="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+            fallbackColor="from-green-500 to-green-600"
+            onNavigate={onNavigate}
+          />
+          <SidebarAppIcon 
+            name="Facebook" 
+            url="https://www.facebook.com" 
+            logo="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+            fallbackColor="from-blue-600 to-blue-700"
+            onNavigate={onNavigate}
+          />
+          <SidebarAppIcon 
+            name="YouTube" 
+            url="https://www.youtube.com" 
+            logo="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg"
+            fallbackColor="from-red-600 to-red-700"
+            onNavigate={onNavigate}
+          />
+          <SidebarAppIcon 
+            name="TikTok" 
+            url="https://www.tiktok.com" 
+            logo="https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png"
+            fallbackColor="from-black to-zinc-800"
+            onNavigate={onNavigate}
+          />
+          <SidebarAppIcon 
+            name="Instagram" 
+            url="https://www.instagram.com" 
+            logo="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg"
+            fallbackColor="from-purple-600 via-pink-500 to-orange-400"
+            onNavigate={onNavigate}
+          />
+          
+          <div className="w-6 h-px bg-white/10 my-1" />
+          
+          {/* Sri Lankan Services */}
+          <SidebarAppIcon 
+            name="Dialog" 
+            url="https://www.dialog.lk" 
+            logo="https://www.dialog.lk/favicon.ico"
+            fallbackColor="from-red-600 to-orange-500"
+            onNavigate={onNavigate}
+          />
+          <SidebarAppIcon 
+            name="Mobitel" 
+            url="https://www.mobitel.lk" 
+            logo="https://www.mobitel.lk/sites/default/files/favicon.ico"
+            fallbackColor="from-green-600 to-green-700"
+            onNavigate={onNavigate}
+          />
+          
+          <div className="mt-auto space-y-2">
+            <SidebarAppIcon 
+              name="Gmail" 
+              url="https://mail.google.com" 
+              logo="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
+              fallbackColor="from-red-500 to-yellow-500"
+              onNavigate={onNavigate}
+            />
+            <SidebarAppIcon 
+              name="Google" 
+              url="https://www.google.com" 
+              logo="https://www.google.com/favicon.ico"
+              fallbackColor="from-blue-500 to-green-500"
+              onNavigate={onNavigate}
+            />
           </div>
         </div>
 
@@ -565,8 +712,8 @@ const NewTabPage: React.FC<{
               </div>
             </div>
 
-            {/* Quick Links - Enhanced 21st.dev style */}
-            <div className="w-full max-w-2xl mb-12">
+            {/* Quick Links - Enhanced 21st.dev style with real logos */}
+            <div className="w-full max-w-3xl mb-12">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
                   <Sparkles size={12} className="text-amber-500" /> Quick Access
@@ -575,18 +722,35 @@ const NewTabPage: React.FC<{
                   <Plus size={12} /> Add Site
                 </button>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
                 {quickLinks.map((link, i) => (
                   <button
                     key={i}
                     onClick={() => onNavigate(link.url)}
-                    className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-0.5"
+                    className="group relative flex flex-col items-center gap-2.5 p-3 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                   >
                     {/* Glow effect on hover */}
-                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-xl`} />
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 blur-xl`} />
                     
-                    <div className={`relative w-11 h-11 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
-                      {link.icon}
+                    {/* Logo container with fallback gradient */}
+                    <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300 overflow-hidden`}>
+                      <img 
+                        src={link.logo} 
+                        alt={link.name}
+                        className="w-7 h-7 object-contain"
+                        onError={(e) => {
+                          // Fallback to first letter if logo fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent && !parent.querySelector('.fallback-letter')) {
+                            const span = document.createElement('span');
+                            span.className = 'fallback-letter text-white font-bold text-lg';
+                            span.textContent = link.name.charAt(0).toUpperCase();
+                            parent.appendChild(span);
+                          }
+                        }}
+                      />
                     </div>
                     <span className="relative text-[10px] text-zinc-500 group-hover:text-white transition-colors truncate w-full text-center font-medium">{link.name}</span>
                   </button>
@@ -594,116 +758,112 @@ const NewTabPage: React.FC<{
               </div>
             </div>
 
-            {/* Featured Content - Bento Grid Style (21st.dev inspired) */}
+            {/* Featured News - Live Feed */}
             <div className="w-full">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
-                  <Star size={14} className="text-amber-500" /> Discover Sri Lanka
+                  <Newspaper size={14} className="text-amber-500" /> Featured News
+                  {newsLoading && (
+                    <span className="ml-2 w-3 h-3 rounded-full border-2 border-amber-500/30 border-t-amber-500 animate-spin" />
+                  )}
                 </h2>
-                <button className="text-xs text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1 group">
+                <button 
+                  onClick={() => onNavigate('https://news.google.com/search?q=sri+lanka')}
+                  className="text-xs text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1 group"
+                >
                   View All <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
               
-              {/* Bento Grid Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[200px]">
-                {/* Large Featured Card - Sigiriya */}
-                <BentoCard
-                  onClick={() => onNavigate('https://www.srilanka.travel/sigiriya')}
-                  className="md:col-span-2 md:row-span-2"
-                  gradient="from-amber-600/20 via-orange-900/40 to-black"
-                  glowColor="amber"
-                  imageUrl="https://images.unsplash.com/photo-1586613835341-e03a4fedbd99?w=800&q=80"
-                >
-                  <div className="relative z-10 h-full flex flex-col justify-between p-6">
-                    <div>
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-amber-500/30">
-                        <Crown size={10} /> UNESCO Heritage
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-amber-100 transition-colors drop-shadow-lg">
-                        Sigiriya Lion Rock
-                      </h3>
-                      <p className="text-sm text-zinc-300 mb-3 line-clamp-2 drop-shadow-md">
-                        Ancient rock fortress and palace ruins, rising 200m above the surrounding plains
-                      </p>
-                      <div className="flex items-center gap-4 text-xs text-zinc-300">
-                        <span className="flex items-center gap-1"><MapPin size={12} /> Matale</span>
-                        <span className="flex items-center gap-1"><Clock size={12} /> 2h from Colombo</span>
+              {/* News Bento Grid Layout */}
+              {newsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[200px]">
+                  {[...Array(5)].map((_, i) => (
+                    <div 
+                      key={i} 
+                      className={`rounded-2xl bg-white/[0.02] border border-white/[0.08] animate-pulse ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                    >
+                      <div className="h-full flex flex-col justify-end p-5">
+                        <div className="h-3 bg-zinc-800 rounded w-16 mb-2" />
+                        <div className="h-5 bg-zinc-800 rounded w-3/4 mb-2" />
+                        <div className="h-3 bg-zinc-800 rounded w-1/2" />
                       </div>
                     </div>
-                  </div>
-                </BentoCard>
+                  ))}
+                </div>
+              ) : newsError ? (
+                <div className="text-center py-12 text-zinc-500">
+                  <Newspaper size={32} className="mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">Unable to load news</p>
+                  <button 
+                    onClick={() => window.location.reload()} 
+                    className="mt-2 text-xs text-amber-500 hover:text-amber-400"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[200px]">
+                  {news.map((article, index) => {
+                    const glowColors: Array<'amber' | 'rose' | 'emerald' | 'sky' | 'yellow'> = ['amber', 'rose', 'emerald', 'sky', 'yellow'];
+                    const gradients = [
+                      'from-amber-600/20 via-orange-900/40 to-black',
+                      'from-rose-600/20 via-pink-900/40 to-black',
+                      'from-emerald-600/20 via-green-900/40 to-black',
+                      'from-sky-600/20 via-blue-900/40 to-black',
+                      'from-yellow-600/20 via-amber-900/40 to-black',
+                    ];
+                    const categoryColors: Record<string, string> = {
+                      'Economy': 'text-amber-300',
+                      'Environment': 'text-emerald-300',
+                      'Technology': 'text-sky-300',
+                      'Sports': 'text-rose-300',
+                      'Culture': 'text-purple-300',
+                      'default': 'text-zinc-300'
+                    };
 
-                {/* Temple of the Tooth */}
-                <BentoCard
-                  onClick={() => onNavigate('https://www.srilanka.travel/kandy')}
-                  className="md:col-span-1"
-                  gradient="from-rose-600/20 via-pink-900/40 to-black"
-                  glowColor="rose"
-                  imageUrl="https://images.unsplash.com/photo-1625736300986-c08c605cc818?w=600&q=80"
-                >
-                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-rose-300 uppercase tracking-wider mb-1 drop-shadow-md">Culture</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-rose-100 transition-colors drop-shadow-lg">
-                      Temple of the Tooth
-                    </h3>
-                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Sacred Buddhist temple in Kandy</p>
-                  </div>
-                </BentoCard>
+                    const isMainArticle = index === 0;
+                    const timeAgo = getTimeAgo(article.publishedAt);
 
-                {/* Ella */}
-                <BentoCard
-                  onClick={() => onNavigate('https://www.srilanka.travel/ella')}
-                  className="md:col-span-1"
-                  gradient="from-emerald-600/20 via-green-900/40 to-black"
-                  glowColor="emerald"
-                  imageUrl="https://images.unsplash.com/photo-1566766189268-ef9da0bed4c8?w=600&q=80"
-                >
-                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-emerald-300 uppercase tracking-wider mb-1 drop-shadow-md">Nature</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-emerald-100 transition-colors drop-shadow-lg">
-                      Nine Arch Bridge
-                    </h3>
-                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Colonial-era railway marvel in Ella</p>
-                  </div>
-                </BentoCard>
-
-                {/* Galle Fort */}
-                <BentoCard
-                  onClick={() => onNavigate('https://www.srilanka.travel/galle')}
-                  className="md:col-span-1"
-                  gradient="from-sky-600/20 via-blue-900/40 to-black"
-                  glowColor="sky"
-                  imageUrl="https://images.unsplash.com/photo-1580364631707-c06e0f545e8c?w=600&q=80"
-                >
-                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-sky-300 uppercase tracking-wider mb-1 drop-shadow-md">History</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-sky-100 transition-colors drop-shadow-lg">
-                      Galle Fort
-                    </h3>
-                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Dutch colonial fortification</p>
-                  </div>
-                </BentoCard>
-
-                {/* Yala National Park */}
-                <BentoCard
-                  onClick={() => onNavigate('https://www.srilanka.travel/yala')}
-                  className="md:col-span-1"
-                  gradient="from-yellow-600/20 via-amber-900/40 to-black"
-                  glowColor="yellow"
-                  imageUrl="https://images.unsplash.com/photo-1602527076644-59e188249ae8?w=600&q=80"
-                >
-                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
-                    <span className="text-[9px] font-bold text-yellow-300 uppercase tracking-wider mb-1 drop-shadow-md">Wildlife</span>
-                    <h3 className="text-base font-bold text-white group-hover:text-yellow-100 transition-colors drop-shadow-lg">
-                      Yala Safari
-                    </h3>
-                    <p className="text-[11px] text-zinc-300 mt-1 drop-shadow-md">Highest leopard density in the world</p>
-                  </div>
-                </BentoCard>
-              </div>
+                    return (
+                      <BentoCard
+                        key={index}
+                        onClick={() => onNavigate(article.url)}
+                        className={isMainArticle ? 'md:col-span-2 md:row-span-2' : 'md:col-span-1'}
+                        gradient={gradients[index % gradients.length]}
+                        glowColor={glowColors[index % glowColors.length]}
+                        imageUrl={article.urlToImage || `https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&q=80`}
+                      >
+                        <div className={`relative z-10 h-full flex flex-col ${isMainArticle ? 'justify-between p-6' : 'justify-end p-5'}`}>
+                          {isMainArticle && (
+                            <div>
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/20 backdrop-blur-sm text-red-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-red-500/30">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /> Live
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-[9px] font-bold uppercase tracking-wider drop-shadow-md ${categoryColors[article.category || 'default'] || categoryColors.default}`}>
+                                {article.source.name}
+                              </span>
+                              <span className="text-[9px] text-zinc-400">• {timeAgo}</span>
+                            </div>
+                            <h3 className={`font-bold text-white group-hover:text-amber-100 transition-colors drop-shadow-lg line-clamp-2 ${isMainArticle ? 'text-xl md:text-2xl mb-2' : 'text-sm'}`}>
+                              {article.title}
+                            </h3>
+                            {isMainArticle && article.description && (
+                              <p className="text-sm text-zinc-300 line-clamp-2 drop-shadow-md">
+                                {article.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </BentoCard>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Ceylon Tea CTA Section - 21st.dev inspired with shimmer effect */}
