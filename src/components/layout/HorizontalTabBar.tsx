@@ -264,11 +264,20 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
                 getTabIcon(tab.url, tab.isLoading)
               )}
               
-              {/* Audio indicator */}
-              {tab.isPlayingAudio && (
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                  {tab.isMuted ? <VolumeX size={6} className="text-white" /> : <Volume2 size={6} className="text-white" />}
-                </div>
+              {/* Audio/Mute indicator - clickable */}
+              {(tab.isPlayingAudio || tab.isMuted) && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleMuteTab?.(tab.id);
+                  }}
+                  className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center transition-colors ${
+                    tab.isMuted ? 'bg-red-500 hover:bg-red-400' : 'bg-blue-500 hover:bg-blue-400'
+                  }`}
+                  title={tab.isMuted ? 'Unmute Tab' : 'Mute Tab'}
+                >
+                  {tab.isMuted ? <VolumeX size={7} className="text-white" /> : <Volume2 size={7} className="text-white" />}
+                </button>
               )}
             </div>
           );
@@ -345,6 +354,21 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
                   >
                     {tab.title || 'New Tab'}
                   </span>
+                  {/* Audio/Mute Indicator */}
+                  {(tab.isPlayingAudio || tab.isMuted) && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleMuteTab?.(tab.id);
+                      }}
+                      className={`ml-1 shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors ${
+                        tab.isMuted ? 'text-red-400' : 'text-blue-400'
+                      }`}
+                      title={tab.isMuted ? 'Unmute Tab' : 'Mute Tab'}
+                    >
+                      {tab.isMuted ? <VolumeX size={10} /> : <Volume2 size={10} />}
+                    </button>
+                  )}
                   {container?.isDisposable && (
                     <ShieldAlert size={10} className="ml-1 text-red-500 shrink-0" />
                   )}
