@@ -120,10 +120,10 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   };
 
   return (
-    <div className="h-16 bg-[#050505] flex items-center px-6 space-x-4 shrink-0 z-20 border-b border-white/5">
+    <div className="h-16 bg-[#050505] flex items-center px-6 shrink-0 z-20 border-b border-white/5">
       
-      {/* Navigation Controls */}
-      <div className="flex items-center space-x-1 text-zinc-500">
+      {/* Left Section - Navigation Controls */}
+      <div className="flex items-center space-x-1 text-zinc-500 w-48">
         <button 
           onClick={onBack} 
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors disabled:opacity-30"
@@ -144,88 +144,90 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
         </button>
       </div>
 
-      {/* Address Bar */}
-      <div className="flex-1 max-w-3xl mx-auto relative group">
-        <div
-          className={`relative flex items-center transition-all duration-300 ${
-            isFocused
-              ? 'bg-white/10 ring-1 ring-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
-              : 'bg-white/5 hover:bg-white/10'
-          } rounded-xl h-11`}
-        >
-          {/* Leading Icon & Container Indicator */}
-          <div className="pl-3 pr-2 flex items-center gap-2">
-            <button
-              className="text-zinc-500 hover:text-white transition-colors"
-              onClick={() => setIsSiteInfoOpen(true)}
-            >
-              {url.startsWith('https') ? (
-                <Lock size={12} className="text-green-500" />
-              ) : (
-                <Search size={12} />
-              )}
-            </button>
+      {/* Center Section - Address Bar */}
+      <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-2xl relative group">
+          <div
+            className={`relative flex items-center transition-all duration-300 ${
+              isFocused
+                ? 'bg-white/10 ring-1 ring-white/10 shadow-[0_0_15px_rgba(255,255,255,0.05)]'
+                : 'bg-white/5 hover:bg-white/10'
+            } rounded-xl h-11`}
+          >
+            {/* Leading Icon & Container Indicator */}
+            <div className="pl-3 pr-2 flex items-center gap-2">
+              <button
+                className="text-zinc-500 hover:text-white transition-colors"
+                onClick={() => setIsSiteInfoOpen(true)}
+              >
+                {url.startsWith('https') ? (
+                  <Lock size={12} className="text-green-500" />
+                ) : (
+                  <Search size={12} />
+                )}
+              </button>
 
-            <div
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider cursor-default shadow-[0_0_5px_currentColor]"
-              style={{ backgroundColor: `${activeContainer.color}15`, color: activeContainer.color }}
-              title={`Container: ${activeContainer.name}`}
-            >
-              <span className="hidden sm:inline">{activeContainer.name}</span>
+              <div
+                className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider cursor-default shadow-[0_0_5px_currentColor]"
+                style={{ backgroundColor: `${activeContainer.color}15`, color: activeContainer.color }}
+                title={`Container: ${activeContainer.name}`}
+              >
+                <span className="hidden sm:inline">{activeContainer.name}</span>
+              </div>
+            </div>
+
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              className="flex-1 w-full bg-transparent border-none text-xs text-white py-2 focus:outline-none placeholder:text-zinc-600 font-sans tracking-wide"
+              placeholder="Search or enter website"
+            />
+
+            {/* Trailing Actions */}
+            <div className="pr-1.5 flex items-center space-x-1">
+              {/* Offline Save Button */}
+              {!url.startsWith('serendib://') && (
+                <button
+                  onClick={onSaveOffline}
+                  disabled={isOfflineSaved}
+                  className={`p-1.5 rounded-md transition-all ${
+                    isOfflineSaved
+                      ? 'text-green-500 cursor-default'
+                      : 'text-zinc-500 hover:text-white hover:bg-white/10'
+                  }`}
+                  title={isOfflineSaved ? "Available Offline" : "Save Page Offline"}
+                >
+                  {isOfflineSaved ? <Check size={14} /> : <DownloadCloud size={14} />}
+                </button>
+              )}
+
+              <button
+                onClick={onToggleBookmark}
+                className={`p-1.5 rounded-md transition-all ${
+                  isBookmarked
+                    ? 'text-yellow-500 hover:bg-yellow-500/10'
+                    : 'text-zinc-500 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Star size={14} className={isBookmarked ? "fill-current" : ""} />
+              </button>
             </div>
           </div>
 
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="flex-1 w-full bg-transparent border-none text-xs text-white py-2 focus:outline-none placeholder:text-zinc-600 font-sans tracking-wide"
-            placeholder="Search or enter website"
+          <SiteInfoPopup
+            url={url}
+            isOpen={isSiteInfoOpen}
+            onClose={() => setIsSiteInfoOpen(false)}
           />
-
-          {/* Trailing Actions */}
-          <div className="pr-1.5 flex items-center space-x-1">
-            {/* Offline Save Button */}
-            {!url.startsWith('serendib://') && (
-              <button
-                onClick={onSaveOffline}
-                disabled={isOfflineSaved}
-                className={`p-1.5 rounded-md transition-all ${
-                  isOfflineSaved
-                    ? 'text-green-500 cursor-default'
-                    : 'text-zinc-500 hover:text-white hover:bg-white/10'
-                }`}
-                title={isOfflineSaved ? "Available Offline" : "Save Page Offline"}
-              >
-                {isOfflineSaved ? <Check size={14} /> : <DownloadCloud size={14} />}
-              </button>
-            )}
-
-            <button
-              onClick={onToggleBookmark}
-              className={`p-1.5 rounded-md transition-all ${
-                isBookmarked
-                  ? 'text-yellow-500 hover:bg-yellow-500/10'
-                  : 'text-zinc-500 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Star size={14} className={isBookmarked ? "fill-current" : ""} />
-            </button>
-          </div>
         </div>
-
-        <SiteInfoPopup
-          url={url}
-          isOpen={isSiteInfoOpen}
-          onClose={() => setIsSiteInfoOpen(false)}
-        />
       </div>
 
-      {/* Right Actions */}
-      <div className="flex items-center space-x-2 pl-2 text-zinc-500">
+      {/* Right Section - Actions */}
+      <div className="flex items-center justify-end space-x-2 w-48 text-zinc-500">
         <button
           onClick={() => onNavigate('serendib://extensions')}
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden sm:block"
@@ -256,7 +258,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
         {/* Profile */}
         <button
-          className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 border border-white/10 ml-2"
+          className="w-8 h-8 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 border border-white/10"
           title="Profile"
         >
           <img 
