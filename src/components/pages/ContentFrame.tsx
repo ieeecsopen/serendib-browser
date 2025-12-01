@@ -52,6 +52,7 @@ interface ContentFrameProps {
   onTabFaviconChange: (tabId: string, favicon: string) => void;
   onPasswordFormDetected?: (url: string, hasCredentials: boolean) => void;
   onCredentialSubmitted?: (url: string, username: string, password: string) => void;
+  onTabZoomChange?: (tabId: string, zoomFactor: number) => void;
 }
 
 // ============================================================================
@@ -85,6 +86,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   onTabFaviconChange,
   onPasswordFormDetected,
   onCredentialSubmitted,
+  onTabZoomChange,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -268,6 +270,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
               onNavigate={onNavigate}
               onPasswordFormDetected={onPasswordFormDetected}
               onCredentialSubmitted={onCredentialSubmitted}
+              onZoomChange={onTabZoomChange}
             />
           );
         })}
