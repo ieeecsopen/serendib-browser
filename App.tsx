@@ -898,6 +898,10 @@ const App: React.FC = () => {
             onZoomOut={handleZoomOut}
             onZoomReset={handleZoomReset}
             onSetZoom={handleSetZoom}
+            sitePermissions={getCurrentSitePermissions()}
+            defaultPermissions={DEFAULT_PERMISSIONS}
+            onUpdatePermission={handleUpdatePermission}
+            onResetSitePermissions={handleResetSitePermissions}
           />
         )}
         
