@@ -552,8 +552,8 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
       return (
         <div
           ref={ref}
-          style={{ top: contextMenu.y, left: contextMenu.x }}
-          className="fixed z-50 w-64 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 flex flex-col text-zinc-300 backdrop-blur-xl"
+          style={{ top: contextMenu.y, left: contextMenu.x, backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+          className="fixed z-50 w-64 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 flex flex-col backdrop-blur-xl" 
         >
           {/* Tab Actions */}
           <div className="pb-1.5 mb-1.5 border-b border-white/5 space-y-0.5">
@@ -652,8 +652,8 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
     return (
       <div
         ref={ref}
-        style={{ top: contextMenu.y, left: contextMenu.x }}
-        className="fixed z-50 w-48 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 flex flex-col text-zinc-300 backdrop-blur-xl"
+        style={{ top: contextMenu.y, left: contextMenu.x, backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+        className="fixed z-50 w-48 rounded-xl shadow-2xl p-1.5 animate-in fade-in zoom-in-95 duration-100 flex flex-col backdrop-blur-xl"
       >
         <ContextMenuItem 
           icon={<Edit3 size={12} />} 
