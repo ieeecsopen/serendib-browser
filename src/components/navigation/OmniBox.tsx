@@ -97,15 +97,25 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   onZoomOut,
   onZoomReset,
   onSetZoom,
+  // Permissions
+  sitePermissions,
+  defaultPermissions,
+  onUpdatePermission,
+  onResetSitePermissions,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
   const [isFocused, setIsFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSiteInfoOpen, setIsSiteInfoOpen] = useState(false);
+  const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
   
   // Refs
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Derived state
+  const hasCustomPermissions = sitePermissions && Object.keys(sitePermissions.permissions).length > 0;
+  const currentOrigin = url.startsWith('http') ? new URL(url).origin : '';
 
   // Effects
   useEffect(() => {
