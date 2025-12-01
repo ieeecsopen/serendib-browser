@@ -184,6 +184,7 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
             onUrlChange={(url) => onTabUrlChange(rightTabId, url)}
             onLoadingChange={(loading) => onTabLoadingChange(rightTabId, loading)}
             onFaviconChange={(favicon) => onTabFaviconChange(rightTabId, favicon)}
+            onNavigate={onNavigate}
           />
         </div>
       </div>
