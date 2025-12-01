@@ -202,6 +202,71 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.invoke('offline-get-image-data', filePath),
     },
     
+    // =========================================================================
+    // Password Manager Operations
+    // =========================================================================
+    
+    passwords: {
+        /**
+         * Save encrypted vault data to secure storage
+         * @param {string} encryptedData - Encrypted vault data
+         */
+        saveVault: (encryptedData) =>
+            ipcRenderer.invoke('password-save-vault', encryptedData),
+        
+        /**
+         * Load encrypted vault data from secure storage
+         */
+        loadVault: () =>
+            ipcRenderer.invoke('password-load-vault'),
+        
+        /**
+         * Save vault settings (salt, verification hash)
+         * @param {object} settings - Vault settings
+         */
+        saveSettings: (settings) =>
+            ipcRenderer.invoke('password-save-settings', settings),
+        
+        /**
+         * Load vault settings
+         */
+        loadSettings: () =>
+            ipcRenderer.invoke('password-load-settings'),
+        
+        /**
+         * Delete vault completely
+         */
+        deleteVault: () =>
+            ipcRenderer.invoke('password-delete-vault'),
+        
+        /**
+         * Check if vault exists
+         */
+        vaultExists: () =>
+            ipcRenderer.invoke('password-vault-exists'),
+        
+        /**
+         * Generate secure random bytes
+         * @param {number} length - Number of bytes
+         */
+        generateRandom: (length) =>
+            ipcRenderer.invoke('password-generate-random', length),
+        
+        /**
+         * Export passwords with save dialog
+         * @param {string} encryptedData - Encrypted password data
+         * @param {string} defaultFilename - Default filename
+         */
+        exportWithDialog: (encryptedData, defaultFilename) =>
+            ipcRenderer.invoke('password-export', encryptedData, defaultFilename),
+        
+        /**
+         * Import passwords with open dialog
+         */
+        importWithDialog: () =>
+            ipcRenderer.invoke('password-import'),
+    },
+    
     // Legacy container methods (for backward compatibility)
     getContainerSession: (containerId) => 
         ipcRenderer.invoke('container-get-partition', containerId, false),
@@ -259,7 +324,16 @@ contextBridge.exposeInMainWorld('electron', {
             'offline-delete-page',
             'offline-get-stats',
             'offline-open-folder',
-            'offline-get-image-data'
+            'offline-get-image-data',
+            'password-save-vault',
+            'password-load-vault',
+            'password-save-settings',
+            'password-load-settings',
+            'password-delete-vault',
+            'password-vault-exists',
+            'password-generate-random',
+            'password-export',
+            'password-import'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);
