@@ -1065,7 +1065,7 @@ const App: React.FC = () => {
   const showHorizontalTabs = !isFocusMode && !settings.verticalTabs;
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden text-sm bg-[#050505] text-zinc-100 font-sans selection:bg-zinc-800">
+    <div className="flex h-screen w-screen overflow-hidden text-sm font-sans selection:bg-zinc-800" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       
       {/* Window Title Bar with Drag Region */}
       <div className="absolute top-0 left-0 right-0 h-8 drag-region z-50 flex items-center justify-end">
@@ -1103,7 +1103,7 @@ const App: React.FC = () => {
       )}
 
       {/* 2. Main Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#050505] relative pt-8">
+      <div className="flex-1 flex flex-col min-w-0 relative pt-8" style={{ backgroundColor: 'var(--bg-primary)' }}>
         
         {/* Horizontal Tab Strip */}
         {showHorizontalTabs && (

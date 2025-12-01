@@ -263,9 +263,10 @@ export const BUILT_IN_THEMES: Record<string, CustomTheme> = {
   },
 };
 
-// Apply theme to CSS variables
+// Apply theme to CSS variables and body styles
 export const applyTheme = (theme: CustomTheme) => {
   const root = document.documentElement;
+  const body = document.body;
   const colors = theme.colors;
   
   // Set CSS variables
@@ -288,6 +289,10 @@ export const applyTheme = (theme: CustomTheme) => {
   root.style.setProperty('--info', colors.info);
   root.style.setProperty('--shadow', colors.shadow);
   root.style.setProperty('--overlay', colors.overlay);
+  
+  // Apply background color directly to body for immediate effect
+  body.style.backgroundColor = colors.bgPrimary;
+  body.style.color = colors.textPrimary;
   
   // Set dark/light mode class
   if (theme.isDark) {

@@ -206,7 +206,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   };
 
   return (
-    <div className="h-16 bg-[#050505] flex items-center px-6 shrink-0 z-20 border-b border-white/5">
+    <div className="h-16 flex items-center px-6 shrink-0 z-20" style={{ backgroundColor: 'var(--bg-primary)', borderBottom: '1px solid var(--border-secondary)' }}>
       
       {/* Left Section - Navigation Controls */}
       <div className="flex items-center gap-1 text-zinc-500 shrink-0">
@@ -592,7 +592,7 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-full mt-3 w-64 max-h-[calc(100vh-120px)] overflow-y-auto bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl py-1.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50 font-sans backdrop-blur-xl scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+          <div className="absolute right-0 top-full mt-3 w-64 max-h-[calc(100vh-120px)] overflow-y-auto rounded-xl shadow-2xl py-1.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50 font-sans backdrop-blur-xl scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent" style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}>
             
             {/* New Tab Actions */}
             <div className="px-1 space-y-0.5">
