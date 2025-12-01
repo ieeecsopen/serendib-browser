@@ -47,6 +47,9 @@ const App: React.FC = () => {
   // Focus Mode State
   const [isFocusMode, setIsFocusMode] = useState(false);
   
+  // Full Screen State
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  
   // Snapshot Manager State
   const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false);
   
