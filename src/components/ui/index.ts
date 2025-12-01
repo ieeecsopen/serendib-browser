@@ -7,6 +7,8 @@ export { FindBar } from './FindBar';
 export { ToastContainer } from './ToastContainer';
 export { ZoomControl } from './ZoomControl';
 export { default as PermissionsPopup } from './PermissionsPopup';
+export { CertificateViewer } from './CertificateViewer';
+export { ShareMenu } from './ShareMenu';
 
 // shadcn-style components
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card';

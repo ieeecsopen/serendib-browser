@@ -10,11 +10,13 @@ import type { Container, SitePermissions, DefaultPermissions, PermissionType, Pe
 import { SiteInfoPopup } from '../ui/SiteInfoPopup';
 import { ZoomControl } from '../ui/ZoomControl';
 import PermissionsPopup from '../ui/PermissionsPopup';
+import { CertificateViewer } from '../ui/CertificateViewer';
+import { ShareMenu } from '../ui/ShareMenu';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
-  Shield, Code, Maximize, PictureInPicture2
+  Shield, Code, Maximize, PictureInPicture2, SplitSquareHorizontal, Share2, ShieldCheck
 } from 'lucide-react';
 
 // ============================================================================
