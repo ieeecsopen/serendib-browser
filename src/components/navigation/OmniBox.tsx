@@ -14,7 +14,7 @@ import {
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
-  Shield, Code, Maximize
+  Shield, Code, Maximize, PictureInPicture2
 } from 'lucide-react';
 
 // ============================================================================
