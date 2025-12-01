@@ -127,26 +127,89 @@ const App: React.FC = () => {
 
   // --- Theme Effect ---
   useEffect(() => {
-    const root = document.documentElement;
-    if (settings.theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
+    // Apply custom theme based on settings
+    const theme = getTheme(settings.theme);
+    applyTheme(theme);
   }, [settings.theme]);
 
   // --- Shortcuts Effect ---
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger shortcuts if typing in an input
+      const target = e.target as HTMLElement;
+      const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      
+      // Ctrl/Cmd + T - New Tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 't' && !e.shiftKey) {
+        e.preventDefault();
+        handleCreateTab();
+      }
+      
+      // Ctrl/Cmd + W - Close Tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+        e.preventDefault();
+        handleCloseTab(activeTabId);
+      }
+      
+      // Ctrl/Cmd + Shift + T - Reopen Closed Tab
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
+        e.preventDefault();
+        handleReopenClosedTab();
+      }
+      
+      // Ctrl/Cmd + Shift + N - New Private Window/Tab
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') {
+        e.preventDefault();
+        handleCreatePrivateTab();
+      }
+      
+      // Ctrl/Cmd + 1-9 - Switch to Tab
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && /^[1-9]$/.test(e.key)) {
+        e.preventDefault();
+        const tabIndex = parseInt(e.key) - 1;
+        if (tabIndex < visibleTabs.length) {
+          setActiveTabId(visibleTabs[tabIndex].id);
+        }
+      }
+      
+      // Ctrl/Cmd + Tab - Next Tab
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        const currentIndex = visibleTabs.findIndex(t => t.id === activeTabId);
+        const nextIndex = (currentIndex + 1) % visibleTabs.length;
+        setActiveTabId(visibleTabs[nextIndex].id);
+      }
+      
+      // Ctrl/Cmd + Shift + Tab - Previous Tab
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Tab') {
+        e.preventDefault();
+        const currentIndex = visibleTabs.findIndex(t => t.id === activeTabId);
+        const prevIndex = currentIndex === 0 ? visibleTabs.length - 1 : currentIndex - 1;
+        setActiveTabId(visibleTabs[prevIndex].id);
+      }
+      
+      // Ctrl/Cmd + L - Focus Address Bar
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+        e.preventDefault();
+        const addressBar = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+        if (addressBar) {
+          addressBar.focus();
+          addressBar.select();
+        }
+      }
+      
+      // Ctrl/Cmd + F - Find in Page
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
         setShowFindBar(prev => !prev);
       }
+      
       // Ctrl/Cmd + Shift + S to open Snapshot Manager
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'S') {
         e.preventDefault();
         setIsSnapshotManagerOpen(prev => !prev);
       }
+      
       // Zoom shortcuts
       if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
         e.preventDefault();
@@ -156,10 +219,11 @@ const App: React.FC = () => {
         e.preventDefault();
         handleZoomOut();
       }
-      if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+      if ((e.ctrlKey || e.metaKey) && e.key === '0' && !isTyping) {
         e.preventDefault();
         handleZoomReset();
       }
+      
       // Print shortcut
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
         e.preventDefault();
@@ -168,6 +232,7 @@ const App: React.FC = () => {
           electron.print.printPage();
         }
       }
+      
       // Developer Tools shortcut (F12)
       if (e.key === 'F12') {
         e.preventDefault();
@@ -176,6 +241,7 @@ const App: React.FC = () => {
           webview.openDevTools();
         }
       }
+      
       // Inspect element shortcut (Ctrl+Shift+I)
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
         e.preventDefault();
@@ -184,6 +250,7 @@ const App: React.FC = () => {
           webview.openDevTools();
         }
       }
+      
       // Full screen shortcut (F11)
       if (e.key === 'F11') {
         e.preventDefault();
@@ -194,6 +261,7 @@ const App: React.FC = () => {
           });
         }
       }
+      
       // Exit full screen (Escape when in fullscreen)
       if (e.key === 'Escape' && isFullScreen) {
         const electron = (window as any).electron;
@@ -205,7 +273,7 @@ const App: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullScreen]);
+  }, [isFullScreen, activeTabId, visibleTabs]);
 
   // --- Derived State ---
   const visibleTabs = tabs.filter(t => t.workspaceId === activeWorkspaceId);
