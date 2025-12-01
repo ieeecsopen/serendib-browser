@@ -450,11 +450,13 @@ const NewTabPage: React.FC<{
               </div>
             </div>
 
-            {/* Quick Links */}
-            <div className="w-full max-w-2xl mb-10">
+            {/* Quick Links - Enhanced 21st.dev style */}
+            <div className="w-full max-w-2xl mb-12">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Quick Access</h2>
-                <button className="text-xs text-zinc-600 hover:text-white transition-colors flex items-center gap-1">
+                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles size={12} className="text-amber-500" /> Quick Access
+                </h2>
+                <button className="text-xs text-zinc-600 hover:text-amber-500 transition-colors flex items-center gap-1 group">
                   <Plus size={12} /> Add Site
                 </button>
               </div>
@@ -463,12 +465,15 @@ const NewTabPage: React.FC<{
                   <button
                     key={i}
                     onClick={() => onNavigate(link.url)}
-                    className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.05] transition-all"
+                    className="group relative flex flex-col items-center gap-2.5 p-4 rounded-2xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.06] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                    {/* Glow effect on hover */}
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300 blur-xl`} />
+                    
+                    <div className={`relative w-11 h-11 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
                       {link.icon}
                     </div>
-                    <span className="text-[10px] text-zinc-500 group-hover:text-white transition-colors truncate w-full text-center">{link.name}</span>
+                    <span className="relative text-[10px] text-zinc-500 group-hover:text-white transition-colors truncate w-full text-center font-medium">{link.name}</span>
                   </button>
                 ))}
               </div>
