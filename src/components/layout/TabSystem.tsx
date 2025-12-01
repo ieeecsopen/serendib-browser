@@ -209,7 +209,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
 
   return (
     <>
-      <div className={`flex flex-col h-full ${isCollapsed ? 'w-[60px]' : 'w-[260px]'} bg-[#050505]/95 backdrop-blur-xl border-r border-white/5 z-10 text-zinc-400 font-sans select-none transition-all duration-300`}>
+      <div className={`flex flex-col h-full ${isCollapsed ? 'w-[60px]' : 'w-[260px]'} backdrop-blur-xl z-10 font-sans select-none transition-all duration-300`} style={{ backgroundColor: 'var(--bg-primary)', borderRight: '1px solid var(--border-secondary)', color: 'var(--text-secondary)' }}>
         
         {/* Header: Traffic Lights & New Tab Button */}
         <div className={`pt-8 pb-4 ${isCollapsed ? 'px-2' : 'px-5'} flex flex-col gap-5 shrink-0`}>
@@ -426,7 +426,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
         </div>
 
         {/* Workspace Switcher */}
-        <div className={`p-3 mt-auto border-t border-white/5 bg-[#0A0A0A]/50 backdrop-blur-md ${isCollapsed ? 'flex flex-col items-center gap-1' : ''}`}>
+        <div className={`p-3 mt-auto backdrop-blur-md ${isCollapsed ? 'flex flex-col items-center gap-1' : ''}`} style={{ borderTop: '1px solid var(--border-secondary)', backgroundColor: 'var(--bg-secondary)' }}>
           <div className={`flex ${isCollapsed ? 'flex-col' : ''} items-center justify-between gap-1`}>
             <div className={`flex ${isCollapsed ? 'flex-col' : ''} items-center gap-1 ${isCollapsed ? '' : 'overflow-x-auto scrollbar-none flex-1'}`}>
               {workspaces.map((ws) => {
