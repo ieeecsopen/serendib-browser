@@ -48,6 +48,11 @@ interface WebViewProps {
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const ABORTED_ERROR_CODE = -3;
 
+// Zoom presets and limits
+const ZOOM_PRESETS = [0.25, 0.33, 0.5, 0.67, 0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0];
+const MIN_ZOOM = ZOOM_PRESETS[0];
+const MAX_ZOOM = ZOOM_PRESETS[ZOOM_PRESETS.length - 1];
+
 // ============================================================================
 // Global WebView Interface
 // ============================================================================
