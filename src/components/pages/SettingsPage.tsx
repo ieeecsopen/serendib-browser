@@ -5,7 +5,8 @@
  */
 
 import React, { useState } from 'react';
-import type { BrowserSettings } from '../../types';
+import type { BrowserSettings, DefaultPermissions, PermissionType, PermissionSetting, SitePermissions } from '../../types';
+import { DEFAULT_PERMISSIONS } from '../../constants';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { Switch } from '../ui/switch';
 import { Select } from '../ui/select';
@@ -16,17 +17,24 @@ import {
   Settings, Globe, Shield, Zap, Palette, Bell, 
   Languages, Search, Monitor, HardDrive, Eye, 
   Lock, Wifi, Database, RefreshCw, ChevronRight,
-  Keyboard, Info, Download, Trash2, Key
+  Keyboard, Info, Download, Trash2, Key,
+  Camera, Mic, MapPin, Clipboard, ClipboardPaste, Volume2, ExternalLink
 } from 'lucide-react';
 
 interface SettingsPageProps {
   settings: BrowserSettings;
   onUpdateSetting: (key: keyof BrowserSettings, value: any) => void;
   onOpenPasswordManager?: () => void;
+  // Permissions
+  sitePermissionsMap?: Record<string, SitePermissions>;
+  defaultPermissions?: DefaultPermissions;
+  onUpdateDefaultPermission?: (permission: PermissionType, setting: PermissionSetting) => void;
+  onResetSitePermissions?: (origin: string) => void;
+  onClearAllSitePermissions?: () => void;
 }
 
 // Section types
-type SettingsSection = 'general' | 'privacy' | 'passwords' | 'performance' | 'appearance' | 'shortcuts' | 'about';
+type SettingsSection = 'general' | 'privacy' | 'permissions' | 'passwords' | 'performance' | 'appearance' | 'shortcuts' | 'about';
 
 // Navigation items
 const navItems: { id: SettingsSection; label: string; icon: React.ReactNode; description: string }[] = [
