@@ -266,6 +266,8 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
               onLoadingChange={onTabLoadingChange}
               onFaviconChange={onTabFaviconChange}
               onNavigate={onNavigate}
+              onPasswordFormDetected={onPasswordFormDetected}
+              onCredentialSubmitted={onCredentialSubmitted}
             />
           );
         })}
