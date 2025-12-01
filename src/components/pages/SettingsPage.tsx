@@ -282,7 +282,7 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({
   onResetSitePermissions,
   onClearAllSitePermissions,
 }) => {
-  const sitesList = Object.values(sitePermissionsMap);
+  const sitesList: SitePermissions[] = Object.values(sitePermissionsMap);
 
   return (
     <div className="space-y-6">

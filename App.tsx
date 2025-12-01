@@ -943,6 +943,10 @@ const App: React.FC = () => {
             onPasswordFormDetected={handlePasswordFormDetected}
             onCredentialSubmitted={handleCredentialSubmitted}
             onTabZoomChange={handleTabZoomChange}
+            sitePermissionsMap={sitePermissionsMap}
+            defaultPermissions={DEFAULT_PERMISSIONS}
+            onResetSitePermissions={handleResetSitePermissions}
+            onClearAllSitePermissions={handleClearAllSitePermissions}
           />
           
           <AIPanel 
