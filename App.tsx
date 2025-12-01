@@ -121,6 +121,14 @@ const App: React.FC = () => {
         e.preventDefault();
         handleZoomReset();
       }
+      // Print shortcut
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        const electron = (window as any).electron;
+        if (electron?.print?.printPage) {
+          electron.print.printPage();
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
