@@ -474,6 +474,16 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
                   }
                 })} 
               />
+              <MenuItem 
+                icon={<PictureInPicture2 size={16} />} 
+                label="Picture in Picture" 
+                onClick={() => onAction(async () => {
+                  const webview = (window as any).__activeWebview;
+                  if (webview?.requestPictureInPicture) {
+                    await webview.requestPictureInPicture();
+                  }
+                })} 
+              />
             </div>
 
             <MenuDivider />
