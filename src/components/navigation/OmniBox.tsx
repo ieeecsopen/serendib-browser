@@ -197,6 +197,34 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
                 )}
               </button>
 
+              {/* Permissions Indicator - shows when site has custom permissions */}
+              {currentOrigin && defaultPermissions && onUpdatePermission && (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsPermissionsOpen(!isPermissionsOpen)}
+                    className={`p-1 rounded-md transition-colors ${
+                      hasCustomPermissions
+                        ? 'text-blue-400 hover:bg-blue-500/10'
+                        : 'text-zinc-500 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="Site Permissions"
+                  >
+                    <Shield size={12} />
+                  </button>
+                  
+                  {isPermissionsOpen && (
+                    <PermissionsPopup
+                      origin={currentOrigin}
+                      sitePermissions={sitePermissions}
+                      defaultPermissions={defaultPermissions}
+                      onUpdatePermission={onUpdatePermission}
+                      onResetSitePermissions={onResetSitePermissions || (() => {})}
+                      onClose={() => setIsPermissionsOpen(false)}
+                    />
+                  )}
+                </div>
+              )}
+
               <div
                 className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider cursor-default shadow-[0_0_5px_currentColor]"
                 style={{ backgroundColor: `${activeContainer.color}15`, color: activeContainer.color }}
