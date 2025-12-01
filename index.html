@@ -33,28 +33,62 @@
         -webkit-app-region: no-drag;
       }
       
-      /* Theme-aware text colors */
+      /* ============================================
+         Theme-aware color overrides using CSS vars
+         ============================================ */
+      
+      /* In light mode, override zinc colors to be inverted */
+      .light .text-white { color: var(--text-primary, #09090b) !important; }
+      .light .text-zinc-100 { color: var(--text-primary, #18181b) !important; }
+      .light .text-zinc-200 { color: #27272a !important; }
+      .light .text-zinc-300 { color: #3f3f46 !important; }
+      .light .text-zinc-400 { color: #52525b !important; }
+      .light .text-zinc-500 { color: #71717a !important; }
+      .light .text-zinc-600 { color: #a1a1aa !important; }
+      
+      .light .bg-zinc-900 { background-color: #f4f4f5 !important; }
+      .light .bg-zinc-800 { background-color: #e4e4e7 !important; }
+      .light .bg-zinc-700 { background-color: #d4d4d8 !important; }
+      
+      .light .border-zinc-800 { border-color: #d4d4d8 !important; }
+      .light .border-zinc-700 { border-color: #e4e4e7 !important; }
+      .light .border-white\\/5 { border-color: rgba(0, 0, 0, 0.08) !important; }
+      .light .border-white\\/10 { border-color: rgba(0, 0, 0, 0.1) !important; }
+      .light .border-white\\/20 { border-color: rgba(0, 0, 0, 0.15) !important; }
+      
+      .light .bg-white\\/5 { background-color: rgba(0, 0, 0, 0.03) !important; }
+      .light .bg-white\\/10 { background-color: rgba(0, 0, 0, 0.06) !important; }
+      .light .bg-white\\/\[0\\.03\] { background-color: rgba(0, 0, 0, 0.03) !important; }
+      .light .bg-white\\/\[0\\.01\] { background-color: rgba(0, 0, 0, 0.01) !important; }
+      
+      .light .hover\\:bg-white\\/5:hover { background-color: rgba(0, 0, 0, 0.05) !important; }
+      .light .hover\\:bg-white\\/10:hover { background-color: rgba(0, 0, 0, 0.08) !important; }
+      .light .hover\\:text-white:hover { color: #09090b !important; }
+      
+      .light .ring-white\\/10 { --tw-ring-color: rgba(0, 0, 0, 0.1) !important; }
+      
+      .light .placeholder\\:text-zinc-500::placeholder { color: #a1a1aa !important; }
+      .light .placeholder\\:text-zinc-600::placeholder { color: #71717a !important; }
+      
+      /* Fix shadow colors in light mode */
+      .light .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important; }
+      .light .shadow-black\\/50 { --tw-shadow-color: rgba(0, 0, 0, 0.1) !important; }
+      
+      /* Ensure proper icon visibility */
+      .light .text-zinc-500 svg { color: #71717a !important; }
+      .light .text-zinc-400 svg { color: #52525b !important; }
+      
+      /* Theme utility classes */
       .theme-text-primary { color: var(--text-primary); }
       .theme-text-secondary { color: var(--text-secondary); }
       .theme-text-muted { color: var(--text-muted); }
-      
-      /* Theme-aware backgrounds */
       .theme-bg-primary { background-color: var(--bg-primary); }
       .theme-bg-secondary { background-color: var(--bg-secondary); }
       .theme-bg-tertiary { background-color: var(--bg-tertiary); }
-      .theme-bg-hover { background-color: var(--bg-hover); }
-      
-      /* Theme-aware borders */
       .theme-border-primary { border-color: var(--border-primary); }
       .theme-border-secondary { border-color: var(--border-secondary); }
-      
-      /* Accent colors */
       .theme-accent { color: var(--accent); }
       .theme-bg-accent { background-color: var(--accent); }
-      
-      /* Hover states */
-      .hover\\:theme-bg-hover:hover { background-color: var(--bg-hover); }
-      .hover\\:theme-text-primary:hover { color: var(--text-primary); }
       
       /* Light mode scrollbar */
       .light::-webkit-scrollbar-thumb {
