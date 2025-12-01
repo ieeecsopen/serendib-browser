@@ -1025,39 +1025,54 @@ const App: React.FC = () => {
         )}
         
         <div className="flex-1 flex overflow-hidden relative">
-          <ContentFrame 
-            activeTab={activeTab}
-            tabs={visibleTabs}
-            containers={containers}
-            bookmarks={bookmarks}
-            history={history}
-            offlinePages={offlinePages}
-            downloads={downloads}
-            extensions={extensions}
-            settings={settings}
-            showFindBar={showFindBar}
-            onCloseFindBar={() => setShowFindBar(false)}
-            onNavigate={handleNavigate}
-            onDeleteBookmark={(id) => setBookmarks(prev => prev.filter(b => b.id !== id))}
-            onClearHistory={() => setHistory([])}
-            onUpdateSetting={(k, v) => setSettings(prev => ({...prev, [k]: v}))}
-            onDeleteOfflinePage={(id) => setOfflinePages(prev => prev.filter(p => p.id !== id))}
-            onSyncOfflinePages={() => {}}
-            onClearDownloads={() => setDownloads([])}
-            onToggleExtension={handleToggleExtension}
-            onRemoveExtension={handleRemoveExtension}
-            onTabTitleChange={handleTabTitleChange}
-            onTabUrlChange={handleTabUrlChange}
-            onTabLoadingChange={handleTabLoadingChange}
-            onTabFaviconChange={handleTabFaviconChange}
-            onPasswordFormDetected={handlePasswordFormDetected}
-            onCredentialSubmitted={handleCredentialSubmitted}
-            onTabZoomChange={handleTabZoomChange}
-            sitePermissionsMap={sitePermissionsMap}
-            defaultPermissions={DEFAULT_PERMISSIONS}
-            onResetSitePermissions={handleResetSitePermissions}
-            onClearAllSitePermissions={handleClearAllSitePermissions}
-          />
+          {/* Split View Mode */}
+          {splitView.enabled && splitView.leftTabId && splitView.rightTabId ? (
+            <SplitViewContainer
+              tabs={visibleTabs}
+              leftTabId={splitView.leftTabId}
+              rightTabId={splitView.rightTabId}
+              containers={containers}
+              onTabTitleChange={handleTabTitleChange}
+              onTabUrlChange={handleTabUrlChange}
+              onTabLoadingChange={handleTabLoadingChange}
+              onTabFaviconChange={handleTabFaviconChange}
+              onCloseSplitView={handleCloseSplitView}
+            />
+          ) : (
+            <ContentFrame 
+              activeTab={activeTab}
+              tabs={visibleTabs}
+              containers={containers}
+              bookmarks={bookmarks}
+              history={history}
+              offlinePages={offlinePages}
+              downloads={downloads}
+              extensions={extensions}
+              settings={settings}
+              showFindBar={showFindBar}
+              onCloseFindBar={() => setShowFindBar(false)}
+              onNavigate={handleNavigate}
+              onDeleteBookmark={(id) => setBookmarks(prev => prev.filter(b => b.id !== id))}
+              onClearHistory={() => setHistory([])}
+              onUpdateSetting={(k, v) => setSettings(prev => ({...prev, [k]: v}))}
+              onDeleteOfflinePage={(id) => setOfflinePages(prev => prev.filter(p => p.id !== id))}
+              onSyncOfflinePages={() => {}}
+              onClearDownloads={() => setDownloads([])}
+              onToggleExtension={handleToggleExtension}
+              onRemoveExtension={handleRemoveExtension}
+              onTabTitleChange={handleTabTitleChange}
+              onTabUrlChange={handleTabUrlChange}
+              onTabLoadingChange={handleTabLoadingChange}
+              onTabFaviconChange={handleTabFaviconChange}
+              onPasswordFormDetected={handlePasswordFormDetected}
+              onCredentialSubmitted={handleCredentialSubmitted}
+              onTabZoomChange={handleTabZoomChange}
+              sitePermissionsMap={sitePermissionsMap}
+              defaultPermissions={DEFAULT_PERMISSIONS}
+              onResetSitePermissions={handleResetSitePermissions}
+              onClearAllSitePermissions={handleClearAllSitePermissions}
+            />
+          )}
           
           <AIPanel 
             isOpen={isAiOpen} 
