@@ -5,29 +5,42 @@
  */
 
 import React, { useState, useRef, useCallback } from 'react';
-import { X, GripVertical, Maximize2, Minimize2 } from 'lucide-react';
+import { X, GripVertical, Maximize2 } from 'lucide-react';
+import { WebView } from '../browser/WebView';
+import type { Tab, Container } from '../../types';
 
 interface SplitViewContainerProps {
-  leftContent: React.ReactNode;
-  rightContent: React.ReactNode;
-  splitRatio: number;
-  onSplitRatioChange: (ratio: number) => void;
-  onCloseSplit: () => void;
-  leftTitle?: string;
-  rightTitle?: string;
+  tabs: Tab[];
+  leftTabId: string;
+  rightTabId: string;
+  containers: Container[];
+  onTabTitleChange: (tabId: string, title: string) => void;
+  onTabUrlChange: (tabId: string, url: string) => void;
+  onTabLoadingChange: (tabId: string, isLoading: boolean) => void;
+  onTabFaviconChange: (tabId: string, favicon: string) => void;
+  onCloseSplitView: () => void;
 }
 
 export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
-  leftContent,
-  rightContent,
-  splitRatio,
-  onSplitRatioChange,
-  onCloseSplit,
-  leftTitle = 'Left Panel',
-  rightTitle = 'Right Panel',
+  tabs,
+  leftTabId,
+  rightTabId,
+  containers,
+  onTabTitleChange,
+  onTabUrlChange,
+  onTabLoadingChange,
+  onTabFaviconChange,
+  onCloseSplitView,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [splitRatio, setSplitRatio] = useState(0.5);
+
+  const leftTab = tabs.find(t => t.id === leftTabId);
+  const rightTab = tabs.find(t => t.id === rightTabId);
+  
+  const leftContainer = containers.find(c => c.id === leftTab?.containerId) || containers[0];
+  const rightContainer = containers.find(c => c.id === rightTab?.containerId) || containers[0];
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -42,8 +55,8 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
     
     // Clamp between 20% and 80%
     const clampedRatio = Math.max(0.2, Math.min(0.8, newRatio));
-    onSplitRatioChange(clampedRatio);
-  }, [isDragging, onSplitRatioChange]);
+    setSplitRatio(clampedRatio);
+  }, [isDragging]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
@@ -54,6 +67,14 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
       setIsDragging(false);
     }
   }, [isDragging]);
+
+  if (!leftTab || !rightTab) {
+    return (
+      <div className="flex-1 flex items-center justify-center text-zinc-500">
+        <p>Split view tabs not found</p>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -70,18 +91,36 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
       >
         {/* Left Panel Header */}
         <div className="h-8 bg-zinc-900 border-b border-white/10 flex items-center justify-between px-3">
-          <span className="text-xs text-zinc-400 truncate flex-1">{leftTitle}</span>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div 
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ backgroundColor: leftContainer.color }}
+              title={leftContainer.name}
+            />
+            {leftTab.favicon && (
+              <img src={leftTab.favicon} className="w-4 h-4 shrink-0" alt="" />
+            )}
+            <span className="text-xs text-zinc-400 truncate">{leftTab.title}</span>
+          </div>
           <button
-            onClick={() => onSplitRatioChange(0.75)}
+            onClick={() => setSplitRatio(0.75)}
             className="p-1 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
             title="Expand Left"
           >
             <Maximize2 size={12} />
           </button>
         </div>
-        {/* Left Content */}
+        {/* Left Content - WebView */}
         <div className="flex-1 relative overflow-hidden">
-          {leftContent}
+          <WebView
+            tab={leftTab}
+            isActive={false}
+            container={leftContainer}
+            onTitleChange={(title) => onTabTitleChange(leftTabId, title)}
+            onUrlChange={(url) => onTabUrlChange(leftTabId, url)}
+            onLoadingChange={(loading) => onTabLoadingChange(leftTabId, loading)}
+            onFaviconChange={(favicon) => onTabFaviconChange(leftTabId, favicon)}
+          />
         </div>
       </div>
 
@@ -104,17 +143,27 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
       >
         {/* Right Panel Header */}
         <div className="h-8 bg-zinc-900 border-b border-white/10 flex items-center justify-between px-3">
-          <span className="text-xs text-zinc-400 truncate flex-1">{rightTitle}</span>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <div 
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ backgroundColor: rightContainer.color }}
+              title={rightContainer.name}
+            />
+            {rightTab.favicon && (
+              <img src={rightTab.favicon} className="w-4 h-4 shrink-0" alt="" />
+            )}
+            <span className="text-xs text-zinc-400 truncate">{rightTab.title}</span>
+          </div>
           <div className="flex items-center gap-1">
             <button
-              onClick={() => onSplitRatioChange(0.25)}
+              onClick={() => setSplitRatio(0.25)}
               className="p-1 text-zinc-500 hover:text-white hover:bg-white/10 rounded transition-colors"
               title="Expand Right"
             >
               <Maximize2 size={12} />
             </button>
             <button
-              onClick={onCloseSplit}
+              onClick={onCloseSplitView}
               className="p-1 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
               title="Close Split View"
             >
@@ -122,9 +171,17 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
             </button>
           </div>
         </div>
-        {/* Right Content */}
+        {/* Right Content - WebView */}
         <div className="flex-1 relative overflow-hidden">
-          {rightContent}
+          <WebView
+            tab={rightTab}
+            isActive={false}
+            container={rightContainer}
+            onTitleChange={(title) => onTabTitleChange(rightTabId, title)}
+            onUrlChange={(url) => onTabUrlChange(rightTabId, url)}
+            onLoadingChange={(loading) => onTabLoadingChange(rightTabId, loading)}
+            onFaviconChange={(favicon) => onTabFaviconChange(rightTabId, favicon)}
+          />
         </div>
       </div>
 
