@@ -22,10 +22,11 @@ import {
 interface SettingsPageProps {
   settings: BrowserSettings;
   onUpdateSetting: (key: keyof BrowserSettings, value: any) => void;
+  onOpenPasswordManager?: () => void;
 }
 
 // Section types
-type SettingsSection = 'general' | 'privacy' | 'performance' | 'appearance' | 'shortcuts' | 'about';
+type SettingsSection = 'general' | 'privacy' | 'passwords' | 'performance' | 'appearance' | 'shortcuts' | 'about';
 
 // Navigation items
 const navItems: { id: SettingsSection; label: string; icon: React.ReactNode; description: string }[] = [
