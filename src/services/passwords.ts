@@ -90,7 +90,7 @@ async function encryptData(data: string, key: CryptoKey): Promise<string> {
   const iv = generateIV();
   
   const encryptedBuffer = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
+    { name: 'AES-GCM', iv: iv.buffer as ArrayBuffer },
     key,
     encoder.encode(data)
   );
