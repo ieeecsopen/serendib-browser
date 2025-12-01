@@ -186,8 +186,8 @@ const PrivacySection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting
   <div className="space-y-6">
     <div className="flex items-center gap-3">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-1">Privacy & Security</h2>
-        <p className="text-sm text-zinc-500">Control how your data is handled and protected</p>
+        <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Privacy & Security</h2>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Control how your data is handled and protected</p>
       </div>
       <Badge variant="success">Protected</Badge>
     </div>
@@ -297,8 +297,8 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-1">Site Permissions</h2>
-        <p className="text-sm text-zinc-500">Control what websites can access</p>
+        <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Site Permissions</h2>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Control what websites can access</p>
       </div>
       
       <Card>
@@ -405,8 +405,8 @@ const PermissionsSection: React.FC<PermissionsSectionProps> = ({
 const PasswordsSection: React.FC<{ onOpenPasswordManager?: () => void }> = ({ onOpenPasswordManager }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold text-white mb-1">Passwords</h2>
-      <p className="text-sm text-zinc-500">Manage saved logins and autofill settings</p>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Passwords</h2>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage saved logins and autofill settings</p>
     </div>
     
     <Card>
@@ -508,8 +508,8 @@ const PasswordsSection: React.FC<{ onOpenPasswordManager?: () => void }> = ({ on
 const PerformanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold text-white mb-1">Performance</h2>
-      <p className="text-sm text-zinc-500">Optimize browser speed and resource usage</p>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Performance</h2>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Optimize browser speed and resource usage</p>
     </div>
     
     <Card>
@@ -640,8 +640,8 @@ const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSett
 const ShortcutsSection: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold text-white mb-1">Keyboard Shortcuts</h2>
-      <p className="text-sm text-zinc-500">Quick access to browser features</p>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Keyboard Shortcuts</h2>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Quick access to browser features</p>
     </div>
     
     <Card>
@@ -724,8 +724,8 @@ const ShortcutsSection: React.FC = () => (
 const AboutSection: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold text-white mb-1">About Serendib Browser</h2>
-      <p className="text-sm text-zinc-500">Browser information and credits</p>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About Serendib Browser</h2>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Browser information and credits</p>
     </div>
     
     <Card>
