@@ -26,6 +26,8 @@ import {
 // Types
 // ============================================================================
 
+import type { HistoryItem, Bookmark } from '../../types';
+
 interface OmniBoxProps {
   url: string;
   title?: string;
@@ -39,6 +41,8 @@ interface OmniBoxProps {
   onNewTab: () => void;
   onNewTabInContainer: (containerId: string) => void;
   onNewDisposableTab: () => void;
+  onNewPrivateTab?: () => void;
+  onReopenClosedTab?: () => void;
   onToggleAI: () => void;
   isAiOpen: boolean;
   isBookmarked: boolean;
@@ -47,6 +51,9 @@ interface OmniBoxProps {
   onSaveOffline: () => void;
   isOfflineSaved: boolean;
   onOpenSnapshots?: () => void;
+  // Autocomplete data
+  history?: HistoryItem[];
+  bookmarks?: Bookmark[];
   // Zoom controls
   zoomLevel?: number;
   onZoomIn?: () => void;
@@ -61,6 +68,8 @@ interface OmniBoxProps {
   // Split View
   onToggleSplitView?: () => void;
   isSplitView?: boolean;
+  // Private mode indicator
+  isPrivateMode?: boolean;
 }
 
 // ============================================================================
