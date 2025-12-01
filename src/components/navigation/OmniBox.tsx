@@ -124,10 +124,14 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
+  const [isSendToDeviceOpen, setIsSendToDeviceOpen] = useState(false);
   
   // Refs
   const menuRef = useRef<HTMLDivElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
+  const qrCodeRef = useRef<HTMLDivElement>(null);
+  const sendToDeviceRef = useRef<HTMLDivElement>(null);
 
   // Derived state
   const hasCustomPermissions = sitePermissions && Object.keys(sitePermissions.permissions).length > 0;
