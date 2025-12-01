@@ -25,6 +25,7 @@ import {
 
 interface OmniBoxProps {
   url: string;
+  title?: string;
   isLoading: boolean;
   activeContainer: Container;
   containers: Container[];
@@ -54,6 +55,9 @@ interface OmniBoxProps {
   defaultPermissions?: DefaultPermissions;
   onUpdatePermission?: (origin: string, permission: PermissionType, setting: PermissionSetting) => void;
   onResetSitePermissions?: (origin: string) => void;
+  // Split View
+  onToggleSplitView?: () => void;
+  isSplitView?: boolean;
 }
 
 // ============================================================================
@@ -76,6 +80,7 @@ const getContainerIcon = (iconName: string) => {
 
 export const OmniBox: React.FC<OmniBoxProps> = ({
   url,
+  title = '',
   isLoading,
   activeContainer,
   containers,
@@ -104,6 +109,9 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   defaultPermissions,
   onUpdatePermission,
   onResetSitePermissions,
+  // Split View
+  onToggleSplitView,
+  isSplitView = false,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -111,9 +119,12 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSiteInfoOpen, setIsSiteInfoOpen] = useState(false);
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   
   // Refs
   const menuRef = useRef<HTMLDivElement>(null);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
 
   // Derived state
   const hasCustomPermissions = sitePermissions && Object.keys(sitePermissions.permissions).length > 0;
@@ -137,6 +148,21 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMenuOpen]);
+
+  // Close share menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target as Node)) {
+        setIsShareMenuOpen(false);
+      }
+    };
+
+    if (isShareMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isShareMenuOpen]);
 
   // Handlers
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -199,6 +225,27 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
                 )}
               </button>
 
+              {/* Certificate Viewer - only for HTTPS sites */}
+              {url.startsWith('https') && (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsCertificateOpen(!isCertificateOpen)}
+                    className="p-1 rounded-md text-green-500 hover:bg-green-500/10 transition-colors"
+                    title="View Certificate"
+                  >
+                    <ShieldCheck size={12} />
+                  </button>
+                  
+                  {isCertificateOpen && (
+                    <CertificateViewer
+                      url={url}
+                      isOpen={isCertificateOpen}
+                      onClose={() => setIsCertificateOpen(false)}
+                    />
+                  )}
+                </div>
+              )}
+
               {/* Permissions Indicator - shows when site has custom permissions */}
               {currentOrigin && defaultPermissions && onUpdatePermission && (
                 <div className="relative">
@@ -249,6 +296,30 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
+              {/* Share Button */}
+              {!url.startsWith('serendib://') && (
+                <div className="relative" ref={shareMenuRef}>
+                  <button
+                    onClick={() => setIsShareMenuOpen(!isShareMenuOpen)}
+                    className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                    title="Share Page"
+                  >
+                    <Share2 size={14} />
+                  </button>
+                  
+                  <ShareMenu
+                    url={url}
+                    title={title || 'Serendib Browser'}
+                    isOpen={isShareMenuOpen}
+                    onClose={() => setIsShareMenuOpen(false)}
+                    onShare={(method) => {
+                      console.log(`Shared via ${method}`);
+                      setIsShareMenuOpen(false);
+                    }}
+                  />
+                </div>
+              )}
+
               {/* Offline Save Button */}
               {!url.startsWith('serendib://') && (
                 <button
@@ -351,6 +422,8 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
           onNewTabInContainer={onNewTabInContainer}
           onNavigate={onNavigate}
           onOpenSnapshots={onOpenSnapshots}
+          onToggleSplitView={onToggleSplitView}
+          isSplitView={isSplitView}
         />
       </div>
     </div>
@@ -371,10 +444,12 @@ interface MainMenuProps {
   onNewTabInContainer: (containerId: string) => void;
   onNavigate: (url: string) => void;
   onOpenSnapshots?: () => void;
+  onToggleSplitView?: () => void;
+  isSplitView?: boolean;
 }
 
 const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
-  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNavigate, onOpenSnapshots }, ref) => {
+  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNavigate, onOpenSnapshots, onToggleSplitView, isSplitView }, ref) => {
     
     const getContainerIconForMenu = (iconName: string) => {
       switch (iconName) {
@@ -486,6 +561,13 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
                   }
                 })} 
               />
+              {onToggleSplitView && (
+                <MenuItem 
+                  icon={<SplitSquareHorizontal size={16} />} 
+                  label={isSplitView ? "Exit Split View" : "Split View"} 
+                  onClick={() => onAction(onToggleSplitView)} 
+                />
+              )}
             </div>
 
             <MenuDivider />

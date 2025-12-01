@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TabSystem } from './src/components/layout/TabSystem';
 import { HorizontalTabBar } from './src/components/layout/HorizontalTabBar';
+import { SplitViewContainer } from './src/components/layout/SplitViewContainer';
 import { OmniBox } from './src/components/navigation/OmniBox';
 import { AIPanel } from './src/components/ai/AIPanel';
 import { ToastContainer } from './src/components/ui/ToastContainer';
@@ -863,6 +864,62 @@ const App: React.FC = () => {
     }
   };
 
+  // --- Split View Toggle ---
+  const handleToggleSplitView = () => {
+    if (splitView.enabled) {
+      // Exit split view
+      setSplitView({
+        enabled: false,
+        leftTabId: null,
+        rightTabId: null,
+        splitRatio: 0.5,
+      });
+    } else {
+      // Enter split view - use current tab as left, need to select right tab
+      // For now, use the next tab or create one if none available
+      const currentIndex = visibleTabs.findIndex(t => t.id === activeTabId);
+      const rightTab = visibleTabs.find((t, i) => i !== currentIndex && t.id !== activeTabId);
+      
+      if (rightTab) {
+        setSplitView({
+          enabled: true,
+          leftTabId: activeTabId,
+          rightTabId: rightTab.id,
+          splitRatio: 0.5,
+        });
+      } else if (visibleTabs.length >= 1) {
+        // Only one tab, create a new one for right side
+        const newId = generateId();
+        const newTab: Tab = {
+          id: newId,
+          title: 'New Tab',
+          url: DEFAULT_HOME_URL,
+          isLoading: false,
+          history: [DEFAULT_HOME_URL],
+          historyIndex: 0,
+          workspaceId: activeWorkspaceId,
+          containerId: 'cont-default'
+        };
+        setTabs(prev => [...prev, newTab]);
+        setSplitView({
+          enabled: true,
+          leftTabId: activeTabId,
+          rightTabId: newId,
+          splitRatio: 0.5,
+        });
+      }
+    }
+  };
+
+  const handleCloseSplitView = () => {
+    setSplitView({
+      enabled: false,
+      leftTabId: null,
+      rightTabId: null,
+      splitRatio: 0.5,
+    });
+  };
+
   const showVerticalTabs = !isFocusMode && settings.verticalTabs;
   const showHorizontalTabs = !isFocusMode && !settings.verticalTabs;
 
@@ -934,6 +991,7 @@ const App: React.FC = () => {
         {!isFocusMode && (
           <OmniBox 
             url={activeTab?.url || ''}
+            title={activeTab?.title || ''}
             isLoading={activeTab?.isLoading || false}
             activeContainer={activeContainer}
             containers={containers}
@@ -961,6 +1019,8 @@ const App: React.FC = () => {
             defaultPermissions={DEFAULT_PERMISSIONS}
             onUpdatePermission={handleUpdatePermission}
             onResetSitePermissions={handleResetSitePermissions}
+            onToggleSplitView={handleToggleSplitView}
+            isSplitView={splitView.enabled}
           />
         )}
         
