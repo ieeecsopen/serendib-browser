@@ -484,9 +484,10 @@ interface MenuItemProps {
   label: string;
   onClick: () => void;
   variant?: 'default' | 'danger';
+  shortcut?: string;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick, variant = 'default' }) => (
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick, variant = 'default', shortcut }) => (
   <button 
     onClick={onClick} 
     className={`w-full text-left flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
@@ -496,7 +497,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick, variant = 'de
     }`}
   >
     <span className="text-zinc-500">{icon}</span>
-    {label}
+    <span className="flex-1">{label}</span>
+    {shortcut && <span className="text-xs text-zinc-500">{shortcut}</span>}
   </button>
 );
 
