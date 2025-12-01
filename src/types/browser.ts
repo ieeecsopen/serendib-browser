@@ -15,6 +15,12 @@ export interface Tab {
   containerId: string;
   /** Zoom level (1.0 = 100%) */
   zoomLevel?: number;
+  /** Whether this tab is pinned */
+  isPinned?: boolean;
+  /** Whether this tab is muted */
+  isMuted?: boolean;
+  /** Whether this tab is playing audio */
+  isPlayingAudio?: boolean;
 }
 
 /** Container for context isolation (like Firefox containers) */
