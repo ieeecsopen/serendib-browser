@@ -276,11 +276,20 @@ export const TabSystem: React.FC<TabSystemProps> = ({
                       getTabIcon(tab.url, tab.isLoading)
                     )}
                     
-                    {/* Audio indicator */}
-                    {tab.isPlayingAudio && (
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
-                        <Volume2 size={6} className="text-white" />
-                      </div>
+                    {/* Audio/Mute indicator for pinned tabs */}
+                    {(tab.isPlayingAudio || tab.isMuted) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleMuteTab?.(tab.id);
+                        }}
+                        className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full flex items-center justify-center transition-colors ${
+                          tab.isMuted ? 'bg-red-500 hover:bg-red-400' : 'bg-blue-500 hover:bg-blue-400'
+                        }`}
+                        title={tab.isMuted ? 'Unmute Tab' : 'Mute Tab'}
+                      >
+                        {tab.isMuted ? <VolumeX size={7} className="text-white" /> : <Volume2 size={7} className="text-white" />}
+                      </button>
                     )}
                   </div>
                 );
@@ -354,6 +363,21 @@ export const TabSystem: React.FC<TabSystemProps> = ({
                         >
                           {tab.title || 'New Tab'}
                         </span>
+                        {/* Audio/Mute Indicator */}
+                        {(tab.isPlayingAudio || tab.isMuted) && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onToggleMuteTab?.(tab.id);
+                            }}
+                            className={`ml-1.5 shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors ${
+                              tab.isMuted ? 'text-red-400' : 'text-blue-400'
+                            }`}
+                            title={tab.isMuted ? 'Unmute Tab' : 'Mute Tab'}
+                          >
+                            {tab.isMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+                          </button>
+                        )}
                         {container?.isDisposable && (
                           <span title="Disposable Tab" className="ml-1.5 shrink-0">
                             <ShieldAlert size={10} className="text-red-500" />
@@ -375,8 +399,23 @@ export const TabSystem: React.FC<TabSystemProps> = ({
                   </>
                 )}
 
+                {/* Audio/Mute indicator when collapsed */}
+                {isCollapsed && (tab.isPlayingAudio || tab.isMuted) && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleMuteTab?.(tab.id);
+                    }}
+                    className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full flex items-center justify-center transition-colors ${
+                      tab.isMuted ? 'bg-red-500 hover:bg-red-400' : 'bg-blue-500 hover:bg-blue-400'
+                    }`}
+                    title={tab.isMuted ? 'Unmute Tab' : 'Mute Tab'}
+                  >
+                    {tab.isMuted ? <VolumeX size={7} className="text-white" /> : <Volume2 size={7} className="text-white" />}
+                  </button>
+                )}
                 {/* Disposable indicator when collapsed */}
-                {isCollapsed && container?.isDisposable && (
+                {isCollapsed && container?.isDisposable && !tab.isPlayingAudio && !tab.isMuted && (
                   <div className="absolute bottom-0.5 right-0.5">
                     <ShieldAlert size={8} className="text-red-500" />
                   </div>
