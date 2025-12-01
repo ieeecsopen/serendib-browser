@@ -83,6 +83,8 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   onTabUrlChange,
   onTabLoadingChange,
   onTabFaviconChange,
+  onPasswordFormDetected,
+  onCredentialSubmitted,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isSyncing, setIsSyncing] = useState(false);
