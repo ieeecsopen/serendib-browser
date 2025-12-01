@@ -100,14 +100,21 @@ const SettingItem: React.FC<{
 // Keyboard Shortcut Item
 const ShortcutItem: React.FC<{ keys: string[]; action: string }> = ({ keys, action }) => (
   <div className="flex items-center justify-between py-3">
-    <span className="text-sm text-zinc-300">{action}</span>
+    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{action}</span>
     <div className="flex items-center gap-1">
       {keys.map((key, i) => (
         <React.Fragment key={i}>
-          <kbd className="px-2 py-1 text-xs font-mono bg-zinc-900 border border-zinc-700 rounded text-zinc-300">
+          <kbd 
+            className="px-2 py-1 text-xs font-mono rounded"
+            style={{ 
+              backgroundColor: 'var(--bg-tertiary)', 
+              border: '1px solid var(--border-primary)',
+              color: 'var(--text-secondary)' 
+            }}
+          >
             {key}
           </kbd>
-          {i < keys.length - 1 && <span className="text-zinc-600 text-xs">+</span>}
+          {i < keys.length - 1 && <span className="text-xs" style={{ color: 'var(--text-muted)' }}>+</span>}
         </React.Fragment>
       ))}
     </div>
@@ -118,8 +125,8 @@ const ShortcutItem: React.FC<{ keys: string[]; action: string }> = ({ keys, acti
 const GeneralSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting }) => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold text-white mb-1">General Settings</h2>
-      <p className="text-sm text-zinc-500">Configure basic browser preferences</p>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>General Settings</h2>
+      <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Configure basic browser preferences</p>
     </div>
     
     <Card>
