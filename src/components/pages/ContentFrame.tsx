@@ -596,17 +596,17 @@ const NewTabPage: React.FC<{
           
           <div className="w-6 h-px bg-white/10 my-1" />
           
-          {/* Sri Lankan Services */}
+          {/* Productivity */}
           <SidebarAppIcon 
-            name="Dialog" 
-            url="https://www.dialog.lk" 
-            logo="https://www.dialog.lk/favicon.ico"
+            name="ChatGPT" 
+            url="https://chat.openai.com" 
+            logo="https://chat.openai.com/favicon.ico"
             onNavigate={onNavigate}
           />
           <SidebarAppIcon 
-            name="Mobitel" 
-            url="https://www.mobitel.lk" 
-            logo="https://www.mobitel.lk/sites/default/files/favicon.ico"
+            name="Google Maps" 
+            url="https://maps.google.com" 
+            logo="https://maps.google.com/favicon.ico"
             onNavigate={onNavigate}
           />
           
@@ -618,9 +618,9 @@ const NewTabPage: React.FC<{
               onNavigate={onNavigate}
             />
             <SidebarAppIcon 
-              name="Google" 
-              url="https://www.google.com" 
-              logo="https://www.google.com/favicon.ico"
+              name="LinkedIn" 
+              url="https://www.linkedin.com" 
+              logo="https://static.licdn.com/aero-v1/sc/h/akt4ae504epesldzj74dzred8"
               onNavigate={onNavigate}
             />
           </div>
