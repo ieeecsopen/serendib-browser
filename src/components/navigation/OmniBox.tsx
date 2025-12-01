@@ -246,14 +246,14 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
         <button
           onClick={onToggleAI}
-          className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
             isAiOpen
               ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.2)]'
               : 'bg-white/5 text-zinc-400 border border-white/5 hover:bg-white/10 hover:text-white'
           }`}
         >
           <MessageSquare size={14} />
-          <span className="hidden lg:inline">Ask AI</span>
+          <span>Ask AI</span>
         </button>
 
         {/* Profile */}
