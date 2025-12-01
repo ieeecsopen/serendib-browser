@@ -230,7 +230,57 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
         ref={tabsContainerRef}
         className="flex-1 flex items-center gap-0.5 px-1 overflow-x-auto scrollbar-none"
       >
-        {tabs.map((tab) => {
+        {/* Pinned Tabs */}
+        {tabs.filter(t => t.isPinned).map((tab) => {
+          const container = containers.find(c => c.id === tab.containerId);
+          const isActive = activeTabId === tab.id;
+          
+          return (
+            <div
+              key={tab.id}
+              onClick={() => onTabSelect(tab.id)}
+              onContextMenu={(e) => handleContextMenu(e, tab.id)}
+              title={tab.title || 'Pinned Tab'}
+              className={`
+                relative flex items-center justify-center h-8 w-10 rounded-lg cursor-pointer transition-all shrink-0
+                ${isActive 
+                  ? 'bg-white/15 text-white shadow-md ring-1 ring-white/10' 
+                  : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
+                }
+              `}
+            >
+              {/* Container Indicator */}
+              {container && (
+                <div
+                  className="absolute top-0.5 left-0.5 w-1 h-1 rounded-full"
+                  style={{ backgroundColor: container.color }}
+                />
+              )}
+              
+              {/* Favicon / Icon */}
+              {tab.favicon ? (
+                <img src={tab.favicon} alt="" className="w-3.5 h-3.5 rounded-sm" />
+              ) : (
+                getTabIcon(tab.url, tab.isLoading)
+              )}
+              
+              {/* Audio indicator */}
+              {tab.isPlayingAudio && (
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                  {tab.isMuted ? <VolumeX size={6} className="text-white" /> : <Volume2 size={6} className="text-white" />}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        
+        {/* Separator if there are pinned tabs */}
+        {tabs.filter(t => t.isPinned).length > 0 && tabs.filter(t => !t.isPinned).length > 0 && (
+          <div className="w-px h-5 bg-white/10 mx-1 shrink-0" />
+        )}
+        
+        {/* Regular Tabs */}
+        {tabs.filter(t => !t.isPinned).map((tab) => {
           const container = containers.find(c => c.id === tab.containerId);
           const isActive = activeTabId === tab.id;
           const isEditing = editingTabId === tab.id;
