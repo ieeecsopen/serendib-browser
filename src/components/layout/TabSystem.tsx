@@ -37,6 +37,8 @@ interface TabSystemProps {
   onDeleteWorkspace: (id: string) => void;
   onChangeTabContainer: (tabId: string, containerId: string) => void;
   onCreateDisposableTab: () => void;
+  onTogglePinTab?: (tabId: string) => void;
+  onToggleMuteTab?: (tabId: string) => void;
 }
 
 interface ContextMenuState {
@@ -89,6 +91,9 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   onRenameWorkspace,
   onDeleteWorkspace,
   onChangeTabContainer,
+  onCreateDisposableTab,
+  onTogglePinTab,
+  onToggleMuteTab,
 }) => {
   // State
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
