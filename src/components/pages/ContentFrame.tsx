@@ -224,6 +224,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
       <SettingsPage
         settings={settings}
         onUpdateSetting={onUpdateSetting}
+        onOpenPasswordManager={() => onNavigate('serendib://passwords')}
       />
     );
   }
