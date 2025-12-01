@@ -13,6 +13,8 @@ export interface Tab {
   historyIndex: number;
   workspaceId: string;
   containerId: string;
+  /** Zoom level (1.0 = 100%) */
+  zoomLevel?: number;
 }
 
 /** Container for context isolation (like Firefox containers) */

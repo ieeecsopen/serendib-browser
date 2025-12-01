@@ -354,10 +354,16 @@ export const WebView: React.FC<WebViewProps> = ({
         loadURL,
         canGoBack: () => webview?.canGoBack?.() || false,
         canGoForward: () => webview?.canGoForward?.() || false,
-        fillCredentials, // Add autofill method
+        fillCredentials,
+        // Zoom methods
+        getZoomFactor,
+        setZoomFactor,
+        zoomIn,
+        zoomOut,
+        resetZoom,
       };
     }
-  }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials]);
+  }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials, getZoomFactor, setZoomFactor, zoomIn, zoomOut, resetZoom]);
 
   // Don't render for internal URLs
   if (tab.url.startsWith('serendib://')) {
