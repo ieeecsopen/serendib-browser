@@ -538,6 +538,8 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
           onNewTab={onNewTab}
           onNewDisposableTab={onNewDisposableTab}
           onNewTabInContainer={onNewTabInContainer}
+          onNewPrivateTab={onNewPrivateTab}
+          onReopenClosedTab={onReopenClosedTab}
           onNavigate={onNavigate}
           onOpenSnapshots={onOpenSnapshots}
           onToggleSplitView={onToggleSplitView}
@@ -560,6 +562,8 @@ interface MainMenuProps {
   onNewTab: () => void;
   onNewDisposableTab: () => void;
   onNewTabInContainer: (containerId: string) => void;
+  onNewPrivateTab?: () => void;
+  onReopenClosedTab?: () => void;
   onNavigate: (url: string) => void;
   onOpenSnapshots?: () => void;
   onToggleSplitView?: () => void;
@@ -567,7 +571,7 @@ interface MainMenuProps {
 }
 
 const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
-  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNavigate, onOpenSnapshots, onToggleSplitView, isSplitView }, ref) => {
+  ({ isOpen, onToggle, onAction, containers, onNewTab, onNewDisposableTab, onNewTabInContainer, onNewPrivateTab, onReopenClosedTab, onNavigate, onOpenSnapshots, onToggleSplitView, isSplitView }, ref) => {
     
     const getContainerIconForMenu = (iconName: string) => {
       switch (iconName) {
