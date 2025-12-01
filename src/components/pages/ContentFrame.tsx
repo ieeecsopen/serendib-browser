@@ -2,7 +2,7 @@
  * Content Frame Component
  * 
  * Main content area that renders either internal pages or WebViews
- * for external URLs.
+ * for external URLs. Designed with Sri Lankan cultural context.
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -18,7 +18,9 @@ import {
   ShieldAlert, Clock, Trash2, Check, ArrowRight, Plus, DownloadCloud, 
   FileText, WifiOff, RefreshCcw, Bell, Home, Search, PlusSquare, 
   Sliders, Twitter, Instagram, Disc, Dribbble, Hexagon, BookOpen,
-  Tag, Calendar, User, ExternalLink, FolderOpen, HardDrive
+  Tag, Calendar, User, ExternalLink, FolderOpen, HardDrive,
+  Palmtree, Mountain, Waves, Sun, MapPin, Newspaper, TrendingUp,
+  Coffee, Compass, Globe2, Star
 } from 'lucide-react';
 
 // ============================================================================
