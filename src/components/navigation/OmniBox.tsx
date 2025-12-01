@@ -785,24 +785,28 @@ interface MenuItemProps {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
-  variant?: 'default' | 'danger';
+  variant?: 'default' | 'danger' | 'purple';
   shortcut?: string;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick, variant = 'default', shortcut }) => (
-  <button 
-    onClick={onClick} 
-    className={`w-full text-left flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${
-      variant === 'danger'
-        ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
-        : 'text-zinc-300 hover:text-white hover:bg-white/10'
-    }`}
-  >
-    <span className="text-zinc-500">{icon}</span>
-    <span className="flex-1">{label}</span>
-    {shortcut && <span className="text-xs text-zinc-500">{shortcut}</span>}
-  </button>
-);
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick, variant = 'default', shortcut }) => {
+  const variantClasses = {
+    default: 'text-zinc-300 hover:text-white hover:bg-white/10',
+    danger: 'text-red-400 hover:bg-red-500/10 hover:text-red-300',
+    purple: 'text-purple-400 hover:bg-purple-500/10 hover:text-purple-300'
+  };
+
+  return (
+    <button 
+      onClick={onClick} 
+      className={`w-full text-left flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors ${variantClasses[variant]}`}
+    >
+      <span className="text-zinc-500">{icon}</span>
+      <span className="flex-1">{label}</span>
+      {shortcut && <span className="text-xs text-zinc-500">{shortcut}</span>}
+    </button>
+  );
+};
 
 const MenuDivider: React.FC = () => <div className="my-1.5 h-px bg-white/5" />;
 
