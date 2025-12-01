@@ -569,7 +569,9 @@ const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSett
   const themeOptions = [
     { id: 'dark', name: 'Dark', preview: 'bg-zinc-900', headerBg: 'bg-zinc-700' },
     { id: 'light', name: 'Light', preview: 'bg-zinc-100', headerBg: 'bg-zinc-300' },
-    { id: 'serendib', name: 'Serendib', preview: 'bg-[#12121a]', headerBg: 'bg-purple-700' },
+    { id: 'serendib', name: 'Serendib', preview: 'bg-[#14100c]', headerBg: 'bg-amber-600' },
+    { id: 'ceylon', name: 'Ceylon Tea', preview: 'bg-[#121e12]', headerBg: 'bg-emerald-600' },
+    { id: 'ocean', name: 'Lanka Ocean', preview: 'bg-[#0c1e28]', headerBg: 'bg-sky-600' },
     { id: 'midnight', name: 'Midnight', preview: 'bg-[#1e293b]', headerBg: 'bg-blue-700' },
     { id: 'forest', name: 'Forest', preview: 'bg-[#132018]', headerBg: 'bg-green-700' },
     { id: 'rose', name: 'Rose', preview: 'bg-[#200a14]', headerBg: 'bg-pink-700' },
@@ -590,7 +592,7 @@ const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSett
           <CardDescription>Choose your preferred color scheme</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-5 gap-3">
             {themeOptions.map((theme) => (
               <button
                 key={theme.id}
