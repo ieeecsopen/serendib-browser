@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import type { Tab, Bookmark, HistoryItem, BrowserSettings, OfflinePage, DownloadItem, Extension, Container } from '../../types';
+import type { Tab, Bookmark, HistoryItem, BrowserSettings, OfflinePage, DownloadItem, Extension, Container, SitePermissions, DefaultPermissions, PermissionType, PermissionSetting } from '../../types';
 import { MOCK_SEARCH_RESULTS } from '../../constants';
 import { FindBar } from '../ui/FindBar';
 import { DownloadsPage } from './DownloadsPage';
@@ -53,6 +53,12 @@ interface ContentFrameProps {
   onPasswordFormDetected?: (url: string, hasCredentials: boolean) => void;
   onCredentialSubmitted?: (url: string, username: string, password: string) => void;
   onTabZoomChange?: (tabId: string, zoomFactor: number) => void;
+  // Permissions
+  sitePermissionsMap?: Record<string, SitePermissions>;
+  defaultPermissions?: DefaultPermissions;
+  onUpdateDefaultPermission?: (permission: PermissionType, setting: PermissionSetting) => void;
+  onResetSitePermissions?: (origin: string) => void;
+  onClearAllSitePermissions?: () => void;
 }
 
 // ============================================================================
