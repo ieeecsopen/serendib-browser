@@ -2,11 +2,15 @@
  * WebView Component
  * 
  * Electron webview wrapper for rendering external web pages.
- * Handles navigation, events, error states, and container session isolation.
+ * Handles navigation, events, error states, container session isolation,
+ * and password autofill integration.
  */
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import type { Tab, Container } from '../../types';
+import type { AutofillSuggestion } from '../../types/passwords';
+import { getAutofillScript, getAutofillFillScript, getSuggestionsForUrl } from '../../services/autofill';
+import { decryptPassword, extractDomain, isVaultUnlocked } from '../../services/passwords';
 
 // ============================================================================
 // Types
