@@ -104,6 +104,8 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   onNewTab,
   onNewTabInContainer,
   onNewDisposableTab,
+  onNewPrivateTab,
+  onReopenClosedTab,
   onToggleAI,
   isAiOpen,
   isBookmarked,
@@ -111,6 +113,9 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   onSaveOffline,
   isOfflineSaved,
   onOpenSnapshots,
+  // Autocomplete
+  history = [],
+  bookmarks = [],
   // Zoom
   zoomLevel = 1.0,
   onZoomIn,
@@ -125,6 +130,8 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   // Split View
   onToggleSplitView,
   isSplitView = false,
+  // Private mode
+  isPrivateMode = false,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -136,12 +143,15 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isQRCodeOpen, setIsQRCodeOpen] = useState(false);
   const [isSendToDeviceOpen, setIsSendToDeviceOpen] = useState(false);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [autocompleteIndex, setAutocompleteIndex] = useState(0);
   
   // Refs
   const menuRef = useRef<HTMLDivElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const sendToDeviceRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Derived state
   const hasCustomPermissions = sitePermissions && Object.keys(sitePermissions.permissions).length > 0;
@@ -150,6 +160,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   // Effects
   useEffect(() => {
     setInputValue(url);
+    setShowAutocomplete(false);
   }, [url]);
 
   useEffect(() => {
