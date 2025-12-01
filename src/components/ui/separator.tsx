@@ -1,7 +1,7 @@
 /**
  * Separator Component (shadcn-style)
  * 
- * A visual separator for content.
+ * A visual separator for content. Theme-aware.
  */
 
 import React from 'react';
@@ -17,10 +17,11 @@ export const Separator: React.FC<SeparatorProps> = ({
 }) => (
   <div
     className={`
-      shrink-0 bg-zinc-800
+      shrink-0
       ${orientation === 'horizontal' ? 'h-[1px] w-full' : 'h-full w-[1px]'}
       ${className}
     `}
+    style={{ backgroundColor: 'var(--border-primary)' }}
   />
 );
 

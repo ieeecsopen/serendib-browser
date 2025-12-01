@@ -74,7 +74,10 @@ const SettingItem: React.FC<{
 }> = ({ icon, label, description, children, htmlFor }) => (
   <div className="flex items-center justify-between py-4">
     <div className="flex items-start gap-4">
-      <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400">
+      <div 
+        className="p-2 rounded-lg"
+        style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)' }}
+      >
         {icon}
       </div>
       <div className="space-y-1">
@@ -82,7 +85,7 @@ const SettingItem: React.FC<{
           {label}
         </Label>
         {description && (
-          <p className="text-xs text-zinc-500 max-w-md">
+          <p className="text-xs max-w-md" style={{ color: 'var(--text-muted)' }}>
             {description}
           </p>
         )}
