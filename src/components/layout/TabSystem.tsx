@@ -243,7 +243,53 @@ export const TabSystem: React.FC<TabSystemProps> = ({
 
         {/* Tabs List */}
         <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'px-1' : 'px-2'} space-y-1 scrollbar-none py-2`}>
-          {tabs.map((tab) => {
+          {/* Pinned Tabs Section */}
+          {tabs.filter(t => t.isPinned).length > 0 && (
+            <div className={`flex flex-wrap gap-1 ${isCollapsed ? 'justify-center' : 'px-1'} pb-2 mb-2 border-b border-white/5`}>
+              {tabs.filter(t => t.isPinned).map((tab) => {
+                const container = containers.find(c => c.id === tab.containerId);
+                const isActive = activeTabId === tab.id;
+                
+                return (
+                  <div
+                    key={tab.id}
+                    onClick={() => onTabSelect(tab.id)}
+                    onContextMenu={(e) => handleContextMenu(e, 'tab', tab.id)}
+                    title={tab.title || 'Pinned Tab'}
+                    className={`
+                      relative w-9 h-9 flex items-center justify-center rounded-lg cursor-pointer transition-all duration-200
+                      ${isActive ? 'bg-white/15 text-white shadow-md ring-1 ring-white/10' : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'}
+                    `}
+                  >
+                    {/* Container Indicator */}
+                    {container && (
+                      <div
+                        className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full shadow-[0_0_4px_currentColor]"
+                        style={{ backgroundColor: container.color, color: container.color }}
+                      />
+                    )}
+                    
+                    {/* Icon / Favicon */}
+                    {tab.favicon ? (
+                      <img src={tab.favicon} alt="" className="w-4 h-4 rounded-sm" />
+                    ) : (
+                      getTabIcon(tab.url, tab.isLoading)
+                    )}
+                    
+                    {/* Audio indicator */}
+                    {tab.isPlayingAudio && (
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                        <Volume2 size={6} className="text-white" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          
+          {/* Regular Tabs */}
+          {tabs.filter(t => !t.isPinned).map((tab) => {
             const container = containers.find(c => c.id === tab.containerId);
             const isActive = activeTabId === tab.id;
             const isEditing = editingId === tab.id && editType === 'tab';
@@ -413,6 +459,8 @@ export const TabSystem: React.FC<TabSystemProps> = ({
           onDeleteWorkspace={onDeleteWorkspace}
           onChangeTabContainer={onChangeTabContainer}
           onMoveTabToWorkspace={onMoveTabToWorkspace}
+          onTogglePinTab={onTogglePinTab}
+          onToggleMuteTab={onToggleMuteTab}
         />
       )}
     </>
@@ -436,6 +484,8 @@ interface TabContextMenuProps {
   onDeleteWorkspace: (id: string) => void;
   onChangeTabContainer: (tabId: string, containerId: string) => void;
   onMoveTabToWorkspace: (tabId: string, workspaceId: string) => void;
+  onTogglePinTab?: (tabId: string) => void;
+  onToggleMuteTab?: (tabId: string) => void;
 }
 
 const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
