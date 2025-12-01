@@ -151,10 +151,28 @@ const App: React.FC = () => {
           webview.openDevTools();
         }
       }
+      // Full screen shortcut (F11)
+      if (e.key === 'F11') {
+        e.preventDefault();
+        const electron = (window as any).electron;
+        if (electron?.toggleFullscreen) {
+          electron.toggleFullscreen().then((isFullscreen: boolean) => {
+            setIsFullScreen(isFullscreen);
+          });
+        }
+      }
+      // Exit full screen (Escape when in fullscreen)
+      if (e.key === 'Escape' && isFullScreen) {
+        const electron = (window as any).electron;
+        if (electron?.exitFullscreen) {
+          electron.exitFullscreen();
+          setIsFullScreen(false);
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isFullScreen]);
 
   // --- Derived State ---
   const visibleTabs = tabs.filter(t => t.workspaceId === activeWorkspaceId);
