@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { TabSystem } from './components/TabSystem';
-import { OmniBox } from './components/OmniBox';
-import { ContentFrame } from './components/ContentFrame';
-import { AIPanel } from './components/AIPanel';
-import { ToastContainer } from './components/BrowserUI';
-import { WindowControls } from './components/WindowControls';
-import { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, ThemeMode, Container, OfflinePage, DownloadItem, Extension, Notification } from './types';
-import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS } from './constants';
+import { TabSystem } from './src/components/layout/TabSystem';
+import { OmniBox } from './src/components/navigation/OmniBox';
+import { AIPanel } from './src/components/ai/AIPanel';
+import { ToastContainer } from './src/components/ui/ToastContainer';
+import { WindowControls } from './src/components/layout/WindowControls';
+import { ContentFrame } from './src/components/pages/ContentFrame';
+import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification } from './src/types';
+import { ThemeMode } from './src/types/settings';
+import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS } from './src/constants';
 import { Minimize2, Plus, X } from 'lucide-react';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -43,7 +44,7 @@ const App: React.FC = () => {
   
   const [settings, setSettings] = useState<BrowserSettings>({
     homeUrl: DEFAULT_HOME_URL,
-    searchEngine: 'Google',
+    searchEngine: 'DuckDuckGo',
     theme: ThemeMode.DARK,
     enableAdBlock: true,
     privacyMode: false,
@@ -108,7 +109,14 @@ const App: React.FC = () => {
       if (url.includes('.') && !url.includes(' ')) {
         url = `https://${url}`;
       } else {
-        url = `https://search?q=${encodeURIComponent(url)}`;
+        // Use actual search engine based on settings
+        const searchUrls: Record<string, string> = {
+          'Google': 'https://www.google.com/search?q=',
+          'Bing': 'https://www.bing.com/search?q=',
+          'DuckDuckGo': 'https://duckduckgo.com/?q='
+        };
+        const searchBase = searchUrls[settings.searchEngine] || searchUrls.Google;
+        url = `${searchBase}${encodeURIComponent(url)}`;
       }
     }
 
@@ -118,10 +126,61 @@ const App: React.FC = () => {
       title: url.startsWith('serendib://') ? getInternalTitle(url) : url 
     });
 
-    setTimeout(() => {
-      updateTab(activeTabId, { isLoading: false });
+    // For internal pages, stop loading immediately
+    if (url.startsWith('serendib://')) {
+      setTimeout(() => {
+        updateTab(activeTabId, { isLoading: false });
+        addToHistory(url);
+      }, 100);
+    }
+    // For external pages, loading state is managed by WebView component
+  };
+
+  // Handler for webview title updates
+  const handleTabTitleChange = (tabId: string, title: string) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, title } : t
+    ));
+  };
+
+  // Handler for webview URL updates
+  const handleTabUrlChange = (tabId: string, url: string) => {
+    setTabs(prev => prev.map(t => {
+      if (t.id !== tabId) return t;
+      
+      // Add to history if it's a new URL
+      if (url !== t.url) {
+        const newHistory = t.history.slice(0, t.historyIndex + 1);
+        newHistory.push(url);
+        return { 
+          ...t, 
+          url, 
+          history: newHistory, 
+          historyIndex: newHistory.length - 1 
+        };
+      }
+      return { ...t, url };
+    }));
+    
+    // Add to browser history
+    const tab = tabs.find(t => t.id === tabId);
+    if (tab && !settings.privacyMode && !url.startsWith('serendib://')) {
       addToHistory(url);
-    }, 800);
+    }
+  };
+
+  // Handler for webview loading state
+  const handleTabLoadingChange = (tabId: string, isLoading: boolean) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, isLoading } : t
+    ));
+  };
+
+  // Handler for webview favicon updates
+  const handleTabFaviconChange = (tabId: string, favicon: string) => {
+    setTabs(prev => prev.map(t => 
+      t.id === tabId ? { ...t, favicon } : t
+    ));
   };
 
   const updateTab = (id: string, updates: Partial<Tab>) => {
@@ -300,6 +359,13 @@ const App: React.FC = () => {
   };
 
   const handleBack = () => {
+    // First try to use the webview's back navigation
+    if ((window as any).__activeWebview?.canGoBack?.()) {
+      (window as any).__activeWebview.goBack();
+      return;
+    }
+    
+    // Fallback to internal history
     if (!activeTab || activeTab.historyIndex <= 0) return;
     const newIndex = activeTab.historyIndex - 1;
     const prevUrl = activeTab.history[newIndex];
@@ -307,10 +373,28 @@ const App: React.FC = () => {
   };
 
   const handleForward = () => {
+    // First try to use the webview's forward navigation
+    if ((window as any).__activeWebview?.canGoForward?.()) {
+      (window as any).__activeWebview.goForward();
+      return;
+    }
+    
+    // Fallback to internal history
     if (!activeTab || activeTab.historyIndex >= activeTab.history.length - 1) return;
     const newIndex = activeTab.historyIndex + 1;
     const nextUrl = activeTab.history[newIndex];
     setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, historyIndex: newIndex, url: nextUrl, title: nextUrl.startsWith('serendib://') ? getInternalTitle(nextUrl) : nextUrl } : t));
+  };
+
+  const handleRefresh = () => {
+    // Try to use the webview's reload
+    if ((window as any).__activeWebview?.reload) {
+      (window as any).__activeWebview.reload();
+      return;
+    }
+    
+    // Fallback to navigating to the same URL
+    handleNavigate(activeTab?.url || DEFAULT_HOME_URL);
   };
   
   const handleHistoryJump = (tabId: string, index: number) => {
@@ -460,7 +544,7 @@ const App: React.FC = () => {
             activeContainer={activeContainer}
             containers={containers}
             onNavigate={handleNavigate}
-            onRefresh={() => handleNavigate(activeTab?.url || DEFAULT_HOME_URL)}
+            onRefresh={handleRefresh}
             onBack={handleBack}
             onForward={handleForward}
             onNewTab={handleCreateTab}
@@ -479,6 +563,7 @@ const App: React.FC = () => {
         <div className="flex-1 flex overflow-hidden relative">
           <ContentFrame 
             activeTab={activeTab}
+            tabs={visibleTabs}
             bookmarks={bookmarks}
             history={history}
             offlinePages={offlinePages}
@@ -496,6 +581,10 @@ const App: React.FC = () => {
             onClearDownloads={() => setDownloads([])}
             onToggleExtension={handleToggleExtension}
             onRemoveExtension={handleRemoveExtension}
+            onTabTitleChange={handleTabTitleChange}
+            onTabUrlChange={handleTabUrlChange}
+            onTabLoadingChange={handleTabLoadingChange}
+            onTabFaviconChange={handleTabFaviconChange}
           />
           
           <AIPanel 

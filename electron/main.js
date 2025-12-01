@@ -6,6 +6,117 @@ const isDev = !app.isPackaged;
 
 let mainWindow;
 
+// Use a realistic user agent
+const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+// ============================================================================
+// Container Session Management
+// ============================================================================
+
+// Track all container sessions and their metadata
+const containerSessions = new Map();
+const disposableContainers = new Set();
+
+/**
+ * Get or create a session partition for a container
+ * @param {string} containerId - The container ID
+ * @param {boolean} isDisposable - Whether this is a disposable container
+ * @returns {string} The partition string for the session
+ */
+function getContainerPartition(containerId, isDisposable = false) {
+    // Disposable containers use non-persistent partitions (no 'persist:' prefix)
+    // This means their data is stored in memory only and cleared when the session ends
+    if (isDisposable) {
+        disposableContainers.add(containerId);
+        return `container-disposable-${containerId}`;
+    }
+    
+    // Regular containers persist across sessions
+    return `persist:container-${containerId}`;
+}
+
+/**
+ * Configure a session with proper security settings and user agent
+ * @param {Electron.Session} ses - The session to configure
+ */
+function configureSession(ses) {
+    // Set realistic user agent to avoid bot detection
+    ses.webRequest.onBeforeSendHeaders((details, callback) => {
+        details.requestHeaders['User-Agent'] = userAgent;
+        callback({ cancel: false, requestHeaders: details.requestHeaders });
+    });
+    
+    // Block known tracking domains (basic ad blocking)
+    ses.webRequest.onBeforeRequest({ urls: ['*://*.doubleclick.net/*', '*://*.googlesyndication.com/*'] }, (details, callback) => {
+        callback({ cancel: true });
+    });
+}
+
+/**
+ * Clear all data for a container session
+ * @param {string} containerId - The container ID to clear
+ */
+async function clearContainerData(containerId) {
+    const isDisposable = disposableContainers.has(containerId);
+    const partition = isDisposable 
+        ? `container-disposable-${containerId}`
+        : `persist:container-${containerId}`;
+    
+    try {
+        const ses = session.fromPartition(partition);
+        await ses.clearStorageData({
+            storages: ['cookies', 'localstorage', 'sessionstorage', 'indexdb', 'websql', 'serviceworkers', 'cachestorage']
+        });
+        await ses.clearCache();
+        await ses.clearAuthCache();
+        
+        containerSessions.delete(containerId);
+        disposableContainers.delete(containerId);
+        
+        console.log(`[Container] Cleared session data for: ${containerId}`);
+        return { success: true };
+    } catch (error) {
+        console.error(`[Container] Error clearing session for ${containerId}:`, error);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Get session statistics for a container
+ * @param {string} containerId - The container ID
+ */
+async function getContainerStats(containerId) {
+    const isDisposable = disposableContainers.has(containerId);
+    const partition = isDisposable 
+        ? `container-disposable-${containerId}`
+        : `persist:container-${containerId}`;
+    
+    try {
+        const ses = session.fromPartition(partition);
+        const cookies = await ses.cookies.get({});
+        const cacheSize = await ses.getCacheSize();
+        
+        return {
+            containerId,
+            isDisposable,
+            cookieCount: cookies.length,
+            cacheSize,
+            cacheSizeFormatted: formatBytes(cacheSize)
+        };
+    } catch (error) {
+        console.error(`[Container] Error getting stats for ${containerId}:`, error);
+        return null;
+    }
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1400,
@@ -46,14 +157,10 @@ function createWindow() {
         return { action: 'deny' };
     });
 
-    // Configure webview permissions
-    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-        callback({
-            responseHeaders: {
-                ...details.responseHeaders,
-                'Content-Security-Policy': ["default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:"]
-            }
-        });
+    // Set user agent for the default session to avoid bot detection
+    session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+        details.requestHeaders['User-Agent'] = userAgent;
+        callback({ cancel: false, requestHeaders: details.requestHeaders });
     });
 }
 
@@ -110,27 +217,94 @@ ipcMain.handle('download-url', async (event, url) => {
     }
 });
 
-// Session/Cookie management for containers
-const containerSessions = new Map();
+// ============================================================================
+// Container IPC Handlers
+// ============================================================================
 
-ipcMain.handle('get-container-session', (event, containerId) => {
-    if (!containerSessions.has(containerId)) {
-        const partition = `persist:container-${containerId}`;
-        containerSessions.set(containerId, partition);
-    }
-    return containerSessions.get(containerId);
+// Get partition string for a container
+ipcMain.handle('container-get-partition', (event, containerId, isDisposable) => {
+    const partition = getContainerPartition(containerId, isDisposable);
+    
+    // Configure the session if it's new
+    const ses = session.fromPartition(partition);
+    configureSession(ses);
+    
+    containerSessions.set(containerId, { partition, isDisposable });
+    console.log(`[Container] Created/retrieved partition for: ${containerId} (disposable: ${isDisposable})`);
+    
+    return partition;
 });
 
-ipcMain.handle('clear-container-session', async (event, containerId) => {
-    const partition = `persist:container-${containerId}`;
+// Clear a container's session data
+ipcMain.handle('container-clear', async (event, containerId) => {
+    return await clearContainerData(containerId);
+});
+
+// Destroy a disposable container completely
+ipcMain.handle('container-destroy', async (event, containerId) => {
+    const result = await clearContainerData(containerId);
+    if (result.success) {
+        console.log(`[Container] Destroyed disposable container: ${containerId}`);
+    }
+    return result;
+});
+
+// Get container statistics
+ipcMain.handle('container-get-stats', async (event, containerId) => {
+    return await getContainerStats(containerId);
+});
+
+// List all active containers
+ipcMain.handle('container-list-active', () => {
+    const active = [];
+    for (const [id, data] of containerSessions) {
+        active.push({
+            id,
+            partition: data.partition,
+            isDisposable: data.isDisposable || disposableContainers.has(id)
+        });
+    }
+    return active;
+});
+
+// Clear all disposable containers (called on app quit or manual cleanup)
+ipcMain.handle('container-clear-all-disposable', async () => {
+    const results = [];
+    for (const containerId of disposableContainers) {
+        const result = await clearContainerData(containerId);
+        results.push({ containerId, ...result });
+    }
+    return results;
+});
+
+// Get cookies for a container
+ipcMain.handle('container-get-cookies', async (event, containerId, filter = {}) => {
+    const isDisposable = disposableContainers.has(containerId);
+    const partition = isDisposable 
+        ? `container-disposable-${containerId}`
+        : `persist:container-${containerId}`;
+    
     try {
         const ses = session.fromPartition(partition);
-        await ses.clearStorageData();
-        await ses.clearCache();
-        containerSessions.delete(containerId);
+        const cookies = await ses.cookies.get(filter);
+        return { success: true, cookies };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Remove a specific cookie from a container
+ipcMain.handle('container-remove-cookie', async (event, containerId, url, name) => {
+    const isDisposable = disposableContainers.has(containerId);
+    const partition = isDisposable 
+        ? `container-disposable-${containerId}`
+        : `persist:container-${containerId}`;
+    
+    try {
+        const ses = session.fromPartition(partition);
+        await ses.cookies.remove(url, name);
         return { success: true };
     } catch (error) {
-        console.error('Error clearing container session:', error);
         return { success: false, error: error.message };
     }
 });
@@ -146,6 +320,11 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+    // Clear all disposable containers before quitting
+    for (const containerId of disposableContainers) {
+        clearContainerData(containerId).catch(console.error);
+    }
+    
     if (process.platform !== 'darwin') {
         app.quit();
     }

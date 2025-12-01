@@ -1,16 +1,21 @@
+/**
+ * Browser-related type definitions
+ */
 
+/** Represents a browser tab */
 export interface Tab {
   id: string;
   title: string;
   url: string;
   favicon?: string;
   isLoading: boolean;
-  history: string[]; // Back stack
+  history: string[];
   historyIndex: number;
   workspaceId: string;
-  containerId: string; // Context isolation
+  containerId: string;
 }
 
+/** Container for context isolation (like Firefox containers) */
 export interface Container {
   id: string;
   name: string;
@@ -19,6 +24,7 @@ export interface Container {
   isDisposable: boolean;
 }
 
+/** Workspace grouping for tabs */
 export interface Workspace {
   id: string;
   name: string;
@@ -26,6 +32,7 @@ export interface Workspace {
   tabIds: string[];
 }
 
+/** Bookmark entry */
 export interface Bookmark {
   id: string;
   title: string;
@@ -33,6 +40,7 @@ export interface Bookmark {
   dateAdded: number;
 }
 
+/** Browser history entry */
 export interface HistoryItem {
   id: string;
   title: string;
@@ -40,28 +48,33 @@ export interface HistoryItem {
   timestamp: number;
 }
 
+/** Offline saved page */
 export interface OfflinePage {
   id: string;
   title: string;
   url: string;
   excerpt: string;
-  content: string; // HTML content
+  content: string;
   savedAt: number;
   synced: boolean;
-  size: string; // e.g. "1.2 MB"
+  size: string;
 }
 
+/** Download item */
 export interface DownloadItem {
   id: string;
   filename: string;
   url: string;
   totalBytes: number;
   receivedBytes: number;
-  state: 'progressing' | 'completed' | 'interrupted' | 'cancelled';
+  state: DownloadState;
   startTime: number;
   endTime?: number;
 }
 
+export type DownloadState = 'progressing' | 'completed' | 'interrupted' | 'cancelled';
+
+/** Browser extension */
 export interface Extension {
   id: string;
   name: string;
@@ -70,42 +83,4 @@ export interface Extension {
   icon: string;
   enabled: boolean;
   permissions: string[];
-}
-
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  timestamp: number;
-}
-
-export enum ThemeMode {
-  LIGHT = 'light',
-  DARK = 'dark',
-  SYSTEM = 'system',
-  SERENDIB = 'serendib' // Custom Sri Lankan theme
-}
-
-export interface BrowserSettings {
-  homeUrl: string;
-  searchEngine: 'Google' | 'Bing' | 'DuckDuckGo';
-  theme: ThemeMode;
-  enableAdBlock: boolean;
-  privacyMode: boolean; // Incognito
-  
-  // New Settings
-  language: 'en-US' | 'si-LK' | 'ta-LK';
-  verticalTabs: boolean;
-  accentColor: 'blue' | 'green' | 'purple' | 'orange' | 'gold';
-  dataSaver: boolean;
-  memorySaver: boolean;
-  lowSpecMode: boolean;
-}
-
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'model';
-  text: string;
-  timestamp: number;
 }
