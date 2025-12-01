@@ -134,6 +134,9 @@ const App: React.FC = () => {
 
   // --- Shortcuts Effect ---
   useEffect(() => {
+    // Calculate visible tabs inside effect to avoid dependency issues
+    const currentVisibleTabs = tabs.filter(t => t.workspaceId === activeWorkspaceId);
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger shortcuts if typing in an input
       const target = e.target as HTMLElement;
@@ -167,25 +170,25 @@ const App: React.FC = () => {
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && /^[1-9]$/.test(e.key)) {
         e.preventDefault();
         const tabIndex = parseInt(e.key) - 1;
-        if (tabIndex < visibleTabs.length) {
-          setActiveTabId(visibleTabs[tabIndex].id);
+        if (tabIndex < currentVisibleTabs.length) {
+          setActiveTabId(currentVisibleTabs[tabIndex].id);
         }
       }
       
       // Ctrl/Cmd + Tab - Next Tab
       if ((e.ctrlKey || e.metaKey) && e.key === 'Tab' && !e.shiftKey) {
         e.preventDefault();
-        const currentIndex = visibleTabs.findIndex(t => t.id === activeTabId);
-        const nextIndex = (currentIndex + 1) % visibleTabs.length;
-        setActiveTabId(visibleTabs[nextIndex].id);
+        const currentIndex = currentVisibleTabs.findIndex(t => t.id === activeTabId);
+        const nextIndex = (currentIndex + 1) % currentVisibleTabs.length;
+        setActiveTabId(currentVisibleTabs[nextIndex].id);
       }
       
       // Ctrl/Cmd + Shift + Tab - Previous Tab
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Tab') {
         e.preventDefault();
-        const currentIndex = visibleTabs.findIndex(t => t.id === activeTabId);
-        const prevIndex = currentIndex === 0 ? visibleTabs.length - 1 : currentIndex - 1;
-        setActiveTabId(visibleTabs[prevIndex].id);
+        const currentIndex = currentVisibleTabs.findIndex(t => t.id === activeTabId);
+        const prevIndex = currentIndex === 0 ? currentVisibleTabs.length - 1 : currentIndex - 1;
+        setActiveTabId(currentVisibleTabs[prevIndex].id);
       }
       
       // Ctrl/Cmd + L - Focus Address Bar
@@ -273,7 +276,7 @@ const App: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullScreen, activeTabId, visibleTabs]);
+  }, [isFullScreen, activeTabId, tabs, activeWorkspaceId]);
 
   // --- Derived State ---
   const visibleTabs = tabs.filter(t => t.workspaceId === activeWorkspaceId);
