@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TabSystem } from './src/components/layout/TabSystem';
+import { HorizontalTabBar } from './src/components/layout/HorizontalTabBar';
 import { OmniBox } from './src/components/navigation/OmniBox';
 import { AIPanel } from './src/components/ai/AIPanel';
 import { ToastContainer } from './src/components/ui/ToastContainer';
@@ -501,39 +502,23 @@ const App: React.FC = () => {
         
         {/* Horizontal Tab Strip */}
         {showHorizontalTabs && (
-          <div className="flex items-center h-10 bg-[#050505] px-2 gap-1 overflow-x-auto scrollbar-none border-b border-white/5 shrink-0 pt-1">
-            {visibleTabs.map(tab => (
-              <div 
-                key={tab.id}
-                onClick={() => setActiveTabId(tab.id)}
-                className={`
-                  group relative flex items-center h-full px-3 rounded-t-lg min-w-[140px] max-w-[220px] text-xs font-medium cursor-pointer transition-all border-t border-x
-                  ${activeTabId === tab.id 
-                    ? 'bg-white/10 text-white border-white/5 shadow-sm z-10' 
-                    : 'bg-transparent border-transparent text-zinc-500 hover:bg-white/5'
-                  }
-                `}
-              >
-                 <div 
-                    className="w-1.5 h-1.5 rounded-full mr-2"
-                    style={{ backgroundColor: containers.find(c => c.id === tab.containerId)?.color || '#3b82f6' }}
-                 />
-                 <span className="truncate flex-1 mr-2">{tab.title}</span>
-                 <button 
-                   onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id); }}
-                   className="p-0.5 rounded-full hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                 >
-                   <X size={12} />
-                 </button>
-              </div>
-            ))}
-            <button 
-              onClick={() => handleCreateTab()} 
-              className="p-1.5 rounded-md hover:bg-white/10 text-zinc-500 transition-colors"
-            >
-              <Plus size={16} />
-            </button>
-          </div>
+          <HorizontalTabBar
+            tabs={visibleTabs}
+            activeTabId={activeTabId}
+            workspaces={workspaces}
+            activeWorkspaceId={activeWorkspaceId}
+            containers={containers}
+            onTabSelect={setActiveTabId}
+            onTabClose={handleCloseTab}
+            onTabCreate={() => handleCreateTab()}
+            onRenameTab={handleRenameTab}
+            onWorkspaceSelect={setActiveWorkspaceId}
+            onReorderTabs={handleReorderTabs}
+            onMoveTabToWorkspace={handleMoveTabToWorkspace}
+            onCreateWorkspace={handleCreateWorkspace}
+            onChangeTabContainer={handleSwitchContainer}
+            onCreateDisposableTab={handleCreateDisposableTab}
+          />
         )}
 
         {/* OmniBox */}

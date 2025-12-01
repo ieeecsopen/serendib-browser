@@ -4,3 +4,4 @@
 
 export { WindowControls } from './WindowControls';
 export { TabSystem } from './TabSystem';
+export { HorizontalTabBar } from './HorizontalTabBar';
