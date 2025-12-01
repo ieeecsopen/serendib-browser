@@ -551,11 +551,16 @@ const App: React.FC = () => {
     const tabToClose = tabs.find(t => t.id === id);
     if (!tabToClose) return;
 
+    // Save to recently closed (unless it's a private tab)
+    const container = containers.find(c => c.id === tabToClose.containerId);
+    if (!container?.isDisposable && tabToClose.url !== DEFAULT_HOME_URL) {
+      setRecentlyClosedTabs(prev => [tabToClose, ...prev.slice(0, 9)]); // Keep last 10
+    }
+
     const remainingTabs = tabs.filter(t => t.id !== id);
     const remainingInWorkspace = remainingTabs.filter(t => t.workspaceId === tabToClose.workspaceId);
     
     const containerId = tabToClose.containerId;
-    const container = containers.find(c => c.id === containerId);
     
     if (container && container.isDisposable) {
       const otherTabsUsingContainer = remainingTabs.some(t => t.containerId === containerId);
@@ -585,6 +590,55 @@ const App: React.FC = () => {
         setActiveTabId(remainingInWorkspace[remainingInWorkspace.length - 1].id);
       }
     }
+  };
+
+  // Reopen last closed tab (Ctrl+Shift+T)
+  const handleReopenClosedTab = () => {
+    if (recentlyClosedTabs.length === 0) {
+      addNotification('No Closed Tabs', 'There are no recently closed tabs to reopen.', 'info');
+      return;
+    }
+    
+    const [tabToReopen, ...remainingClosed] = recentlyClosedTabs;
+    setRecentlyClosedTabs(remainingClosed);
+    
+    // Create new tab with same URL and title
+    const newId = generateId();
+    const newTab: Tab = {
+      ...tabToReopen,
+      id: newId,
+      workspaceId: activeWorkspaceId,
+    };
+    
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newId);
+    addNotification('Tab Reopened', `Restored: ${tabToReopen.title}`, 'success');
+  };
+
+  // Create private/incognito tab (Ctrl+Shift+N)
+  const handleCreatePrivateTab = () => {
+    // Add private container if not exists
+    if (!containers.find(c => c.id === 'cont-private')) {
+      setContainers(prev => [...prev, PRIVATE_CONTAINER]);
+    }
+    
+    const newId = generateId();
+    const newTab: Tab = {
+      id: newId,
+      title: 'Private Tab',
+      url: DEFAULT_HOME_URL,
+      isLoading: false,
+      history: [DEFAULT_HOME_URL],
+      historyIndex: 0,
+      workspaceId: activeWorkspaceId,
+      containerId: 'cont-private',
+      isPrivate: true,
+    };
+    
+    setTabs(prev => [...prev, newTab]);
+    setActiveTabId(newId);
+    setIsPrivateMode(true);
+    addNotification('Private Browsing', 'This tab won\'t save history, cookies, or cache.', 'info');
   };
 
   // --- Pin/Mute Tab Handlers ---
