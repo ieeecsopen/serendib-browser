@@ -596,22 +596,40 @@ const NewTabPage: React.FC<{
               </div>
             </div>
 
-            {/* Ceylon Tea & Coffee Section */}
-            <div className="w-full mt-10 p-6 rounded-2xl bg-gradient-to-r from-emerald-950/50 to-green-950/30 border border-emerald-900/30">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-green-700 flex items-center justify-center">
-                  <Coffee size={24} className="text-white" />
+            {/* Ceylon Tea CTA Section - 21st.dev inspired with shimmer effect */}
+            <div className="w-full mt-10 group">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-950/60 via-green-900/40 to-emerald-950/60 border border-emerald-500/20 p-6 hover:border-emerald-500/40 transition-all duration-500">
+                {/* Animated gradient shine */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">World Famous Ceylon Tea</h3>
-                  <p className="text-sm text-zinc-400">Explore the lush tea plantations of Nuwara Eliya and taste the finest tea in the world</p>
+                
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+                
+                <div className="relative flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-900/30 group-hover:scale-105 transition-transform">
+                    <Coffee size={28} className="text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xl font-bold text-white">World Famous Ceylon Tea</h3>
+                      <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold uppercase tracking-wider rounded-full border border-emerald-500/30">
+                        #1 Quality
+                      </span>
+                    </div>
+                    <p className="text-sm text-zinc-400">Explore the lush tea plantations of Nuwara Eliya and taste the finest tea in the world</p>
+                  </div>
+                  <button 
+                    onClick={() => onNavigate('https://www.pureceylontea.com')}
+                    className="relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white text-sm font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-emerald-900/30 hover:shadow-emerald-800/50 hover:scale-105 overflow-hidden group/btn"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      Explore <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                    </span>
+                  </button>
                 </div>
-                <button 
-                  onClick={() => onNavigate('https://www.pureceylontea.com')}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  Explore
-                </button>
               </div>
             </div>
           </div>
