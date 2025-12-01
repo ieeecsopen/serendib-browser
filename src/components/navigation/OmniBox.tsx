@@ -596,13 +596,30 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
             
             {/* New Tab Actions */}
             <div className="px-1 space-y-0.5">
-              <MenuItem icon={<Plus size={16} />} label="New Tab" onClick={() => onAction(onNewTab)} />
+              <MenuItem icon={<Plus size={16} />} label="New Tab" shortcut="Ctrl+T" onClick={() => onAction(onNewTab)} />
+              {onNewPrivateTab && (
+                <MenuItem 
+                  icon={<EyeOff size={16} className="text-purple-400" />} 
+                  label="New Private Tab" 
+                  shortcut="Ctrl+Shift+N"
+                  onClick={() => onAction(onNewPrivateTab)}
+                  variant="purple"
+                />
+              )}
               <MenuItem 
                 icon={<ShieldAlert size={16} className="text-red-500" />} 
                 label="New Disposable Tab" 
                 onClick={() => onAction(onNewDisposableTab)}
                 variant="danger"
               />
+              {onReopenClosedTab && (
+                <MenuItem 
+                  icon={<RotateCcw size={16} />} 
+                  label="Reopen Closed Tab" 
+                  shortcut="Ctrl+Shift+T"
+                  onClick={() => onAction(onReopenClosedTab)}
+                />
+              )}
             </div>
 
             <MenuDivider />
