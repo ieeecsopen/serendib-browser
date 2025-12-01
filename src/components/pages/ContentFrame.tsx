@@ -11,6 +11,7 @@ import { MOCK_SEARCH_RESULTS } from '../../constants';
 import { FindBar } from '../ui/FindBar';
 import { DownloadsPage } from './DownloadsPage';
 import { ExtensionsPage } from './ExtensionsPage';
+import { SettingsPage } from './SettingsPage';
 import { WebView } from '../browser/WebView';
 import { 
   ShieldAlert, Clock, Trash2, Check, ArrowRight, Plus, DownloadCloud, 
