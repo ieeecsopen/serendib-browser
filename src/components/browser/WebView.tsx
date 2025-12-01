@@ -454,9 +454,10 @@ interface WebViewErrorProps {
 
 const WebViewError: React.FC<WebViewErrorProps> = ({ error, isActive, onRetry, onGoHome }) => (
   <div
-    className={`absolute inset-0 flex flex-col items-center justify-center bg-[#050505] text-center p-8 ${
+    className={`absolute inset-0 flex flex-col items-center justify-center text-center p-8 ${
       isActive ? '' : 'hidden'
     }`}
+    style={{ backgroundColor: 'var(--bg-primary)' }}
   >
     <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mb-6">
       <svg className="w-8 h-8 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
