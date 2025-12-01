@@ -303,6 +303,47 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
+              {/* QR Code Generator */}
+              {!url.startsWith('serendib://') && (
+                <div className="relative" ref={qrCodeRef}>
+                  <button
+                    onClick={() => setIsQRCodeOpen(!isQRCodeOpen)}
+                    className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                    title="Generate QR Code"
+                  >
+                    <QrCode size={14} />
+                  </button>
+                  
+                  <QRCodeGenerator
+                    url={url}
+                    title={title || 'Current Page'}
+                    isOpen={isQRCodeOpen}
+                    onClose={() => setIsQRCodeOpen(false)}
+                  />
+                </div>
+              )}
+
+              {/* Send to Device */}
+              {!url.startsWith('serendib://') && (
+                <div className="relative" ref={sendToDeviceRef}>
+                  <button
+                    onClick={() => setIsSendToDeviceOpen(!isSendToDeviceOpen)}
+                    className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                    title="Send to Device"
+                  >
+                    <Send size={14} />
+                  </button>
+                  
+                  <SendToDevice
+                    url={url}
+                    title={title || 'Current Page'}
+                    isOpen={isSendToDeviceOpen}
+                    onClose={() => setIsSendToDeviceOpen(false)}
+                    onShowQRCode={() => setIsQRCodeOpen(true)}
+                  />
+                </div>
+              )}
+
               {/* Share Button */}
               {!url.startsWith('serendib://') && (
                 <div className="relative" ref={shareMenuRef}>
