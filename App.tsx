@@ -1140,6 +1140,8 @@ const App: React.FC = () => {
             onNewTab={handleCreateTab}
             onNewTabInContainer={handleCreateTab}
             onNewDisposableTab={handleCreateDisposableTab}
+            onNewPrivateTab={handleCreatePrivateTab}
+            onReopenClosedTab={handleReopenClosedTab}
             onToggleAI={() => setIsAiOpen(!isAiOpen)}
             isAiOpen={isAiOpen}
             isBookmarked={!!bookmarks.find(b => b.url === activeTab?.url)}
@@ -1148,6 +1150,10 @@ const App: React.FC = () => {
             onSaveOffline={handleSaveOffline}
             isOfflineSaved={isCurrentPageSaved}
             onOpenSnapshots={() => setIsSnapshotManagerOpen(true)}
+            // Autocomplete data
+            history={history}
+            bookmarks={bookmarks}
+            // Zoom
             zoomLevel={activeTab?.zoomLevel || 1.0}
             onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
@@ -1159,10 +1165,10 @@ const App: React.FC = () => {
             onResetSitePermissions={handleResetSitePermissions}
             onToggleSplitView={handleToggleSplitView}
             isSplitView={splitView.enabled}
+            // Private mode
+            isPrivateMode={activeTab?.isPrivate || false}
           />
-        )}
-        
-        <div className="flex-1 flex overflow-hidden relative">
+        )}        <div className="flex-1 flex overflow-hidden relative">
           {/* Split View Mode */}
           {splitView.enabled && splitView.leftTabId && splitView.rightTabId ? (
             <SplitViewContainer
