@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import type { Tab, Bookmark, HistoryItem, BrowserSettings, OfflinePage, DownloadItem, Extension } from '../../types';
+import type { Tab, Bookmark, HistoryItem, BrowserSettings, OfflinePage, DownloadItem, Extension, Container } from '../../types';
 import { MOCK_SEARCH_RESULTS } from '../../constants';
 import { FindBar } from '../ui/FindBar';
 import { DownloadsPage } from './DownloadsPage';
@@ -25,6 +25,7 @@ import {
 interface ContentFrameProps {
   activeTab: Tab | undefined;
   tabs: Tab[];
+  containers: Container[];
   bookmarks: Bookmark[];
   history: HistoryItem[];
   offlinePages: OfflinePage[];
@@ -76,6 +77,7 @@ const Switch = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 export const ContentFrame: React.FC<ContentFrameProps> = ({
   activeTab,
   tabs,
+  containers,
   bookmarks,
   history,
   offlinePages,
@@ -259,18 +261,22 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     return (
       <div className="flex-1 bg-black relative overflow-hidden">
         <FindBar isOpen={showFindBar} onClose={onCloseFindBar} />
-        {tabs.filter(tab => !tab.url.startsWith('serendib://')).map(tab => (
-          <WebView
-            key={tab.id}
-            tab={tab}
-            isActive={tab.id === activeTab?.id}
-            onTitleChange={onTabTitleChange}
-            onUrlChange={onTabUrlChange}
-            onLoadingChange={onTabLoadingChange}
-            onFaviconChange={onTabFaviconChange}
-            onNavigate={onNavigate}
-          />
-        ))}
+        {tabs.filter(tab => !tab.url.startsWith('serendib://')).map(tab => {
+          const container = containers.find(c => c.id === tab.containerId);
+          return (
+            <WebView
+              key={tab.id}
+              tab={tab}
+              isActive={tab.id === activeTab?.id}
+              container={container}
+              onTitleChange={onTabTitleChange}
+              onUrlChange={onTabUrlChange}
+              onLoadingChange={onTabLoadingChange}
+              onFaviconChange={onTabFaviconChange}
+              onNavigate={onNavigate}
+            />
+          );
+        })}
       </div>
     );
   }

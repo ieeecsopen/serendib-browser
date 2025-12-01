@@ -564,6 +564,7 @@ const App: React.FC = () => {
           <ContentFrame 
             activeTab={activeTab}
             tabs={visibleTabs}
+            containers={containers}
             bookmarks={bookmarks}
             history={history}
             offlinePages={offlinePages}

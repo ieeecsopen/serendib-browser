@@ -59,11 +59,19 @@ declare global {
   interface Window {
     __activeWebview?: ActiveWebview;
     electron?: {
+      minimize?: () => void;
+      maximize?: () => Promise<void>;
+      close?: () => void;
+      isMaximized?: () => Promise<boolean>;
       container?: {
         getPartition: (containerId: string, isDisposable: boolean) => Promise<string>;
         clear: (containerId: string) => Promise<{ success: boolean }>;
         destroy: (containerId: string) => Promise<{ success: boolean }>;
         getStats: (containerId: string) => Promise<any>;
+        listActive: () => Promise<{ containers: string[]; disposableCount: number }>;
+        clearAllDisposable: () => Promise<{ clearedCount: number }>;
+        getCookies: (containerId: string, filter?: any) => Promise<any[]>;
+        removeCookie: (containerId: string, url: string, name: string) => Promise<void>;
       };
     };
   }
