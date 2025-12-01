@@ -12,7 +12,7 @@ import { ZoomControl } from '../ui/ZoomControl';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
-  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera 
+  DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText
 } from 'lucide-react';
 
 // ============================================================================
