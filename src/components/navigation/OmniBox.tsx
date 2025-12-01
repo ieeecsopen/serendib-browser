@@ -501,10 +501,10 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
     
     const getContainerIconForMenu = (iconName: string) => {
       switch (iconName) {
-        case 'Briefcase': return <Briefcase size={14} />;
-        case 'DollarSign': return <DollarSign size={14} />;
-        case 'ShoppingBag': return <ShoppingBag size={14} />;
-        default: return <User size={14} />;
+        case 'Briefcase': return <Briefcase size={12} />;
+        case 'DollarSign': return <DollarSign size={12} />;
+        case 'ShoppingBag': return <ShoppingBag size={12} />;
+        default: return <User size={12} />;
       }
     };
 
@@ -518,7 +518,7 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 top-full mt-3 w-64 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl py-1.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50 font-sans backdrop-blur-xl">
+          <div className="absolute right-0 top-full mt-3 w-64 max-h-[calc(100vh-120px)] overflow-y-auto bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl py-1.5 animate-in fade-in zoom-in-95 duration-100 origin-top-right z-50 font-sans backdrop-blur-xl scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent">
             
             {/* New Tab Actions */}
             <div className="px-1 space-y-0.5">
@@ -632,10 +632,12 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
                   className="w-full text-left flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                 >
                   <div 
-                    className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] shadow-[0_0_5px_currentColor]" 
-                    style={{ backgroundColor: c.color, color: c.color }}
+                    className="w-5 h-5 rounded-full flex items-center justify-center shadow-[0_0_5px_currentColor]" 
+                    style={{ backgroundColor: c.color, color: 'white' }}
                   >
-                    {getContainerIconForMenu(c.icon)}
+                    <span className="text-white" style={{ filter: 'drop-shadow(0 0 1px rgba(0,0,0,0.5))' }}>
+                      {getContainerIconForMenu(c.icon)}
+                    </span>
                   </div>
                   {c.name}
                 </button>
