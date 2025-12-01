@@ -14,9 +14,19 @@ import { ThemeMode } from './src/types/settings';
 import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS, DEFAULT_PERMISSIONS } from './src/constants';
 import { snapshotTabsToTabs, snapshotWorkspacesToWorkspaces, snapshotContainersToContainers } from './src/services/snapshot';
 import { saveCredential, extractDomain, isVaultUnlocked, credentialExists } from './src/services';
-import { Minimize2, Plus, X } from 'lucide-react';
+import { getTheme, applyTheme } from './src/constants/themes';
+import { Minimize2, EyeOff } from 'lucide-react';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
+
+// Private container for incognito mode
+const PRIVATE_CONTAINER: Container = {
+  id: 'cont-private',
+  name: 'Private',
+  icon: 'EyeOff',
+  color: '#6366f1',
+  isDisposable: true,
+};
 
 const App: React.FC = () => {
   // --- State ---
@@ -44,6 +54,12 @@ const App: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [showFindBar, setShowFindBar] = useState(false);
+  
+  // Recently closed tabs for Ctrl+Shift+T
+  const [recentlyClosedTabs, setRecentlyClosedTabs] = useState<Tab[]>([]);
+  
+  // Private/Incognito mode state
+  const [isPrivateMode, setIsPrivateMode] = useState(false);
   
   // Focus Mode State
   const [isFocusMode, setIsFocusMode] = useState(false);
