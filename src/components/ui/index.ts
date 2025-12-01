@@ -5,6 +5,7 @@
 export { SiteInfoPopup } from './SiteInfoPopup';
 export { FindBar } from './FindBar';
 export { ToastContainer } from './ToastContainer';
+export { ZoomControl } from './ZoomControl';
 
 // shadcn-style components
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card';

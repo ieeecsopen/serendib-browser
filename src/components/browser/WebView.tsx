@@ -38,6 +38,7 @@ interface WebViewProps {
   onNavigate: (url: string) => void;
   onPasswordFormDetected?: (url: string, hasCredentials: boolean) => void;
   onCredentialSubmitted?: (url: string, username: string, password: string) => void;
+  onZoomChange?: (tabId: string, zoomFactor: number) => void;
 }
 
 // ============================================================================
@@ -60,6 +61,12 @@ export interface ActiveWebview {
   canGoBack: () => boolean;
   canGoForward: () => boolean;
   fillCredentials?: (username: string, password: string) => Promise<boolean>;
+  // Zoom methods
+  getZoomFactor?: () => number;
+  setZoomFactor?: (factor: number) => void;
+  zoomIn?: () => void;
+  zoomOut?: () => void;
+  resetZoom?: () => void;
 }
 
 declare global {
@@ -99,6 +106,7 @@ export const WebView: React.FC<WebViewProps> = ({
   onNavigate,
   onPasswordFormDetected,
   onCredentialSubmitted,
+  onZoomChange,
 }) => {
   const webviewRef = useRef<HTMLElement>(null);
   const [isReady, setIsReady] = useState(false);

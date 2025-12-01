@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Container } from '../../types';
 import { SiteInfoPopup } from '../ui/SiteInfoPopup';
+import { ZoomControl } from '../ui/ZoomControl';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
@@ -38,6 +39,12 @@ interface OmniBoxProps {
   onSaveOffline: () => void;
   isOfflineSaved: boolean;
   onOpenSnapshots?: () => void;
+  // Zoom controls
+  zoomLevel?: number;
+  onZoomIn?: () => void;
+  onZoomOut?: () => void;
+  onZoomReset?: () => void;
+  onSetZoom?: (level: number) => void;
 }
 
 // ============================================================================
@@ -77,6 +84,12 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   onSaveOffline,
   isOfflineSaved,
   onOpenSnapshots,
+  // Zoom
+  zoomLevel = 1.0,
+  onZoomIn,
+  onZoomOut,
+  onZoomReset,
+  onSetZoom,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -228,6 +241,17 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
       {/* Right Section - Actions */}
       <div className="flex items-center justify-end gap-2 min-w-fit text-zinc-500">
+        {/* Zoom Control - only shows when not at 100% */}
+        {onZoomIn && onZoomOut && onZoomReset && onSetZoom && (
+          <ZoomControl
+            zoomLevel={zoomLevel}
+            onZoomIn={onZoomIn}
+            onZoomOut={onZoomOut}
+            onZoomReset={onZoomReset}
+            onSetZoom={onSetZoom}
+          />
+        )}
+
         <button
           onClick={() => onNavigate('serendib://extensions')}
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden md:block"
