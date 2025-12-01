@@ -4,4 +4,5 @@
 
 export { DownloadsPage } from './DownloadsPage';
 export { ExtensionsPage } from './ExtensionsPage';
+export { SettingsPage } from './SettingsPage';
 export { ContentFrame } from './ContentFrame';

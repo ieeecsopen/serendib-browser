@@ -52,27 +52,6 @@ interface ContentFrameProps {
 }
 
 // ============================================================================
-// Helper Components
-// ============================================================================
-
-const Switch = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
-  <button
-    onClick={() => onChange(!checked)}
-    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-1 focus:ring-zinc-700 ${
-      checked ? 'bg-white' : 'bg-zinc-800'
-    }`}
-  >
-    <span
-      className={`${
-        checked ? 'translate-x-4' : 'translate-x-1'
-      } inline-block h-3.5 w-3.5 transform rounded-full transition-transform duration-200 ease-in-out ${
-        checked ? 'bg-black' : 'bg-zinc-400'
-      }`}
-    />
-  </button>
-);
-
-// ============================================================================
 // Main Component
 // ============================================================================
 
@@ -906,83 +885,6 @@ const HistoryPage: React.FC<{
         )}
       </div>
     </div>
-  </div>
-);
-
-const SettingsPage: React.FC<{
-  settings: BrowserSettings;
-  onUpdateSetting: (key: keyof BrowserSettings, value: any) => void;
-}> = ({ settings, onUpdateSetting }) => (
-  <div className="flex-1 bg-black p-6 md:p-12 overflow-y-auto font-sans">
-    <div className="max-w-3xl mx-auto">
-      <header className="mb-10 border-b border-zinc-900 pb-6">
-        <h1 className="text-2xl font-bold tracking-tight mb-2 text-white flex items-center gap-3">Settings</h1>
-      </header>
-
-      <div className="space-y-12">
-        <section className="space-y-6">
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider">General</h2>
-          <div className="space-y-6">
-            <SettingRow label="Language">
-              <select
-                value={settings.language}
-                onChange={(e) => onUpdateSetting('language', e.target.value)}
-                className="h-8 px-2 rounded bg-zinc-900 text-zinc-300 text-xs border border-zinc-800 focus:outline-none focus:border-zinc-600"
-              >
-                <option value="en-US">English (US)</option>
-                <option value="si-LK">Sinhala (LK)</option>
-                <option value="ta-LK">Tamil (LK)</option>
-              </select>
-            </SettingRow>
-            <SettingRow label="Vertical Tabs">
-              <Switch checked={settings.verticalTabs} onChange={(v) => onUpdateSetting('verticalTabs', v)} />
-            </SettingRow>
-            <SettingRow label="Search Engine">
-              <select
-                value={settings.searchEngine}
-                onChange={(e) => onUpdateSetting('searchEngine', e.target.value)}
-                className="h-8 px-2 rounded bg-zinc-900 text-zinc-300 text-xs border border-zinc-800 focus:outline-none focus:border-zinc-600"
-              >
-                <option value="Google">Google</option>
-                <option value="Bing">Bing</option>
-                <option value="DuckDuckGo">DuckDuckGo</option>
-              </select>
-            </SettingRow>
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider">Privacy & Security</h2>
-          <div className="space-y-6">
-            <SettingRow label="Ad Blocker">
-              <Switch checked={settings.enableAdBlock} onChange={(v) => onUpdateSetting('enableAdBlock', v)} />
-            </SettingRow>
-            <SettingRow label="Data Saver Mode">
-              <Switch checked={settings.dataSaver} onChange={(v) => onUpdateSetting('dataSaver', v)} />
-            </SettingRow>
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider">Performance</h2>
-          <div className="space-y-6">
-            <SettingRow label="Memory Saver">
-              <Switch checked={settings.memorySaver} onChange={(v) => onUpdateSetting('memorySaver', v)} />
-            </SettingRow>
-            <SettingRow label="Low-spec Mode">
-              <Switch checked={settings.lowSpecMode} onChange={(v) => onUpdateSetting('lowSpecMode', v)} />
-            </SettingRow>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-);
-
-const SettingRow: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-  <div className="flex items-center justify-between">
-    <p className="font-medium text-zinc-200">{label}</p>
-    {children}
   </div>
 );
 
