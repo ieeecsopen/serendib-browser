@@ -9,6 +9,8 @@ export { ZoomControl } from './ZoomControl';
 export { default as PermissionsPopup } from './PermissionsPopup';
 export { CertificateViewer } from './CertificateViewer';
 export { ShareMenu } from './ShareMenu';
+export { QRCodeGenerator } from './QRCodeGenerator';
+export { SendToDevice } from './SendToDevice';
 
 // shadcn-style components
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './card';

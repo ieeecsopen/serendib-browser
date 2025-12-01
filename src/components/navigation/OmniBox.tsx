@@ -12,11 +12,14 @@ import { ZoomControl } from '../ui/ZoomControl';
 import PermissionsPopup from '../ui/PermissionsPopup';
 import { CertificateViewer } from '../ui/CertificateViewer';
 import { ShareMenu } from '../ui/ShareMenu';
+import { QRCodeGenerator } from '../ui/QRCodeGenerator';
+import { SendToDevice } from '../ui/SendToDevice';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
-  Shield, Code, Maximize, PictureInPicture2, SplitSquareHorizontal, Share2, ShieldCheck
+  Shield, Code, Maximize, PictureInPicture2, SplitSquareHorizontal, Share2, ShieldCheck,
+  QrCode, Send
 } from 'lucide-react';
 
 // ============================================================================
