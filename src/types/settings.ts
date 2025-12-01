@@ -7,7 +7,7 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
   SYSTEM = 'system',
-  SERENDIB = 'serendib',
+  Seran = 'Seran',
   MIDNIGHT = 'midnight',
   FOREST = 'forest',
   ROSE = 'rose',

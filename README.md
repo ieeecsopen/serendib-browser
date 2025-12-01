@@ -2,7 +2,7 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Serendib Browser
+# Seran Browser
 
 A modern, privacy-focused Electron browser with AI integration, container tabs, and workspace management.
 
@@ -10,7 +10,7 @@ A modern, privacy-focused Electron browser with AI integration, container tabs, 
 
 - 🔐 **Container Tabs** - Firefox-style containers for session isolation
 - 🗂️ **Workspaces** - Organize tabs into separate workspaces
-- 🤖 **AI Assistant** - Gemini-powered contextual AI chat
+- 🤖 **Mira AI Assistant** - Context-aware AI chat powered by Gemini
 - 📱 **Modern UI** - Dark theme with smooth animations
 - 📥 **Offline Reading** - Save pages for offline access
 - 🔌 **Extensions** - Support for browser extensions
@@ -18,7 +18,7 @@ A modern, privacy-focused Electron browser with AI integration, container tabs, 
 ## Project Structure
 
 ```
-serendib-browser/
+seran-browser/
 ├── electron/           # Electron main process
 │   ├── main.js         # Main process entry
 │   └── preload.js      # Preload scripts

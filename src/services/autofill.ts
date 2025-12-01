@@ -19,8 +19,8 @@ import { getAutofillSuggestions, extractDomain, saveCredential, getAllCredential
 export const FORM_DETECTION_SCRIPT = `
 (function() {
   // Avoid running multiple times
-  if (window.__serendibAutofillInitialized) return;
-  window.__serendibAutofillInitialized = true;
+  if (window.__SeranAutofillInitialized) return;
+  window.__SeranAutofillInitialized = true;
 
   const PASSWORD_FIELD_SELECTORS = [
     'input[type="password"]',
@@ -152,7 +152,7 @@ export const FORM_DETECTION_SCRIPT = `
     
     // Create autofill button
     const button = document.createElement('div');
-    button.id = '__serendib_autofill_btn';
+    button.id = '__Seran_autofill_btn';
     button.innerHTML = \`
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -190,19 +190,19 @@ export const FORM_DETECTION_SCRIPT = `
       
       // Show credential picker or auto-fill if only one
       if (credentials.length === 1) {
-        window.__serendibFillCredentials(credentials[0].username, credentials[0].password);
+        window.__SeranFillCredentials(credentials[0].username, credentials[0].password);
       } else {
-        window.__serendibShowCredentialPicker(credentials);
+        window.__SeranShowCredentialPicker(credentials);
       }
     });
   }
 
   // Expose functions globally
-  window.__serendibDetectForms = detectForms;
-  window.__serendibFillCredentials = fillCredentials;
-  window.__serendibCaptureSubmission = captureSubmission;
-  window.__serendibHasPasswordField = hasPasswordField;
-  window.__serendibShowAutofillButton = showAutofillButton;
+  window.__SeranDetectForms = detectForms;
+  window.__SeranFillCredentials = fillCredentials;
+  window.__SeranCaptureSubmission = captureSubmission;
+  window.__SeranHasPasswordField = hasPasswordField;
+  window.__SeranShowAutofillButton = showAutofillButton;
 })();
 `;
 
@@ -240,8 +240,8 @@ export function getAutofillScript(): string {
  */
 export function getAutofillFillScript(username: string, password: string): string {
   return `
-    if (typeof window.__serendibFillCredentials === 'function') {
-      window.__serendibFillCredentials(${JSON.stringify(username)}, ${JSON.stringify(password)});
+    if (typeof window.__SeranFillCredentials === 'function') {
+      window.__SeranFillCredentials(${JSON.stringify(username)}, ${JSON.stringify(password)});
     }
   `;
 }
@@ -252,8 +252,8 @@ export function getAutofillFillScript(username: string, password: string): strin
 export function getPasswordFieldCheckScript(): string {
   return `
     (function() {
-      return typeof window.__serendibHasPasswordField === 'function' 
-        ? window.__serendibHasPasswordField() 
+      return typeof window.__SeranHasPasswordField === 'function' 
+        ? window.__SeranHasPasswordField() 
         : document.querySelector('input[type="password"]') !== null;
     })();
   `;

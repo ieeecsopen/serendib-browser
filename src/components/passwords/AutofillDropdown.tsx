@@ -77,7 +77,7 @@ export const AutofillDropdown: React.FC<AutofillDropdownProps> = ({
       <div className="px-3 py-2 bg-zinc-950 border-b border-zinc-800">
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           <Key size={12} />
-          <span>Serendib Passwords</span>
+          <span>Seran Passwords</span>
         </div>
       </div>
 

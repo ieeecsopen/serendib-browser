@@ -21,7 +21,7 @@ import type { BrowserSettings } from '../types/settings';
 // Constants
 const SNAPSHOT_VERSION = '1.0.0';
 const BROWSER_VERSION = '1.0.0';
-const SNAPSHOT_FILE_EXTENSION = '.serendib-snapshot';
+const SNAPSHOT_FILE_EXTENSION = '.Seran-snapshot';
 const SENSITIVE_URL_PATTERNS = [
   /password/i,
   /token/i,
@@ -492,7 +492,7 @@ export function saveSnapshotEntry(entry: SavedSnapshotEntry): void {
     entries.push(entry);
   }
   
-  localStorage.setItem('serendib-snapshots', JSON.stringify(entries));
+  localStorage.setItem('Seran-snapshots', JSON.stringify(entries));
 }
 
 /**
@@ -500,7 +500,7 @@ export function saveSnapshotEntry(entry: SavedSnapshotEntry): void {
  */
 export function getSnapshotEntries(): SavedSnapshotEntry[] {
   try {
-    const data = localStorage.getItem('serendib-snapshots');
+    const data = localStorage.getItem('Seran-snapshots');
     return data ? JSON.parse(data) : [];
   } catch {
     return [];
@@ -513,14 +513,14 @@ export function getSnapshotEntries(): SavedSnapshotEntry[] {
 export function deleteSnapshotEntry(id: string): void {
   const entries = getSnapshotEntries();
   const filtered = entries.filter(e => e.id !== id);
-  localStorage.setItem('serendib-snapshots', JSON.stringify(filtered));
+  localStorage.setItem('Seran-snapshots', JSON.stringify(filtered));
 }
 
 /**
  * Save full snapshot to local storage
  */
 export function saveSnapshotToStorage(snapshot: WorkspaceSnapshot, encrypted: string): void {
-  localStorage.setItem(`serendib-snapshot-${snapshot.metadata.id}`, encrypted);
+  localStorage.setItem(`Seran-snapshot-${snapshot.metadata.id}`, encrypted);
   
   saveSnapshotEntry({
     id: snapshot.metadata.id,
@@ -539,13 +539,13 @@ export function saveSnapshotToStorage(snapshot: WorkspaceSnapshot, encrypted: st
  * Load snapshot from local storage
  */
 export function loadSnapshotFromStorage(id: string): string | null {
-  return localStorage.getItem(`serendib-snapshot-${id}`);
+  return localStorage.getItem(`Seran-snapshot-${id}`);
 }
 
 /**
  * Delete snapshot from local storage
  */
 export function deleteSnapshotFromStorage(id: string): void {
-  localStorage.removeItem(`serendib-snapshot-${id}`);
+  localStorage.removeItem(`Seran-snapshot-${id}`);
   deleteSnapshotEntry(id);
 }

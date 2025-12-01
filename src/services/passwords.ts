@@ -19,9 +19,9 @@ import type {
 // Constants
 // ============================================================================
 
-const STORAGE_KEY = 'serendib-passwords';
-const VAULT_KEY = 'serendib-vault-settings';
-const SETTINGS_KEY = 'serendib-password-settings';
+const STORAGE_KEY = 'Seran-passwords';
+const VAULT_KEY = 'Seran-vault-settings';
+const SETTINGS_KEY = 'Seran-password-settings';
 
 const DEFAULT_GENERATOR_OPTIONS: PasswordGeneratorOptions = {
   length: 16,

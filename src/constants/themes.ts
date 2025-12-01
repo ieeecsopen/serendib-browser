@@ -100,9 +100,9 @@ export const BUILT_IN_THEMES: Record<string, CustomTheme> = {
     },
   },
   
-  serendib: {
-    id: 'serendib',
-    name: 'Serendib',
+  Seran: {
+    id: 'Seran',
+    name: 'Seran',
     isDark: true,
     colors: {
       bgPrimary: '#0a0806',

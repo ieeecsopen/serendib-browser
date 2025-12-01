@@ -1,9 +1,9 @@
 {
-  "name": "serendib-browser",
+  "name": "seran-browser",
   "private": true,
   "version": "1.0.0",
-  "description": "Serendib Browser - An AI-powered Electron browser",
-  "author": "Serendib",
+  "description": "Seran Browser - An AI-powered Electron browser",
+  "author": "Seran",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
@@ -35,8 +35,8 @@
     "wait-on": "^9.0.3"
   },
   "build": {
-    "appId": "com.serendib.browser",
-    "productName": "Serendib Browser",
+    "appId": "com.seran.browser",
+    "productName": "Seran Browser",
     "directories": {
       "output": "release"
     },

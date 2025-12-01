@@ -1,7 +1,7 @@
 /**
  * AI Panel Component
  * 
- * Gemini-powered AI assistant panel with context-aware chat,
+ * Mira - AI assistant panel with context-aware chat,
  * quick actions (summarize, rewrite, explain), and message history.
  */
 
@@ -31,7 +31,7 @@ type QuickAction = 'summarize' | 'rewrite' | 'explain';
 
 const getPageContext = async (url: string): Promise<string> => {
   // Handle internal browser pages
-  if (url.startsWith('serendib://')) {
+  if (url.startsWith('seran://')) {
     if (url.includes('newtab')) return "User context: User is on the browser's New Tab page.";
     if (url.includes('settings')) return "User context: User is currently adjusting Browser Settings.";
     if (url.includes('history')) return "User context: User is viewing their Browsing History.";
@@ -89,7 +89,7 @@ const getQuickActionConfig = (action: QuickAction) => {
 const INITIAL_MESSAGE: ChatMessage = {
   id: '1',
   role: 'model',
-  text: 'Hello! I am your intelligent assistant. I can read the page you are currently viewing to help summarize, rewrite, or answer questions.',
+  text: 'Hello! I\'m Mira, your intelligent assistant. I can read the page you are currently viewing to help summarize, rewrite, or answer questions.',
   timestamp: Date.now(),
 };
 
@@ -222,9 +222,9 @@ const PanelHeader: React.FC<{ onClose: () => void }> = ({ onClose }) => (
       </div>
       <div className="flex flex-col">
         <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 leading-tight">
-          Gemini Assistant
+          Mira
         </span>
-        <span className="text-[10px] text-zinc-500 font-medium">Context Aware</span>
+        <span className="text-[10px] text-zinc-500 font-medium">AI Assistant</span>
       </div>
     </div>
     <button

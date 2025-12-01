@@ -446,7 +446,7 @@ ipcMain.handle('container-remove-cookie', async (event, containerId, url, name) 
 // Snapshot File Operations
 // ============================================================================
 
-const SNAPSHOT_EXTENSION = '.serendib-snapshot';
+const SNAPSHOT_EXTENSION = '.Seran-snapshot';
 
 // Get the snapshots directory path
 function getSnapshotsDir() {
@@ -537,7 +537,7 @@ ipcMain.handle('snapshot-export-dialog', async (event, defaultFilename, content)
             title: 'Export Workspace Snapshot',
             defaultPath: `${defaultFilename}${SNAPSHOT_EXTENSION}`,
             filters: [
-                { name: 'Serendib Snapshot', extensions: ['serendib-snapshot'] },
+                { name: 'Seran Snapshot', extensions: ['Seran-snapshot'] },
                 { name: 'JSON', extensions: ['json'] },
                 { name: 'All Files', extensions: ['*'] }
             ]
@@ -562,7 +562,7 @@ ipcMain.handle('snapshot-import-dialog', async () => {
         const result = await dialog.showOpenDialog(mainWindow, {
             title: 'Import Workspace Snapshot',
             filters: [
-                { name: 'Serendib Snapshot', extensions: ['serendib-snapshot'] },
+                { name: 'Seran Snapshot', extensions: ['Seran-snapshot'] },
                 { name: 'JSON', extensions: ['json'] },
                 { name: 'All Files', extensions: ['*'] }
             ],
@@ -990,9 +990,9 @@ ipcMain.handle('password-export', async (event, encryptedData, defaultFilename) 
     try {
         const result = await dialog.showSaveDialog(mainWindow, {
             title: 'Export Passwords',
-            defaultPath: `${defaultFilename || 'passwords-export'}.serendib-passwords`,
+            defaultPath: `${defaultFilename || 'passwords-export'}.Seran-passwords`,
             filters: [
-                { name: 'Serendib Passwords', extensions: ['serendib-passwords'] },
+                { name: 'Seran Passwords', extensions: ['Seran-passwords'] },
                 { name: 'All Files', extensions: ['*'] }
             ]
         });
@@ -1016,7 +1016,7 @@ ipcMain.handle('password-import', async () => {
         const result = await dialog.showOpenDialog(mainWindow, {
             title: 'Import Passwords',
             filters: [
-                { name: 'Serendib Passwords', extensions: ['serendib-passwords'] },
+                { name: 'Seran Passwords', extensions: ['Seran-passwords'] },
                 { name: 'CSV', extensions: ['csv'] },
                 { name: 'All Files', extensions: ['*'] }
             ],

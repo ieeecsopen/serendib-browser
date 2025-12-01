@@ -101,13 +101,13 @@ const App: React.FC = () => {
   
   // Sites that should never save passwords
   const [neverSaveSites, setNeverSaveSites] = useState<string[]>(() => {
-    const saved = localStorage.getItem('serendib-never-save-passwords');
+    const saved = localStorage.getItem('Seran-never-save-passwords');
     return saved ? JSON.parse(saved) : [];
   });
   
   // Site permissions state
   const [sitePermissionsMap, setSitePermissionsMap] = useState<Record<string, SitePermissions>>(() => {
-    const saved = localStorage.getItem('serendib-site-permissions');
+    const saved = localStorage.getItem('Seran-site-permissions');
     return saved ? JSON.parse(saved) : {};
   });
   
@@ -307,12 +307,12 @@ const App: React.FC = () => {
     if (url.includes('offline')) return 'Reading List';
     if (url.includes('downloads')) return 'Downloads';
     if (url.includes('extensions')) return 'Extensions';
-    return 'Serendib';
+    return 'Seran';
   };
 
   const handleNavigate = (input: string) => {
     let url = input;
-    if (!url.startsWith('http') && !url.startsWith('serendib://')) {
+    if (!url.startsWith('http') && !url.startsWith('seran://')) {
       if (url.includes('.') && !url.includes(' ')) {
         url = `https://${url}`;
       } else {
@@ -330,11 +330,11 @@ const App: React.FC = () => {
     updateTab(activeTabId, { 
       url, 
       isLoading: true,
-      title: url.startsWith('serendib://') ? getInternalTitle(url) : url 
+      title: url.startsWith('seran://') ? getInternalTitle(url) : url 
     });
 
     // For internal pages, stop loading immediately
-    if (url.startsWith('serendib://')) {
+    if (url.startsWith('seran://')) {
       setTimeout(() => {
         updateTab(activeTabId, { isLoading: false });
         addToHistory(url);
@@ -371,7 +371,7 @@ const App: React.FC = () => {
     
     // Add to browser history
     const tab = tabs.find(t => t.id === tabId);
-    if (tab && !settings.privacyMode && !url.startsWith('serendib://')) {
+    if (tab && !settings.privacyMode && !url.startsWith('seran://')) {
       addToHistory(url);
     }
   };
@@ -450,7 +450,7 @@ const App: React.FC = () => {
   const handleNeverSavePassword = () => {
     const newList = [...neverSaveSites, passwordPrompt.domain];
     setNeverSaveSites(newList);
-    localStorage.setItem('serendib-never-save-passwords', JSON.stringify(newList));
+    localStorage.setItem('Seran-never-save-passwords', JSON.stringify(newList));
     setPasswordPrompt(prev => ({ ...prev, isVisible: false }));
   };
 
@@ -676,7 +676,7 @@ const App: React.FC = () => {
         lastModified: Date.now(),
       };
       const newMap = { ...prev, [origin]: updated };
-      localStorage.setItem('serendib-site-permissions', JSON.stringify(newMap));
+      localStorage.setItem('Seran-site-permissions', JSON.stringify(newMap));
       return newMap;
     });
     addNotification('Permission Updated', `${permission} set to ${setting} for ${new URL(origin).hostname}`, 'info');
@@ -685,7 +685,7 @@ const App: React.FC = () => {
   const handleResetSitePermissions = (origin: string) => {
     setSitePermissionsMap(prev => {
       const { [origin]: removed, ...rest } = prev;
-      localStorage.setItem('serendib-site-permissions', JSON.stringify(rest));
+      localStorage.setItem('Seran-site-permissions', JSON.stringify(rest));
       return rest;
     });
     addNotification('Permissions Reset', `Custom permissions removed for ${new URL(origin).hostname}`, 'info');
@@ -693,7 +693,7 @@ const App: React.FC = () => {
 
   const handleClearAllSitePermissions = () => {
     setSitePermissionsMap({});
-    localStorage.removeItem('serendib-site-permissions');
+    localStorage.removeItem('Seran-site-permissions');
     addNotification('All Permissions Cleared', 'All site-specific permissions have been reset', 'info');
   };
 
@@ -728,7 +728,7 @@ const App: React.FC = () => {
   };
 
   const handleSaveOffline = async () => {
-    if (!activeTab || activeTab.url.startsWith('serendib://')) return;
+    if (!activeTab || activeTab.url.startsWith('seran://')) return;
     if (isCurrentPageSaved) return;
 
     updateTab(activeTabId, { isLoading: true });
@@ -853,7 +853,7 @@ const App: React.FC = () => {
     if (!activeTab || activeTab.historyIndex <= 0) return;
     const newIndex = activeTab.historyIndex - 1;
     const prevUrl = activeTab.history[newIndex];
-    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, historyIndex: newIndex, url: prevUrl, title: prevUrl.startsWith('serendib://') ? getInternalTitle(prevUrl) : prevUrl } : t));
+    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, historyIndex: newIndex, url: prevUrl, title: prevUrl.startsWith('seran://') ? getInternalTitle(prevUrl) : prevUrl } : t));
   };
 
   const handleForward = () => {
@@ -867,7 +867,7 @@ const App: React.FC = () => {
     if (!activeTab || activeTab.historyIndex >= activeTab.history.length - 1) return;
     const newIndex = activeTab.historyIndex + 1;
     const nextUrl = activeTab.history[newIndex];
-    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, historyIndex: newIndex, url: nextUrl, title: nextUrl.startsWith('serendib://') ? getInternalTitle(nextUrl) : nextUrl } : t));
+    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, historyIndex: newIndex, url: nextUrl, title: nextUrl.startsWith('seran://') ? getInternalTitle(nextUrl) : nextUrl } : t));
   };
 
   const handleRefresh = () => {
@@ -885,14 +885,14 @@ const App: React.FC = () => {
     setTabs(prev => prev.map(t => {
       if (t.id !== tabId) return t;
       const newUrl = t.history[index];
-      return { ...t, historyIndex: index, url: newUrl, title: newUrl.startsWith('serendib://') ? getInternalTitle(newUrl) : newUrl };
+      return { ...t, historyIndex: index, url: newUrl, title: newUrl.startsWith('seran://') ? getInternalTitle(newUrl) : newUrl };
     }));
     setActiveTabId(tabId);
   };
 
   const addToHistory = (url: string) => {
     if (settings.privacyMode) return;
-    if (url.startsWith('serendib://read/')) return;
+    if (url.startsWith('seran://read/')) return;
     const item: HistoryItem = { id: generateId(), title: activeTab?.title || url, url, timestamp: Date.now() };
     setHistory(prev => [...prev, item]);
   };

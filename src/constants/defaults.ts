@@ -4,19 +4,19 @@
 
 import type { DefaultPermissions } from '../types';
 
-export const DEFAULT_HOME_URL = 'serendib://newtab';
+export const DEFAULT_HOME_URL = 'seran://newtab';
 
 export const DEFAULT_USER_AGENT = 
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
 /** Internal URL schemes */
 export const INTERNAL_URLS = {
-  NEW_TAB: 'serendib://newtab',
-  SETTINGS: 'serendib://settings',
-  HISTORY: 'serendib://history',
-  DOWNLOADS: 'serendib://downloads',
-  EXTENSIONS: 'serendib://extensions',
-  OFFLINE: 'serendib://offline',
+  NEW_TAB: 'seran://newtab',
+  SETTINGS: 'seran://settings',
+  HISTORY: 'seran://history',
+  DOWNLOADS: 'seran://downloads',
+  EXTENSIONS: 'seran://extensions',
+  OFFLINE: 'seran://offline',
 } as const;
 
 /** Default permission settings for all sites */

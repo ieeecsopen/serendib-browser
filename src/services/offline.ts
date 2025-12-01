@@ -10,9 +10,9 @@ import type { OfflinePage, OfflineImage, OfflineSaveOptions } from '../types/bro
 // Constants
 // ============================================================================
 
-const OFFLINE_STORAGE_KEY = 'serendib-offline-pages';
-const OFFLINE_IMAGES_KEY = 'serendib-offline-images';
-const DEVICE_ID_KEY = 'serendib-device-id';
+const OFFLINE_STORAGE_KEY = 'Seran-offline-pages';
+const OFFLINE_IMAGES_KEY = 'Seran-offline-images';
+const DEVICE_ID_KEY = 'Seran-device-id';
 const WORDS_PER_MINUTE = 200;
 
 // ============================================================================
@@ -559,7 +559,7 @@ export interface SyncStatus {
  */
 export function getSyncConfig(): SyncConfig | null {
   try {
-    const data = localStorage.getItem('serendib-sync-config');
+    const data = localStorage.getItem('Seran-sync-config');
     return data ? JSON.parse(data) : null;
   } catch {
     return null;
@@ -570,7 +570,7 @@ export function getSyncConfig(): SyncConfig | null {
  * Save sync configuration
  */
 export function saveSyncConfig(config: SyncConfig): void {
-  localStorage.setItem('serendib-sync-config', JSON.stringify(config));
+  localStorage.setItem('Seran-sync-config', JSON.stringify(config));
 }
 
 /**

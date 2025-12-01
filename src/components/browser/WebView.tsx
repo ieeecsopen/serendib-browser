@@ -162,8 +162,8 @@ export const WebView: React.FC<WebViewProps> = ({
       // Check for password fields and get suggestions
       const hasPasswordField = await webview.executeJavaScript(`
         (function() {
-          return typeof window.__serendibHasPasswordField === 'function' 
-            ? window.__serendibHasPasswordField() 
+          return typeof window.__SeranHasPasswordField === 'function' 
+            ? window.__SeranHasPasswordField() 
             : document.querySelector('input[type="password"]') !== null;
         })();
       `);
@@ -179,10 +179,10 @@ export const WebView: React.FC<WebViewProps> = ({
         // Set up form submission listener
         await webview.executeJavaScript(`
           (function() {
-            if (typeof window.__serendibCaptureSubmission === 'function') {
-              window.__serendibCaptureSubmission(function(data) {
+            if (typeof window.__SeranCaptureSubmission === 'function') {
+              window.__SeranCaptureSubmission(function(data) {
                 // Send message to parent via console (will be captured)
-                console.log('__SERENDIB_CREDENTIAL_SUBMIT__' + JSON.stringify(data));
+                console.log('__Seran_CREDENTIAL_SUBMIT__' + JSON.stringify(data));
               });
             }
           })();
@@ -294,9 +294,9 @@ export const WebView: React.FC<WebViewProps> = ({
         if (e.level === 2) console.error('[WebView Console]', e.message);
         
         // Capture credential submission messages
-        if (e.message?.startsWith('__SERENDIB_CREDENTIAL_SUBMIT__')) {
+        if (e.message?.startsWith('__Seran_CREDENTIAL_SUBMIT__')) {
           try {
-            const jsonStr = e.message.replace('__SERENDIB_CREDENTIAL_SUBMIT__', '');
+            const jsonStr = e.message.replace('__Seran_CREDENTIAL_SUBMIT__', '');
             const data = JSON.parse(jsonStr);
             if (data.username && data.password) {
               console.log('[WebView] Credential submitted:', data.username);
@@ -402,7 +402,7 @@ export const WebView: React.FC<WebViewProps> = ({
   }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials, getZoomFactor, setZoomFactor, zoomIn, zoomOut, resetZoom]);
 
   // Don't render for internal URLs
-  if (tab.url.startsWith('serendib://')) {
+  if (tab.url.startsWith('seran://')) {
     return null;
   }
 
@@ -417,7 +417,7 @@ export const WebView: React.FC<WebViewProps> = ({
           const webview = webviewRef.current as any;
           webview?.reload?.();
         }}
-        onGoHome={() => onNavigate('serendib://newtab')}
+        onGoHome={() => onNavigate('seran://newtab')}
       />
     );
   }

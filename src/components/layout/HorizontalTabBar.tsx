@@ -58,7 +58,7 @@ const getWorkspaceIcon = (name: string) => {
 
 const getTabIcon = (url: string, isLoading: boolean) => {
   if (isLoading) return <RotateCw size={12} className="animate-spin" />;
-  if (!url.startsWith('serendib://')) return <Globe size={12} />;
+  if (!url.startsWith('seran://')) return <Globe size={12} />;
   if (url.includes('settings')) return <Settings size={12} />;
   if (url.includes('history')) return <History size={12} />;
   return <Home size={12} />;

@@ -27,8 +27,8 @@ export const INITIAL_CONTAINERS: Container[] = [
 export const MOCK_DOWNLOADS: DownloadItem[] = [
   { 
     id: 'd1', 
-    filename: 'serendib-setup.exe', 
-    url: 'https://serendib.browser/download', 
+    filename: 'Seran-setup.exe', 
+    url: 'https://Seran.browser/download', 
     totalBytes: 85000000, 
     receivedBytes: 85000000, 
     state: 'completed', 

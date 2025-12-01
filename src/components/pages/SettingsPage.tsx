@@ -569,7 +569,7 @@ const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSett
   const themeOptions = [
     { id: 'dark', name: 'Dark', preview: 'bg-zinc-900', headerBg: 'bg-zinc-700' },
     { id: 'light', name: 'Light', preview: 'bg-zinc-100', headerBg: 'bg-zinc-300' },
-    { id: 'serendib', name: 'Serendib', preview: 'bg-[#14100c]', headerBg: 'bg-amber-600' },
+    { id: 'Seran', name: 'Seran', preview: 'bg-[#14100c]', headerBg: 'bg-amber-600' },
     { id: 'ceylon', name: 'Ceylon Tea', preview: 'bg-[#121e12]', headerBg: 'bg-emerald-600' },
     { id: 'ocean', name: 'Lanka Ocean', preview: 'bg-[#0c1e28]', headerBg: 'bg-sky-600' },
     { id: 'midnight', name: 'Midnight', preview: 'bg-[#1e293b]', headerBg: 'bg-blue-700' },
@@ -726,7 +726,7 @@ const ShortcutsSection: React.FC = () => (
 const AboutSection: React.FC = () => (
   <div className="space-y-6">
     <div>
-      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About Serendib Browser</h2>
+      <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>About Seran Browser</h2>
       <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Browser information and credits</p>
     </div>
     
@@ -737,7 +737,7 @@ const AboutSection: React.FC = () => (
             <Globe size={32} className="text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Serendib Browser</h3>
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Seran Browser</h3>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Version 1.0.0 • <span className="text-amber-500">ශ්‍රී ලංකාවේ නිර්මාණය</span></p>
           </div>
         </div>
@@ -794,7 +794,7 @@ const AboutSection: React.FC = () => (
           <span className="text-amber-500">ආයුබෝවන්</span> • <span className="text-emerald-500">வணக்கம்</span>
         </p>
         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-          © 2025 Serendib Browser. All rights reserved.
+          © 2025 Seran Browser. All rights reserved.
         </p>
       </CardContent>
     </Card>

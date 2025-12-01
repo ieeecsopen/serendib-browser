@@ -107,7 +107,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
 
   // Sri Lankan themed background animation for new tab
   useEffect(() => {
-    if (activeTab?.url !== 'serendib://newtab') return;
+    if (activeTab?.url !== 'seran://newtab') return;
     
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -184,22 +184,22 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   const url = activeTab.url;
 
   // Downloads Page
-  if (url === 'serendib://downloads') {
+  if (url === 'seran://downloads') {
     return <DownloadsPage downloads={downloads} onClear={onClearDownloads} />;
   }
 
   // Extensions Page
-  if (url === 'serendib://extensions') {
+  if (url === 'seran://extensions') {
     return <ExtensionsPage extensions={extensions} onToggle={onToggleExtension} onRemove={onRemoveExtension} />;
   }
 
   // Password Manager Page
-  if (url === 'serendib://passwords') {
+  if (url === 'seran://passwords') {
     return <PasswordManagerPage onNavigate={onNavigate} />;
   }
 
   // New Tab Page
-  if (url === 'serendib://newtab') {
+  if (url === 'seran://newtab') {
     return (
       <NewTabPage 
         canvasRef={canvasRef} 
@@ -209,7 +209,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   }
 
   // Offline Reading List
-  if (url === 'serendib://offline') {
+  if (url === 'seran://offline') {
     return (
       <OfflineListPage
         offlinePages={offlinePages}
@@ -226,7 +226,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   }
 
   // Offline Reader View
-  if (url.startsWith('serendib://read/')) {
+  if (url.startsWith('seran://read/')) {
     const pageId = url.split('/').pop();
     const page = offlinePages.find(p => p.id === pageId);
     return (
@@ -240,7 +240,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   }
 
   // History Page
-  if (url === 'serendib://history') {
+  if (url === 'seran://history') {
     return (
       <HistoryPage
         history={history}
@@ -251,12 +251,12 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   }
 
   // Settings Page
-  if (url === 'serendib://settings') {
+  if (url === 'seran://settings') {
     return (
       <SettingsPage
         settings={settings}
         onUpdateSetting={onUpdateSetting}
-        onOpenPasswordManager={() => onNavigate('serendib://passwords')}
+        onOpenPasswordManager={() => onNavigate('seran://passwords')}
         sitePermissionsMap={sitePermissionsMap}
         defaultPermissions={defaultPermissions}
         onUpdateDefaultPermission={onUpdateDefaultPermission}
@@ -286,7 +286,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     return (
       <div className="flex-1 bg-black relative overflow-hidden">
         <FindBar isOpen={showFindBar} onClose={onCloseFindBar} />
-        {tabs.filter(tab => !tab.url.startsWith('serendib://')).map(tab => {
+        {tabs.filter(tab => !tab.url.startsWith('seran://')).map(tab => {
           const container = containers.find(c => c.id === tab.containerId);
           return (
             <WebView
@@ -334,7 +334,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
             Open in New Tab
           </a>
           <button
-            onClick={() => onNavigate('serendib://newtab')}
+            onClick={() => onNavigate('seran://newtab')}
             className="w-full bg-zinc-900 text-zinc-400 py-2.5 rounded-md hover:bg-zinc-800 transition-colors text-xs font-medium"
           >
             Back to Home
@@ -569,7 +569,7 @@ const NewTabPage: React.FC<{
       <div className="relative z-10 flex-1 flex overflow-hidden">
         {/* Most Accessed Apps in Sri Lanka - Sidebar */}
         <div className="hidden lg:flex w-16 flex-col items-center py-6 gap-2 border-r backdrop-blur-[1px]" style={{ borderColor: 'var(--border-secondary)', backgroundColor: 'var(--bg-hover)' }}>
-          {/* Serendib Logo */}
+          {/* Seran Logo */}
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-900/30 mb-2">
             🦁
           </div>
@@ -645,14 +645,14 @@ const NewTabPage: React.FC<{
           <header className="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
               <div className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent font-display">
-                Serendib
+                Seran
               </div>
               <span className="text-xs text-zinc-600 hidden sm:block">ශ්‍රී ලංකාව</span>
             </div>
             <div className="flex items-center gap-6" style={{ color: 'var(--text-muted)' }}>
-              <button onClick={() => onNavigate('serendib://newtab')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Home size={20} strokeWidth={1.5} /></button>
+              <button onClick={() => onNavigate('seran://newtab')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Home size={20} strokeWidth={1.5} /></button>
               <button className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Bell size={20} strokeWidth={1.5} /></button>
-              <button onClick={() => onNavigate('serendib://settings')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Sliders size={18} strokeWidth={1.5} /></button>
+              <button onClick={() => onNavigate('seran://settings')} className="transition-colors" style={{ color: 'inherit' }} onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}><Sliders size={18} strokeWidth={1.5} /></button>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right hidden md:block">
@@ -669,7 +669,7 @@ const NewTabPage: React.FC<{
             {/* Greeting */}
             <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h1 className="text-3xl md:text-4xl font-light mb-2" style={{ color: 'var(--text-primary)' }}>{greeting}</h1>
-              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Welcome to Serendib - The Pearl of the Indian Ocean</p>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Welcome to Seran - The Pearl of the Indian Ocean</p>
             </div>
 
             {/* Search Bar - 21st.dev inspired with enhanced glow */}
@@ -912,7 +912,7 @@ const NewTabPage: React.FC<{
           {/* Footer */}
           <footer className="px-8 py-4 text-center" style={{ borderTop: '1px solid var(--border-secondary)' }}>
             <p className="text-[10px]" style={{ color: 'var(--text-muted)' }}>
-              Serendib Browser • Made with ❤️ in Sri Lanka • <span className="text-amber-600">ජය ශ්‍රී ලංකා</span>
+              Seran Browser • Made with ❤️ in Sri Lanka • <span className="text-amber-600">ජය ශ්‍රී ලංකා</span>
             </p>
           </footer>
         </div>
@@ -1137,7 +1137,7 @@ const OfflineListPage: React.FC<{
               <OfflinePageCard
                 key={page.id}
                 page={page}
-                onRead={() => onNavigate(`serendib://read/${page.id}`)}
+                onRead={() => onNavigate(`seran://read/${page.id}`)}
                 onDelete={() => onDelete(page.id)}
                 onOpenOriginal={() => onNavigate(page.url)}
               />
@@ -1273,7 +1273,7 @@ const OfflineReaderPage: React.FC<{
       <div className="flex-1 bg-black flex flex-col items-center justify-center p-8 text-center text-zinc-500">
         <FileText size={48} className="mb-4 opacity-20" />
         <p>Page not found or deleted.</p>
-        <button onClick={() => onNavigate('serendib://offline')} className="mt-4 text-blue-500 hover:underline">
+        <button onClick={() => onNavigate('seran://offline')} className="mt-4 text-blue-500 hover:underline">
           Return to Reading List
         </button>
       </div>
@@ -1306,7 +1306,7 @@ const OfflineReaderPage: React.FC<{
       <div className="sticky top-0 z-10 bg-inherit border-b border-current/10">
         <div className="max-w-2xl mx-auto px-8 py-3 flex items-center justify-between">
           <button 
-            onClick={() => onNavigate('serendib://offline')} 
+            onClick={() => onNavigate('seran://offline')} 
             className="flex items-center gap-2 text-sm opacity-60 hover:opacity-100 transition-opacity font-sans"
           >
             <ArrowRight size={14} className="rotate-180" /> Reading List

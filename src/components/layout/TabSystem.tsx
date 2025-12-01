@@ -63,7 +63,7 @@ const getWorkspaceIcon = (name: string) => {
 
 const getTabIcon = (url: string, isLoading?: boolean) => {
   if (isLoading) return <RotateCw size={13} className="animate-spin" />;
-  if (!url.startsWith('serendib://')) return <Globe size={13} />;
+  if (!url.startsWith('seran://')) return <Globe size={13} />;
   if (url.includes('settings')) return <Settings size={13} />;
   if (url.includes('history')) return <History size={13} />;
   if (url.includes('offline')) return <ArrowRight size={13} />;
@@ -104,7 +104,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   const [editType, setEditType] = useState<'tab' | 'workspace' | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Load collapsed state from localStorage
-    const saved = localStorage.getItem('serendib-sidebar-collapsed');
+    const saved = localStorage.getItem('Seran-sidebar-collapsed');
     return saved === 'true';
   });
   
@@ -114,7 +114,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
 
   // Save collapsed state to localStorage
   useEffect(() => {
-    localStorage.setItem('serendib-sidebar-collapsed', String(isCollapsed));
+    localStorage.setItem('Seran-sidebar-collapsed', String(isCollapsed));
   }, [isCollapsed]);
 
   // Effects

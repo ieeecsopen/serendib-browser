@@ -22,7 +22,7 @@ export const INITIAL_CONTAINERS: Container[] = [
 ];
 
 export const MOCK_DOWNLOADS: DownloadItem[] = [
-  { id: 'd1', filename: 'serendib-setup.exe', url: 'https://serendib.browser/download', totalBytes: 85000000, receivedBytes: 85000000, state: 'completed', startTime: Date.now() - 100000, endTime: Date.now() - 5000 },
+  { id: 'd1', filename: 'Seran-setup.exe', url: 'https://Seran.browser/download', totalBytes: 85000000, receivedBytes: 85000000, state: 'completed', startTime: Date.now() - 100000, endTime: Date.now() - 5000 },
   { id: 'd2', filename: 'financial_report_Q1.pdf', url: 'https://finance.lk/reports', totalBytes: 4500000, receivedBytes: 2100000, state: 'progressing', startTime: Date.now() - 2000 },
   { id: 'd3', filename: 'image_pack.zip', url: 'https://images.com/pack', totalBytes: 120000000, receivedBytes: 0, state: 'interrupted', startTime: Date.now() - 500000 },
 ];
@@ -33,7 +33,7 @@ export const MOCK_EXTENSIONS: Extension[] = [
   { id: 'ext3', name: 'React Developer Tools', description: 'Adds React debugging tools to the Developer Tools.', version: '4.28.0', icon: 'Code', enabled: false, permissions: ['Read your browsing history'] },
 ];
 
-export const DEFAULT_HOME_URL = 'serendib://newtab';
+export const DEFAULT_HOME_URL = 'seran://newtab';
 
 export const SEARCH_ENGINES = {
   Google: 'https://www.google.com/search?q=',

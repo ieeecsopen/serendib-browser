@@ -212,7 +212,7 @@ export const SnapshotManager: React.FC<SnapshotManagerProps> = ({
     
     const filename = `${entry.name.replace(/[^a-z0-9]/gi, '-').toLowerCase()}-${Date.now()}`;
     downloadSnapshot(data, filename);
-    onNotification('Exported', `Snapshot exported as "${filename}.serendib-snapshot"`, 'success');
+    onNotification('Exported', `Snapshot exported as "${filename}.Seran-snapshot"`, 'success');
   };
 
   // Handle file import
@@ -642,11 +642,11 @@ export const SnapshotManager: React.FC<SnapshotManagerProps> = ({
               >
                 <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-3" />
                 <p className="text-zinc-300 mb-1">Click to select a snapshot file</p>
-                <p className="text-zinc-500 text-sm">or drag and drop (.serendib-snapshot)</p>
+                <p className="text-zinc-500 text-sm">or drag and drop (.Seran-snapshot)</p>
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".serendib-snapshot,.json"
+                  accept=".Seran-snapshot,.json"
                   onChange={handleFileSelect}
                   className="hidden"
                 />

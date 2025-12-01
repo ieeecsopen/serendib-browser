@@ -24,9 +24,9 @@ interface SiteInfoPopupProps {
 export const SiteInfoPopup: React.FC<SiteInfoPopupProps> = ({ url, isOpen, onClose }) => {
   if (!isOpen) return null;
 
-  const isSecure = url.startsWith('https') || url.startsWith('serendib://');
-  const domain = url.startsWith('serendib://') 
-    ? 'Serendib Browser' 
+  const isSecure = url.startsWith('https') || url.startsWith('seran://');
+  const domain = url.startsWith('seran://') 
+    ? 'Seran Browser' 
     : (() => { try { return new URL(url).hostname; } catch { return url; } })();
 
   return (

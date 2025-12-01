@@ -375,7 +375,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
               {/* QR Code Generator */}
-              {!url.startsWith('serendib://') && (
+              {!url.startsWith('seran://') && (
                 <div className="relative" ref={qrCodeRef}>
                   <button
                     onClick={() => setIsQRCodeOpen(!isQRCodeOpen)}
@@ -395,7 +395,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
               )}
 
               {/* Send to Device */}
-              {!url.startsWith('serendib://') && (
+              {!url.startsWith('seran://') && (
                 <div className="relative" ref={sendToDeviceRef}>
                   <button
                     onClick={() => setIsSendToDeviceOpen(!isSendToDeviceOpen)}
@@ -416,7 +416,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
               )}
 
               {/* Share Button */}
-              {!url.startsWith('serendib://') && (
+              {!url.startsWith('seran://') && (
                 <div className="relative" ref={shareMenuRef}>
                   <button
                     onClick={() => setIsShareMenuOpen(!isShareMenuOpen)}
@@ -428,7 +428,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
                   
                   <ShareMenu
                     url={url}
-                    title={title || 'Serendib Browser'}
+                    title={title || 'Seran Browser'}
                     isOpen={isShareMenuOpen}
                     onClose={() => setIsShareMenuOpen(false)}
                     onShare={(method) => {
@@ -440,7 +440,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
               )}
 
               {/* Offline Save Button */}
-              {!url.startsWith('serendib://') && (
+              {!url.startsWith('seran://') && (
                 <button
                   onClick={onSaveOffline}
                   disabled={isOfflineSaved}
@@ -490,7 +490,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
         )}
 
         <button
-          onClick={() => onNavigate('serendib://extensions')}
+          onClick={() => onNavigate('seran://extensions')}
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden md:block"
           title="Extensions"
         >
@@ -498,7 +498,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
         </button>
 
         <button
-          onClick={() => onNavigate('serendib://downloads')}
+          onClick={() => onNavigate('seran://downloads')}
           className="p-2 hover:bg-white/5 hover:text-white rounded-lg transition-colors hidden md:block"
           title="Downloads"
         >
@@ -635,12 +635,12 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
               <MenuItem 
                 icon={<DownloadCloud size={16} />} 
                 label="Reading List" 
-                onClick={() => onAction(() => onNavigate('serendib://offline'))} 
+                onClick={() => onAction(() => onNavigate('seran://offline'))} 
               />
               <MenuItem 
                 icon={<Download size={16} />} 
                 label="Downloads" 
-                onClick={() => onAction(() => onNavigate('serendib://downloads'))} 
+                onClick={() => onAction(() => onNavigate('seran://downloads'))} 
               />
             </div>
 
@@ -743,12 +743,12 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
               <MenuItem 
                 icon={<History size={16} />} 
                 label="History" 
-                onClick={() => onAction(() => onNavigate('serendib://history'))} 
+                onClick={() => onAction(() => onNavigate('seran://history'))} 
               />
               <MenuItem 
                 icon={<Puzzle size={16} />} 
                 label="Extensions" 
-                onClick={() => onAction(() => onNavigate('serendib://extensions'))} 
+                onClick={() => onAction(() => onNavigate('seran://extensions'))} 
               />
               <MenuItem icon={<Star size={16} />} label="Bookmarks" onClick={() => {}} />
             </div>
@@ -760,7 +760,7 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
               <MenuItem 
                 icon={<Settings size={16} />} 
                 label="Settings" 
-                onClick={() => onAction(() => onNavigate('serendib://settings'))} 
+                onClick={() => onAction(() => onNavigate('seran://settings'))} 
               />
             </div>
 
