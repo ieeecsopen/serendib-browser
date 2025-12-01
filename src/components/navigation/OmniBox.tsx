@@ -14,12 +14,13 @@ import { CertificateViewer } from '../ui/CertificateViewer';
 import { ShareMenu } from '../ui/ShareMenu';
 import { QRCodeGenerator } from '../ui/QRCodeGenerator';
 import { SendToDevice } from '../ui/SendToDevice';
+import { AddressBarAutocomplete } from './AddressBarAutocomplete';
 import { 
   ArrowLeft, ArrowRight, RotateCw, Star, Search, MessageSquare, X, Lock, Puzzle,
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
   Shield, Code, Maximize, PictureInPicture2, SplitSquareHorizontal, Share2, ShieldCheck,
-  QrCode, Send
+  QrCode, Send, EyeOff, RotateCcw
 } from 'lucide-react';
 
 // ============================================================================
