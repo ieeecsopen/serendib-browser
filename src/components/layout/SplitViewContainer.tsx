@@ -32,6 +32,7 @@ export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
   onTabLoadingChange,
   onTabFaviconChange,
   onCloseSplitView,
+  onNavigate = () => {},
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
