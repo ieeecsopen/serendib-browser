@@ -19,6 +19,7 @@ interface SplitViewContainerProps {
   onTabLoadingChange: (tabId: string, isLoading: boolean) => void;
   onTabFaviconChange: (tabId: string, favicon: string) => void;
   onCloseSplitView: () => void;
+  onNavigate?: (url: string) => void;
 }
 
 export const SplitViewContainer: React.FC<SplitViewContainerProps> = ({
