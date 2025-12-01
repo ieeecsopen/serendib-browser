@@ -218,6 +218,75 @@ const App: React.FC = () => {
     ));
   };
 
+  // Password form detection handler
+  const handlePasswordFormDetected = (url: string, hasCredentials: boolean) => {
+    console.log(`[App] Password form detected at ${url}, has credentials: ${hasCredentials}`);
+    // Could show autofill icon in address bar or other UI indicator
+  };
+
+  // Credential submission handler - shows save password prompt
+  const handleCredentialSubmitted = async (url: string, username: string, password: string) => {
+    const domain = extractDomain(url);
+    if (!domain) return;
+
+    // Check if site is in "never save" list
+    if (neverSaveSites.includes(domain)) {
+      console.log(`[App] Skipping save prompt for ${domain} (in never-save list)`);
+      return;
+    }
+
+    // Check if vault is unlocked
+    if (!isVaultUnlocked()) {
+      console.log('[App] Vault is locked, skipping save prompt');
+      return;
+    }
+
+    // Check if credential already exists
+    const exists = await credentialExists(domain, username);
+    
+    // Get favicon from current tab
+    const favicon = activeTab?.favicon;
+
+    // Show the save password prompt
+    setPasswordPrompt({
+      isVisible: true,
+      domain,
+      username,
+      password,
+      favicon,
+      isUpdate: exists,
+    });
+  };
+
+  // Save password from prompt
+  const handleSavePassword = async () => {
+    try {
+      await saveCredential(
+        `https://${passwordPrompt.domain}`,
+        passwordPrompt.username,
+        passwordPrompt.password
+      );
+      addNotification('Password Saved', `Credentials for ${passwordPrompt.domain} saved.`, 'success');
+    } catch (error) {
+      console.error('[App] Failed to save password:', error);
+      addNotification('Save Failed', 'Could not save password.', 'error');
+    }
+    setPasswordPrompt(prev => ({ ...prev, isVisible: false }));
+  };
+
+  // Never save for this site
+  const handleNeverSavePassword = () => {
+    const newList = [...neverSaveSites, passwordPrompt.domain];
+    setNeverSaveSites(newList);
+    localStorage.setItem('serendib-never-save-passwords', JSON.stringify(newList));
+    setPasswordPrompt(prev => ({ ...prev, isVisible: false }));
+  };
+
+  // Dismiss prompt without saving
+  const handleDismissPasswordPrompt = () => {
+    setPasswordPrompt(prev => ({ ...prev, isVisible: false }));
+  };
+
   const updateTab = (id: string, updates: Partial<Tab>) => {
     setTabs(prev => prev.map(t => {
       if (t.id !== id) return t;
@@ -726,6 +795,8 @@ const App: React.FC = () => {
             onTabUrlChange={handleTabUrlChange}
             onTabLoadingChange={handleTabLoadingChange}
             onTabFaviconChange={handleTabFaviconChange}
+            onPasswordFormDetected={handlePasswordFormDetected}
+            onCredentialSubmitted={handleCredentialSubmitted}
           />
           
           <AIPanel 
@@ -737,6 +808,19 @@ const App: React.FC = () => {
           <ToastContainer 
             notifications={notifications} 
             onDismiss={(id) => setNotifications(prev => prev.filter(n => n.id !== id))} 
+          />
+
+          {/* Save Password Prompt */}
+          <SavePasswordPrompt
+            isVisible={passwordPrompt.isVisible}
+            domain={passwordPrompt.domain}
+            username={passwordPrompt.username}
+            password={passwordPrompt.password}
+            favicon={passwordPrompt.favicon}
+            isUpdate={passwordPrompt.isUpdate}
+            onSave={handleSavePassword}
+            onNeverSave={handleNeverSavePassword}
+            onDismiss={handleDismissPasswordPrompt}
           />
 
           {/* Snapshot Manager Modal */}
