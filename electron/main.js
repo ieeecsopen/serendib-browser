@@ -1,29 +1,73 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
+
+// Check if running in development mode
+const isDev = !app.isPackaged;
+
+let mainWindow;
 
 function createWindow() {
-    const win = new BrowserWindow({
-        width: 1200,
-        height: 800,
+    mainWindow = new BrowserWindow({
+        width: 1400,
+        height: 900,
+        minWidth: 800,
+        minHeight: 600,
         frame: false, // Frameless window for custom UI
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
-            webSecurity: false // Often needed for local file access in some browser-like apps, but use with caution
+            webviewTag: true, // Enable webview tag for browser functionality
+            sandbox: false
         },
         backgroundColor: '#000000',
-        titleBarStyle: 'hiddenInset', // For macOS traffic lights, though we have custom ones
+        titleBarStyle: 'hiddenInset', // For macOS traffic lights
+        show: false, // Don't show until ready
+    });
+
+    // Show window when ready to prevent visual flash
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
     });
 
     if (isDev) {
-        win.loadURL('http://localhost:5173');
-        win.webContents.openDevTools({ mode: 'detach' });
+        mainWindow.loadURL('http://localhost:5173');
+        mainWindow.webContents.openDevTools({ mode: 'detach' });
     } else {
-        win.loadFile(path.join(__dirname, '../dist/index.html'));
+        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     }
+
+    // Handle external links
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith('https://') || url.startsWith('http://')) {
+            shell.openExternal(url);
+        }
+        return { action: 'deny' };
+    });
 }
+
+// Window control handlers
+ipcMain.handle('window-minimize', () => {
+    if (mainWindow) mainWindow.minimize();
+});
+
+ipcMain.handle('window-maximize', () => {
+    if (mainWindow) {
+        if (mainWindow.isMaximized()) {
+            mainWindow.unmaximize();
+        } else {
+            mainWindow.maximize();
+        }
+    }
+});
+
+ipcMain.handle('window-close', () => {
+    if (mainWindow) mainWindow.close();
+});
+
+ipcMain.handle('window-is-maximized', () => {
+    return mainWindow ? mainWindow.isMaximized() : false;
+});
 
 app.whenReady().then(() => {
     createWindow();
@@ -39,4 +83,11 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
+});
+
+// Security: Prevent new window creation
+app.on('web-contents-created', (event, contents) => {
+    contents.on('will-navigate', (event, navigationUrl) => {
+        // Allow navigation within the app
+    });
 });

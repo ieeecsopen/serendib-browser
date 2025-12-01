@@ -4,6 +4,7 @@ import { OmniBox } from './components/OmniBox';
 import { ContentFrame } from './components/ContentFrame';
 import { AIPanel } from './components/AIPanel';
 import { ToastContainer } from './components/BrowserUI';
+import { WindowControls } from './components/WindowControls';
 import { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, ThemeMode, Container, OfflinePage, DownloadItem, Extension, Notification } from './types';
 import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS } from './constants';
 import { Minimize2, Plus, X } from 'lucide-react';
@@ -378,9 +379,15 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen w-screen overflow-hidden text-sm bg-[#050505] text-zinc-100 font-sans selection:bg-zinc-800">
       
+      {/* Window Title Bar with Drag Region */}
+      <div className="absolute top-0 left-0 right-0 h-8 drag-region z-50 flex items-center justify-end">
+        <WindowControls className="no-drag" />
+      </div>
+
       {/* 1. Sidebar (Vertical Tabs) */}
       {showVerticalTabs && (
-        <TabSystem 
+        <div className="pt-8">
+          <TabSystem 
           tabs={visibleTabs}
           activeTabId={activeTabId}
           workspaces={workspaces}
@@ -402,10 +409,11 @@ const App: React.FC = () => {
           onChangeTabContainer={handleSwitchContainer}
           onCreateDisposableTab={handleCreateDisposableTab}
         />
+        </div>
       )}
 
       {/* 2. Main Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#050505] relative">
+      <div className="flex-1 flex flex-col min-w-0 bg-[#050505] relative pt-8">
         
         {/* Horizontal Tab Strip */}
         {showHorizontalTabs && (
