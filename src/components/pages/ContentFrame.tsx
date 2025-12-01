@@ -105,7 +105,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Cosmos background animation for new tab
+  // Sri Lankan themed background animation for new tab
   useEffect(() => {
     if (activeTab?.url !== 'serendib://newtab') return;
     
@@ -118,11 +118,13 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     let width = canvas.width = canvas.offsetWidth;
     let height = canvas.height = canvas.offsetHeight;
     
+    // Sri Lankan themed colors - amber/gold, emerald green (tea), deep maroon
     const blobs = [
-      { x: width * 0.2, y: height * 0.4, r: 600, color: 'rgba(124, 45, 18, 0.15)', vx: 0.2, vy: 0.1 },
-      { x: width * 0.8, y: height * 0.3, r: 500, color: 'rgba(234, 88, 12, 0.12)', vx: -0.3, vy: 0.2 },
-      { x: width * 0.5, y: height * -0.1, r: 800, color: 'rgba(67, 20, 7, 0.3)', vx: 0.1, vy: 0.1 },
-      { x: width * 0.9, y: height * 0.9, r: 400, color: 'rgba(20, 20, 20, 0.8)', vx: -0.2, vy: -0.2 },
+      { x: width * 0.2, y: height * 0.4, r: 600, color: 'rgba(180, 83, 9, 0.12)', vx: 0.2, vy: 0.1 }, // Amber
+      { x: width * 0.8, y: height * 0.3, r: 500, color: 'rgba(234, 88, 12, 0.10)', vx: -0.3, vy: 0.2 }, // Orange
+      { x: width * 0.5, y: height * -0.1, r: 800, color: 'rgba(6, 78, 59, 0.15)', vx: 0.1, vy: 0.1 }, // Emerald (tea)
+      { x: width * 0.9, y: height * 0.9, r: 400, color: 'rgba(127, 29, 29, 0.12)', vx: -0.2, vy: -0.2 }, // Maroon (lion flag)
+      { x: width * 0.1, y: height * 0.8, r: 350, color: 'rgba(202, 138, 4, 0.08)', vx: 0.15, vy: -0.1 }, // Gold
     ];
 
     let animationFrameId: number;
@@ -340,109 +342,248 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
 const NewTabPage: React.FC<{
   canvasRef: React.RefObject<HTMLCanvasElement>;
   onNavigate: (url: string) => void;
-}> = ({ canvasRef, onNavigate }) => (
-  <div className="flex-1 relative overflow-hidden flex flex-col font-sans select-none" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-    <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-primary))' }} />
-    
-    <div className="relative z-10 flex-1 flex">
-      {/* Social Sidebar */}
-      <div className="hidden lg:flex w-16 flex-col items-center py-8 gap-8 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
-        <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Hexagon size={20} /></button>
-        <div className="w-8 h-px bg-white/5" />
-        <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Twitter size={18} /></button>
-        <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Instagram size={18} /></button>
-        <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Disc size={18} /></button>
-        <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Dribbble size={18} /></button>
-      </div>
+}> = ({ canvasRef, onNavigate }) => {
+  const [greeting, setGreeting] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-      {/* Center Content */}
-      <div className="flex-1 flex flex-col relative overflow-y-auto">
-        <header className="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
-          <div className="text-xl font-bold tracking-tight text-white/90 font-display">Serendib</div>
-          <div className="flex items-center gap-6 text-zinc-400">
-            <button className="hover:text-white transition-colors"><Home size={20} strokeWidth={1.5} /></button>
-            <button className="hover:text-white transition-colors"><Search size={20} strokeWidth={1.5} /></button>
-            <button className="hover:text-white transition-colors"><Bell size={20} strokeWidth={1.5} /></button>
-            <button className="hover:text-white transition-colors"><PlusSquare size={20} strokeWidth={1.5} /></button>
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('සුභ උදෑසනක්'); // Good Morning
+    else if (hour < 17) setGreeting('සුභ දවසක්'); // Good Afternoon  
+    else setGreeting('සුභ සන්ධ්‍යාවක්'); // Good Evening
+
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const quickLinks = [
+    { name: 'News First', url: 'https://www.newsfirst.lk', icon: <Newspaper size={16} />, color: 'from-red-600 to-red-800' },
+    { name: 'Daily Mirror', url: 'https://www.dailymirror.lk', icon: <Newspaper size={16} />, color: 'from-blue-600 to-blue-800' },
+    { name: 'Colombo Stock', url: 'https://www.cse.lk', icon: <TrendingUp size={16} />, color: 'from-green-600 to-green-800' },
+    { name: 'Sri Lanka Tourism', url: 'https://www.srilanka.travel', icon: <Palmtree size={16} />, color: 'from-emerald-600 to-teal-800' },
+    { name: 'Dialog', url: 'https://www.dialog.lk', icon: <Globe2 size={16} />, color: 'from-orange-500 to-red-600' },
+    { name: 'Mobitel', url: 'https://www.mobitel.lk', icon: <Globe2 size={16} />, color: 'from-green-500 to-green-700' },
+  ];
+
+  return (
+    <div className="flex-1 relative overflow-hidden flex flex-col font-sans select-none" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, var(--bg-primary))' }} />
+      
+      <div className="relative z-10 flex-1 flex">
+        {/* Sri Lankan Cultural Sidebar */}
+        <div className="hidden lg:flex w-16 flex-col items-center py-8 gap-6 border-r border-white/5 bg-white/[0.01] backdrop-blur-[1px]">
+          {/* Lion Logo - Sri Lankan National Symbol */}
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-900/30">
+            🦁
           </div>
-          <div className="flex items-center gap-4">
-            <button className="text-zinc-400 hover:text-white transition-colors"><Sliders size={18} strokeWidth={1.5} /></button>
-            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 overflow-hidden cursor-pointer hover:border-zinc-500 transition-colors">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" />
+          <div className="w-8 h-px bg-white/10" />
+          <button className="p-2 text-zinc-500 hover:text-amber-500 transition-colors" title="Explore Sri Lanka">
+            <Compass size={18} />
+          </button>
+          <button className="p-2 text-zinc-500 hover:text-emerald-500 transition-colors" title="Nature & Wildlife">
+            <Palmtree size={18} />
+          </button>
+          <button className="p-2 text-zinc-500 hover:text-blue-500 transition-colors" title="Beaches">
+            <Waves size={18} />
+          </button>
+          <button className="p-2 text-zinc-500 hover:text-orange-500 transition-colors" title="Hill Country">
+            <Mountain size={18} />
+          </button>
+          <div className="mt-auto space-y-4">
+            <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Instagram size={18} /></button>
+            <button className="p-2 text-zinc-500 hover:text-white transition-colors"><Twitter size={18} /></button>
+          </div>
+        </div>
+
+        {/* Center Content */}
+        <div className="flex-1 flex flex-col relative overflow-y-auto">
+          {/* Header */}
+          <header className="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
+            <div className="flex items-center gap-3">
+              <div className="text-2xl font-bold tracking-tight bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent font-display">
+                Serendib
+              </div>
+              <span className="text-xs text-zinc-600 hidden sm:block">ශ්‍රී ලංකාව</span>
+            </div>
+            <div className="flex items-center gap-6 text-zinc-400">
+              <button onClick={() => onNavigate('serendib://newtab')} className="hover:text-white transition-colors"><Home size={20} strokeWidth={1.5} /></button>
+              <button className="hover:text-white transition-colors"><Bell size={20} strokeWidth={1.5} /></button>
+              <button onClick={() => onNavigate('serendib://settings')} className="hover:text-white transition-colors"><Sliders size={18} strokeWidth={1.5} /></button>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right hidden md:block">
+                <div className="text-xs text-zinc-500">{currentTime.toLocaleDateString('en-LK', { weekday: 'long' })}</div>
+                <div className="text-sm font-medium text-zinc-300">{currentTime.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 border-2 border-amber-500/30 overflow-hidden cursor-pointer hover:border-amber-400 transition-colors flex items-center justify-center text-white font-semibold">
+                S
+              </div>
+            </div>
+          </header>
+
+          <div className="flex-1 flex flex-col items-center pt-4 pb-12 px-8 w-full max-w-7xl mx-auto">
+            {/* Greeting */}
+            <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h1 className="text-3xl md:text-4xl font-light text-white/90 mb-2">{greeting}</h1>
+              <p className="text-zinc-500 text-sm">Welcome to Serendib - The Pearl of the Indian Ocean</p>
+            </div>
+
+            {/* Search Bar */}
+            <div className="w-full max-w-2xl relative mb-10 group z-20">
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-red-600/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="සොයන්න... Search Google or enter URL"
+                  className="w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:bg-white/[0.07] focus:border-amber-500/30 transition-all shadow-2xl shadow-black/50"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      onNavigate(e.currentTarget.value);
+                    }
+                  }}
+                  autoFocus
+                />
+                <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-500 hover:to-orange-500 transition-all">
+                  <Search size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Links */}
+            <div className="w-full max-w-2xl mb-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Quick Access</h2>
+                <button className="text-xs text-zinc-600 hover:text-white transition-colors flex items-center gap-1">
+                  <Plus size={12} /> Add Site
+                </button>
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {quickLinks.map((link, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onNavigate(link.url)}
+                    className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/20 hover:bg-white/[0.05] transition-all"
+                  >
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${link.color} flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform`}>
+                      {link.icon}
+                    </div>
+                    <span className="text-[10px] text-zinc-500 group-hover:text-white transition-colors truncate w-full text-center">{link.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Featured Content - Sri Lankan Theme */}
+            <div className="w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
+                  <Star size={12} className="text-amber-500" /> Discover Sri Lanka
+                </h2>
+                <button className="text-xs text-amber-500 hover:text-amber-400 transition-colors">View All →</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-in slide-in-from-bottom-8 duration-700 fade-in">
+                <SriLankanCard
+                  onClick={() => onNavigate('https://www.srilanka.travel/sigiriya')}
+                  image="🏛️"
+                  gradient="from-amber-900 via-orange-950 to-black"
+                  title="Sigiriya Lion Rock - Ancient Marvel of Engineering"
+                  location="Matale District"
+                  category="Heritage"
+                />
+                <SriLankanCard
+                  onClick={() => onNavigate('https://www.srilanka.travel/kandy')}
+                  image="🛕"
+                  gradient="from-rose-900 via-pink-950 to-black"
+                  title="Temple of the Sacred Tooth Relic - Spiritual Heart of Lanka"
+                  location="Kandy"
+                  category="Culture"
+                />
+                <SriLankanCard
+                  onClick={() => onNavigate('https://www.srilanka.travel/ella')}
+                  image="🌄"
+                  gradient="from-emerald-900 via-green-950 to-black"
+                  title="Ella's Nine Arch Bridge - Colonial Era Engineering"
+                  location="Ella, Badulla"
+                  category="Nature"
+                />
+                <SriLankanCard
+                  onClick={() => onNavigate('https://www.srilanka.travel/galle')}
+                  image="🏰"
+                  gradient="from-sky-900 via-blue-950 to-black"
+                  title="Galle Fort - UNESCO World Heritage Dutch Colonial Fort"
+                  location="Galle"
+                  category="History"
+                />
+              </div>
+            </div>
+
+            {/* Ceylon Tea & Coffee Section */}
+            <div className="w-full mt-10 p-6 rounded-2xl bg-gradient-to-r from-emerald-950/50 to-green-950/30 border border-emerald-900/30">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600 to-green-700 flex items-center justify-center">
+                  <Coffee size={24} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-1">World Famous Ceylon Tea</h3>
+                  <p className="text-sm text-zinc-400">Explore the lush tea plantations of Nuwara Eliya and taste the finest tea in the world</p>
+                </div>
+                <button 
+                  onClick={() => onNavigate('https://www.pureceylontea.com')}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  Explore
+                </button>
+              </div>
             </div>
           </div>
-        </header>
 
-        <div className="flex-1 flex flex-col items-center pt-8 pb-12 px-8 w-full max-w-7xl mx-auto">
-          <div className="w-full max-w-2xl relative mb-16 group z-20">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl py-4 pl-6 pr-12 text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:bg-white/[0.07] focus:border-white/20 transition-all shadow-2xl shadow-black/50"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  onNavigate(e.currentTarget.value);
-                }
-              }}
-              autoFocus
-            />
-            <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg text-zinc-500 group-hover:text-white transition-colors">
-              <Search size={20} />
-            </button>
-          </div>
-
-          {/* Dashboard Cards */}
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-in slide-in-from-bottom-8 duration-700 fade-in">
-            <DashboardCard
-              onClick={() => onNavigate('https://nasa.gov')}
-              gradient="from-orange-900 via-orange-950 to-black"
-              title="Hubble Spies Newly Forming Star Incubating"
-              source="NASA"
-            />
-            <DashboardCard
-              gradient="from-stone-800 via-stone-900 to-black"
-              title="New Research about Habitual patterns of Pets released"
-              source="NASA"
-            />
-            <DashboardCard
-              gradient="from-sky-900 via-slate-900 to-black"
-              title="Boxed Water is Better. A new Business made around water boxes"
-              source="Boxed Water"
-            />
-            <DashboardCard
-              gradient="from-zinc-800 via-zinc-900 to-black"
-              title="New Unistellar with Fully Automatic Focusing and Light pollution Reduction"
-              source="Unistellar Optics"
-            />
-          </div>
+          {/* Footer */}
+          <footer className="px-8 py-4 border-t border-white/5 text-center">
+            <p className="text-[10px] text-zinc-600">
+              Serendib Browser • Made with ❤️ in Sri Lanka • <span className="text-amber-600">ජය ශ්‍රී ලංකා</span>
+            </p>
+          </footer>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
-const DashboardCard: React.FC<{
+const SriLankanCard: React.FC<{
   onClick?: () => void;
+  image: string;
   gradient: string;
   title: string;
-  source: string;
-}> = ({ onClick, gradient, title, source }) => (
+  location: string;
+  category: string;
+}> = ({ onClick, image, gradient, title, location, category }) => (
   <div
     onClick={onClick}
-    className={`group relative aspect-[4/5] rounded-3xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 hover:border-white/20 transition-all hover:-translate-y-1`}
+    className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 hover:border-amber-500/30 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/20"
   >
     <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
-    <div className="absolute inset-0 flex flex-col justify-end p-5 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
-      <h3 className="text-sm font-bold text-white leading-tight mb-1 group-hover:underline decoration-white/30 underline-offset-4">
+    
+    {/* Decorative emoji as hero */}
+    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
+      {image}
+    </div>
+    
+    <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+      {/* Category badge */}
+      <div className="mb-2">
+        <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-bold uppercase tracking-wider rounded-full border border-amber-500/30">
+          {category}
+        </span>
+      </div>
+      
+      <h3 className="text-sm font-bold text-white leading-tight mb-2 group-hover:text-amber-100 transition-colors line-clamp-2">
         {title}
       </h3>
-      <div className="flex items-center gap-1.5 mt-2">
-        <div className="w-4 h-4 rounded-full bg-blue-600 flex items-center justify-center text-[8px] font-bold">
-          {source.charAt(0)}
-        </div>
-        <span className="text-[10px] text-zinc-400 font-medium">{source}</span>
-        <Check size={8} className="text-blue-500 bg-white rounded-full p-[1px]" />
+      
+      <div className="flex items-center gap-1.5 text-zinc-400">
+        <MapPin size={10} />
+        <span className="text-[10px] font-medium">{location}</span>
       </div>
     </div>
   </div>
