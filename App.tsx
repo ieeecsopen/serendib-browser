@@ -50,6 +50,19 @@ const App: React.FC = () => {
   // Full Screen State
   const [isFullScreen, setIsFullScreen] = useState(false);
   
+  // Split View State
+  const [splitView, setSplitView] = useState<{
+    enabled: boolean;
+    leftTabId: string | null;
+    rightTabId: string | null;
+    splitRatio: number; // 0.5 = 50/50
+  }>({
+    enabled: false,
+    leftTabId: null,
+    rightTabId: null,
+    splitRatio: 0.5,
+  });
+  
   // Snapshot Manager State
   const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false);
   
