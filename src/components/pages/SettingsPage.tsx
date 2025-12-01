@@ -40,6 +40,7 @@ type SettingsSection = 'general' | 'privacy' | 'permissions' | 'passwords' | 'pe
 const navItems: { id: SettingsSection; label: string; icon: React.ReactNode; description: string }[] = [
   { id: 'general', label: 'General', icon: <Globe size={18} />, description: 'Language, search, tabs' },
   { id: 'privacy', label: 'Privacy & Security', icon: <Shield size={18} />, description: 'Tracking, data, blockers' },
+  { id: 'permissions', label: 'Site Permissions', icon: <Lock size={18} />, description: 'Camera, mic, location' },
   { id: 'passwords', label: 'Passwords', icon: <Key size={18} />, description: 'Saved logins, autofill' },
   { id: 'performance', label: 'Performance', icon: <Zap size={18} />, description: 'Speed, memory, data' },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} />, description: 'Theme, notifications' },
