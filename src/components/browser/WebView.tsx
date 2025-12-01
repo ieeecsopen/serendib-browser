@@ -36,6 +36,8 @@ interface WebViewProps {
   onLoadingChange: (tabId: string, isLoading: boolean) => void;
   onFaviconChange: (tabId: string, favicon: string) => void;
   onNavigate: (url: string) => void;
+  onPasswordFormDetected?: (url: string, hasCredentials: boolean) => void;
+  onCredentialSubmitted?: (url: string, username: string, password: string) => void;
 }
 
 // ============================================================================
