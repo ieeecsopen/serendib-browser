@@ -143,7 +143,10 @@ export const AddressBarAutocomplete: React.FC<AddressBarAutocompleteProps> = ({
   };
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-[#0A0A0A] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+    <div 
+      className="absolute top-full left-0 right-0 mt-1 rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150"
+      style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+    >
       <div className="py-1">
         {suggestions.map((suggestion, index) => (
           <button
