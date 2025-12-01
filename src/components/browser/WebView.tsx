@@ -2,11 +2,11 @@
  * WebView Component
  * 
  * Electron webview wrapper for rendering external web pages.
- * Handles navigation, events, and error states.
+ * Handles navigation, events, error states, and container session isolation.
  */
 
 import React, { useRef, useEffect, useCallback, useState } from 'react';
-import type { Tab } from '../../types';
+import type { Tab, Container } from '../../types';
 
 // ============================================================================
 // Types
@@ -26,6 +26,7 @@ interface WebViewEvent extends Event {
 interface WebViewProps {
   tab: Tab;
   isActive: boolean;
+  container?: Container;
   onTitleChange: (tabId: string, title: string) => void;
   onUrlChange: (tabId: string, url: string) => void;
   onLoadingChange: (tabId: string, isLoading: boolean) => void;
@@ -57,6 +58,14 @@ export interface ActiveWebview {
 declare global {
   interface Window {
     __activeWebview?: ActiveWebview;
+    electron?: {
+      container?: {
+        getPartition: (containerId: string, isDisposable: boolean) => Promise<string>;
+        clear: (containerId: string) => Promise<{ success: boolean }>;
+        destroy: (containerId: string) => Promise<{ success: boolean }>;
+        getStats: (containerId: string) => Promise<any>;
+      };
+    };
   }
 }
 
@@ -67,6 +76,7 @@ declare global {
 export const WebView: React.FC<WebViewProps> = ({
   tab,
   isActive,
+  container,
   onTitleChange,
   onUrlChange,
   onLoadingChange,
@@ -76,6 +86,30 @@ export const WebView: React.FC<WebViewProps> = ({
   const webviewRef = useRef<HTMLElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [partition, setPartition] = useState<string | null>(null);
+
+  // Get container partition on mount or when container changes
+  useEffect(() => {
+    const initPartition = async () => {
+      if (window.electron?.container && tab.containerId) {
+        try {
+          const isDisposable = container?.isDisposable || tab.containerId.includes('disp');
+          const partitionStr = await window.electron.container.getPartition(
+            tab.containerId, 
+            isDisposable
+          );
+          setPartition(partitionStr);
+          console.log(`[WebView] Using partition: ${partitionStr} for tab: ${tab.id}`);
+        } catch (err) {
+          console.error('[WebView] Failed to get partition:', err);
+          // Fallback to default partition
+          setPartition(null);
+        }
+      }
+    };
+    
+    initPartition();
+  }, [tab.containerId, container?.isDisposable]);
 
   // Event Handlers
   useEffect(() => {
@@ -200,20 +234,23 @@ export const WebView: React.FC<WebViewProps> = ({
     );
   }
 
-  return (
-    <webview
-      ref={webviewRef as any}
-      src={tab.url}
-      className={`absolute inset-0 w-full h-full ${isActive ? '' : 'hidden'}`}
-      style={{ display: isActive ? 'flex' : 'none' }}
-      // @ts-ignore - Electron webview attributes
-      allowpopups="true"
-      // @ts-ignore
-      useragent={USER_AGENT}
-      // @ts-ignore
-      webpreferences="contextIsolation=yes, nodeIntegration=no"
-    />
-  );
+  // Build webview props with optional partition
+  const webviewProps: Record<string, any> = {
+    ref: webviewRef,
+    src: tab.url,
+    className: `absolute inset-0 w-full h-full ${isActive ? '' : 'hidden'}`,
+    style: { display: isActive ? 'flex' : 'none' },
+    allowpopups: 'true',
+    useragent: USER_AGENT,
+    webpreferences: 'contextIsolation=yes, nodeIntegration=no',
+  };
+
+  // Add partition if available (for container isolation)
+  if (partition) {
+    webviewProps.partition = partition;
+  }
+
+  return React.createElement('webview', webviewProps);
 };
 
 // ============================================================================
