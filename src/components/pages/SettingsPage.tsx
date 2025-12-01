@@ -735,8 +735,8 @@ const AboutSection: React.FC = () => (
             <Globe size={32} className="text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Serendib Browser</h3>
-            <p className="text-sm text-zinc-500">Version 1.0.0</p>
+            <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Serendib Browser</h3>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Version 1.0.0</p>
           </div>
         </div>
         
@@ -829,15 +829,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-black flex font-sans">
+    <div className="flex-1 flex font-sans" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Sidebar Navigation */}
-      <aside className="w-64 border-r border-zinc-800 bg-zinc-950/50 flex flex-col">
-        <div className="p-6 border-b border-zinc-800">
+      <aside className="w-64 flex flex-col" style={{ backgroundColor: 'var(--bg-secondary)', borderRight: '1px solid var(--border-primary)' }}>
+        <div className="p-6" style={{ borderBottom: '1px solid var(--border-primary)' }}>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-zinc-900 text-white">
+            <div className="p-2 rounded-xl" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
               <Settings size={20} />
             </div>
-            <h1 className="text-lg font-bold text-white">Settings</h1>
+            <h1 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Settings</h1>
           </div>
         </div>
         
@@ -846,23 +846,24 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveSection(item.id)}
-              className={`
-                w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all group
-                ${activeSection === item.id 
-                  ? 'bg-zinc-800 text-white' 
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-                }
-              `}
+              className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all group"
+              style={{ 
+                backgroundColor: activeSection === item.id ? 'var(--bg-active)' : 'transparent',
+                color: activeSection === item.id ? 'var(--text-primary)' : 'var(--text-secondary)'
+              }}
             >
-              <div className={`
-                p-1.5 rounded-lg transition-colors
-                ${activeSection === item.id ? 'bg-zinc-700 text-white' : 'text-zinc-500 group-hover:text-zinc-300'}
-              `}>
+              <div 
+                className="p-1.5 rounded-lg transition-colors"
+                style={{ 
+                  backgroundColor: activeSection === item.id ? 'var(--bg-tertiary)' : 'transparent',
+                  color: activeSection === item.id ? 'var(--text-primary)' : 'var(--text-muted)'
+                }}
+              >
                 {item.icon}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{item.label}</div>
-                <div className="text-xs text-zinc-500 truncate">{item.description}</div>
+                <div className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{item.description}</div>
               </div>
               <ChevronRight 
                 size={16} 
