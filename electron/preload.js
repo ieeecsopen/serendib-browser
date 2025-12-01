@@ -7,6 +7,11 @@ contextBridge.exposeInMainWorld('electron', {
     close: () => ipcRenderer.invoke('window-close'),
     isMaximized: () => ipcRenderer.invoke('window-is-maximized'),
     
+    // Full screen controls
+    toggleFullscreen: () => ipcRenderer.invoke('window-toggle-fullscreen'),
+    isFullscreen: () => ipcRenderer.invoke('window-is-fullscreen'),
+    exitFullscreen: () => ipcRenderer.invoke('window-exit-fullscreen'),
+    
     // Platform info
     platform: process.platform,
     
