@@ -678,6 +678,17 @@ const ShortcutsSection: React.FC = () => (
 
     <Card>
       <CardHeader>
+        <CardTitle className="text-base">View</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-0">
+        <ShortcutItem keys={['F11']} action="Toggle Full Screen" />
+        <Separator />
+        <ShortcutItem keys={['Esc']} action="Exit Full Screen" />
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
         <CardTitle className="text-base">Workspaces</CardTitle>
       </CardHeader>
       <CardContent className="space-y-0">
