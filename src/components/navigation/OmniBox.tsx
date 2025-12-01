@@ -47,6 +47,11 @@ interface OmniBoxProps {
   onZoomOut?: () => void;
   onZoomReset?: () => void;
   onSetZoom?: (level: number) => void;
+  // Permissions
+  sitePermissions?: SitePermissions;
+  defaultPermissions?: DefaultPermissions;
+  onUpdatePermission?: (origin: string, permission: PermissionType, setting: PermissionSetting) => void;
+  onResetSitePermissions?: (origin: string) => void;
 }
 
 // ============================================================================
