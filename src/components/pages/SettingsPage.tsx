@@ -250,6 +250,148 @@ const PrivacySection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting
   </div>
 );
 
+// Permission configuration for the settings page
+const PERMISSION_SETTINGS: {
+  type: PermissionType;
+  label: string;
+  icon: React.ElementType;
+  description: string;
+}[] = [
+  { type: 'camera', label: 'Camera', icon: Camera, description: 'Allow websites to access your camera' },
+  { type: 'microphone', label: 'Microphone', icon: Mic, description: 'Allow websites to access your microphone' },
+  { type: 'location', label: 'Location', icon: MapPin, description: 'Allow websites to know your location' },
+  { type: 'notifications', label: 'Notifications', icon: Bell, description: 'Allow websites to send you notifications' },
+  { type: 'clipboard-read', label: 'Clipboard Read', icon: Clipboard, description: 'Allow websites to read your clipboard' },
+  { type: 'clipboard-write', label: 'Clipboard Write', icon: ClipboardPaste, description: 'Allow websites to write to clipboard' },
+  { type: 'autoplay', label: 'Autoplay Media', icon: Volume2, description: 'Allow websites to autoplay media' },
+  { type: 'popups', label: 'Pop-ups', icon: ExternalLink, description: 'Allow websites to open pop-up windows' },
+];
+
+interface PermissionsSectionProps {
+  sitePermissionsMap?: Record<string, SitePermissions>;
+  defaultPermissions: DefaultPermissions;
+  onUpdateDefaultPermission?: (permission: PermissionType, setting: PermissionSetting) => void;
+  onResetSitePermissions?: (origin: string) => void;
+  onClearAllSitePermissions?: () => void;
+}
+
+const PermissionsSection: React.FC<PermissionsSectionProps> = ({
+  sitePermissionsMap = {},
+  defaultPermissions,
+  onUpdateDefaultPermission,
+  onResetSitePermissions,
+  onClearAllSitePermissions,
+}) => {
+  const sitesList = Object.values(sitePermissionsMap);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold text-white mb-1">Site Permissions</h2>
+        <p className="text-sm text-zinc-500">Control what websites can access</p>
+      </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Default Permissions</CardTitle>
+          <CardDescription>Default behavior for all websites</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-0">
+          {PERMISSION_SETTINGS.map((perm, index) => {
+            const Icon = perm.icon;
+            const currentSetting = defaultPermissions[perm.type];
+            return (
+              <React.Fragment key={perm.type}>
+                {index > 0 && <Separator />}
+                <div className="flex items-center justify-between py-4">
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-lg bg-zinc-900 text-zinc-400">
+                      <Icon size={18} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium">{perm.label}</Label>
+                      <p className="text-xs text-zinc-500 max-w-md">{perm.description}</p>
+                    </div>
+                  </div>
+                  <Select
+                    value={currentSetting}
+                    onValueChange={(v) => onUpdateDefaultPermission?.(perm.type, v as PermissionSetting)}
+                    options={[
+                      { value: 'allow', label: 'Allow' },
+                      { value: 'ask', label: 'Ask' },
+                      { value: 'block', label: 'Block' },
+                    ]}
+                    className="w-28"
+                  />
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Sites with Custom Permissions</CardTitle>
+          <CardDescription>
+            {sitesList.length === 0 
+              ? 'No sites have custom permissions yet'
+              : `${sitesList.length} site${sitesList.length === 1 ? ' has' : 's have'} custom permissions`
+            }
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {sitesList.length === 0 ? (
+            <div className="py-8 text-center text-zinc-500 text-sm">
+              <Shield className="mx-auto mb-3 w-8 h-8 opacity-50" />
+              <p>Sites with custom permissions will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {sitesList.map((site) => {
+                const permCount = Object.keys(site.permissions).length;
+                return (
+                  <div
+                    key={site.origin}
+                    className="flex items-center justify-between p-3 bg-zinc-900 rounded-lg group"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-white truncate">
+                        {new URL(site.origin).hostname}
+                      </p>
+                      <p className="text-xs text-zinc-500">
+                        {permCount} custom permission{permCount !== 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => onResetSitePermissions?.(site.origin)}
+                      className="px-3 py-1.5 text-xs text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                );
+              })}
+              
+              {sitesList.length > 0 && (
+                <div className="pt-4">
+                  <button
+                    onClick={onClearAllSitePermissions}
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={16} />
+                    Clear All Site Permissions
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const PasswordsSection: React.FC<{ onOpenPasswordManager?: () => void }> = ({ onOpenPasswordManager }) => (
   <div className="space-y-6">
     <div>
