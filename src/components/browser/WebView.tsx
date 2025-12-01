@@ -76,6 +76,8 @@ export interface ActiveWebview {
   openDevTools?: () => void;
   closeDevTools?: () => void;
   isDevToolsOpened?: () => boolean;
+  // Picture-in-Picture
+  requestPictureInPicture?: () => Promise<boolean>;
 }
 
 declare global {
@@ -369,6 +371,32 @@ export const WebView: React.FC<WebViewProps> = ({
         openDevTools: () => webview?.openDevTools?.(),
         closeDevTools: () => webview?.closeDevTools?.(),
         isDevToolsOpened: () => webview?.isDevToolsOpened?.() || false,
+        // Picture-in-Picture
+        requestPictureInPicture: async () => {
+          try {
+            // Execute JavaScript in the webview to find and trigger PiP on the first video
+            const result = await webview?.executeJavaScript(`
+              (function() {
+                const videos = document.querySelectorAll('video');
+                if (videos.length === 0) {
+                  return { success: false, error: 'No video found on page' };
+                }
+                const video = videos[0];
+                if (document.pictureInPictureEnabled && !video.disablePictureInPicture) {
+                  video.requestPictureInPicture()
+                    .then(() => ({ success: true }))
+                    .catch(err => ({ success: false, error: err.message }));
+                  return { success: true };
+                }
+                return { success: false, error: 'PiP not supported' };
+              })();
+            `);
+            return result?.success || false;
+          } catch (err) {
+            console.error('PiP error:', err);
+            return false;
+          }
+        },
       };
     }
   }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials, getZoomFactor, setZoomFactor, zoomIn, zoomOut, resetZoom]);
