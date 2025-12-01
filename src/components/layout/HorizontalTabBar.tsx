@@ -10,7 +10,7 @@ import type { Tab, Workspace, Container } from '../../types';
 import { 
   X, Plus, Globe, Settings, History, Home, Layers, 
   Briefcase, Newspaper, User, Edit3, Trash2, ArrowRight, 
-  Box, ShieldAlert, RotateCw, ChevronDown
+  Box, ShieldAlert, RotateCw, ChevronDown, Pin, PinOff, Volume2, VolumeX
 } from 'lucide-react';
 
 // ============================================================================
@@ -33,6 +33,8 @@ interface HorizontalTabBarProps {
   onCreateWorkspace: () => void;
   onChangeTabContainer: (tabId: string, containerId: string) => void;
   onCreateDisposableTab: () => void;
+  onTogglePinTab?: (tabId: string) => void;
+  onToggleMuteTab?: (tabId: string) => void;
 }
 
 interface ContextMenuState {
@@ -82,6 +84,8 @@ export const HorizontalTabBar: React.FC<HorizontalTabBarProps> = ({
   onCreateWorkspace,
   onChangeTabContainer,
   onCreateDisposableTab,
+  onTogglePinTab,
+  onToggleMuteTab,
 }) => {
   // State
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
