@@ -16,6 +16,24 @@ contextBridge.exposeInMainWorld('electron', {
     downloadUrl: (url) => ipcRenderer.invoke('download-url', url),
     
     // =========================================================================
+    // Print & PDF
+    // =========================================================================
+    
+    print: {
+        /**
+         * Print the current page
+         * @param {Object} options - Print options
+         */
+        printPage: (options = {}) => ipcRenderer.invoke('print-page', options),
+        
+        /**
+         * Save the current page as PDF
+         * @param {Object} options - PDF options
+         */
+        savePDF: (options = {}) => ipcRenderer.invoke('save-pdf', options),
+    },
+    
+    // =========================================================================
     // Container Session Management
     // =========================================================================
     

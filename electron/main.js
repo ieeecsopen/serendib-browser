@@ -219,6 +219,88 @@ ipcMain.handle('download-url', async (event, url) => {
 });
 
 // ============================================================================
+// Print & PDF Handlers
+// ============================================================================
+
+// Print the current page
+ipcMain.handle('print-page', async (event, options = {}) => {
+    try {
+        const focusedWindow = BrowserWindow.getFocusedWindow();
+        if (focusedWindow) {
+            focusedWindow.webContents.print({
+                silent: options.silent || false,
+                printBackground: options.printBackground !== false,
+                color: options.color !== false,
+                margins: options.margins || { marginType: 'default' },
+                landscape: options.landscape || false,
+                scaleFactor: options.scaleFactor || 100,
+                pagesPerSheet: options.pagesPerSheet || 1,
+                collate: options.collate !== false,
+                copies: options.copies || 1,
+                pageRanges: options.pageRanges || {},
+            }, (success, failureReason) => {
+                if (!success) {
+                    console.error('[Print] Failed:', failureReason);
+                }
+            });
+            return { success: true };
+        }
+        return { success: false, error: 'No focused window' };
+    } catch (error) {
+        console.error('[Print] Error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Save page as PDF
+ipcMain.handle('save-pdf', async (event, options = {}) => {
+    try {
+        const focusedWindow = BrowserWindow.getFocusedWindow();
+        if (!focusedWindow) {
+            return { success: false, error: 'No focused window' };
+        }
+
+        // Show save dialog
+        const { filePath, canceled } = await dialog.showSaveDialog(focusedWindow, {
+            title: 'Save as PDF',
+            defaultPath: options.fileName || 'page.pdf',
+            filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+        });
+
+        if (canceled || !filePath) {
+            return { success: false, canceled: true };
+        }
+
+        // Generate PDF
+        const pdfData = await focusedWindow.webContents.printToPDF({
+            marginsType: options.marginsType || 0, // 0: default, 1: none, 2: minimum
+            pageSize: options.pageSize || 'A4',
+            printBackground: options.printBackground !== false,
+            printSelectionOnly: options.printSelectionOnly || false,
+            landscape: options.landscape || false,
+            scaleFactor: options.scaleFactor || 100,
+            generateTaggedPDF: options.generateTaggedPDF || false,
+        });
+
+        // Save to file
+        await fs.writeFile(filePath, pdfData);
+        
+        // Open the file location
+        if (options.openFile) {
+            shell.openPath(filePath);
+        } else if (options.showInFolder) {
+            shell.showItemInFolder(filePath);
+        }
+
+        console.log('[PDF] Saved to:', filePath);
+        return { success: true, filePath };
+    } catch (error) {
+        console.error('[PDF] Error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// ============================================================================
 // Container IPC Handlers
 // ============================================================================
 
