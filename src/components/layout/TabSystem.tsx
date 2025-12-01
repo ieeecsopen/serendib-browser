@@ -10,7 +10,8 @@ import type { Tab, Workspace, Container } from '../../types';
 import { 
   X, Plus, Globe, Settings, History, Home, Layers, 
   Briefcase, Newspaper, User, Edit3, Trash2, ArrowRight, 
-  Box, ShieldAlert, PanelLeftClose, PanelLeft, RotateCw
+  Box, ShieldAlert, PanelLeftClose, PanelLeft, RotateCw,
+  Pin, PinOff, Volume2, VolumeX
 } from 'lucide-react';
 
 // ============================================================================
