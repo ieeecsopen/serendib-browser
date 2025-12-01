@@ -824,6 +824,11 @@ const App: React.FC = () => {
             onSaveOffline={handleSaveOffline}
             isOfflineSaved={isCurrentPageSaved}
             onOpenSnapshots={() => setIsSnapshotManagerOpen(true)}
+            zoomLevel={activeTab?.zoomLevel || 1.0}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onZoomReset={handleZoomReset}
+            onSetZoom={handleSetZoom}
           />
         )}
         
