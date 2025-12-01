@@ -59,6 +59,7 @@ export interface ActiveWebview {
   loadURL: (url: string) => void;
   canGoBack: () => boolean;
   canGoForward: () => boolean;
+  fillCredentials?: (username: string, password: string) => Promise<boolean>;
 }
 
 declare global {
@@ -128,6 +129,66 @@ export const WebView: React.FC<WebViewProps> = ({
     initPartition();
   }, [tab.containerId, container?.isDisposable]);
 
+  // Inject autofill script when DOM is ready
+  const injectAutofillScript = useCallback(async () => {
+    const webview = webviewRef.current as any;
+    if (!webview || autofillInjected) return;
+
+    try {
+      // Inject the form detection script
+      await webview.executeJavaScript(getAutofillScript());
+      setAutofillInjected(true);
+      console.log('[WebView] Autofill script injected');
+
+      // Check for password fields and get suggestions
+      const hasPasswordField = await webview.executeJavaScript(`
+        (function() {
+          return typeof window.__serendibHasPasswordField === 'function' 
+            ? window.__serendibHasPasswordField() 
+            : document.querySelector('input[type="password"]') !== null;
+        })();
+      `);
+
+      if (hasPasswordField) {
+        const currentUrl = tab.url;
+        const suggestions = await getSuggestionsForUrl(currentUrl);
+        const hasCredentials = suggestions.length > 0;
+        
+        console.log(`[WebView] Password form detected, ${suggestions.length} credentials available`);
+        onPasswordFormDetected?.(currentUrl, hasCredentials);
+
+        // Set up form submission listener
+        await webview.executeJavaScript(`
+          (function() {
+            if (typeof window.__serendibCaptureSubmission === 'function') {
+              window.__serendibCaptureSubmission(function(data) {
+                // Send message to parent via console (will be captured)
+                console.log('__SERENDIB_CREDENTIAL_SUBMIT__' + JSON.stringify(data));
+              });
+            }
+          })();
+        `);
+      }
+    } catch (err) {
+      console.error('[WebView] Failed to inject autofill script:', err);
+    }
+  }, [tab.url, autofillInjected, onPasswordFormDetected]);
+
+  // Fill credentials method (exposed globally for the tab)
+  const fillCredentials = useCallback(async (username: string, password: string) => {
+    const webview = webviewRef.current as any;
+    if (!webview) return false;
+
+    try {
+      const result = await webview.executeJavaScript(getAutofillFillScript(username, password));
+      console.log('[WebView] Credentials filled:', result);
+      return result;
+    } catch (err) {
+      console.error('[WebView] Failed to fill credentials:', err);
+      return false;
+    }
+  }, []);
+
   // Event Handlers
   useEffect(() => {
     const webview = webviewRef.current as any;
@@ -137,16 +198,23 @@ export const WebView: React.FC<WebViewProps> = ({
       'dom-ready': () => {
         setIsReady(true);
         setError(null);
+        // Inject autofill script when DOM is ready
+        injectAutofillScript();
       },
       'did-start-loading': () => {
         onLoadingChange(tab.id, true);
         setError(null);
+        setAutofillInjected(false); // Reset for new page
       },
       'did-stop-loading': () => {
         onLoadingChange(tab.id, false);
       },
       'did-finish-load': () => {
         onLoadingChange(tab.id, false);
+        // Re-inject autofill script after page load
+        if (!autofillInjected) {
+          injectAutofillScript();
+        }
       },
       'page-title-updated': (e: WebViewEvent) => {
         if (e.title) onTitleChange(tab.id, e.title);
@@ -172,6 +240,20 @@ export const WebView: React.FC<WebViewProps> = ({
       },
       'console-message': (e: WebViewEvent) => {
         if (e.level === 2) console.error('[WebView Console]', e.message);
+        
+        // Capture credential submission messages
+        if (e.message?.startsWith('__SERENDIB_CREDENTIAL_SUBMIT__')) {
+          try {
+            const jsonStr = e.message.replace('__SERENDIB_CREDENTIAL_SUBMIT__', '');
+            const data = JSON.parse(jsonStr);
+            if (data.username && data.password) {
+              console.log('[WebView] Credential submitted:', data.username);
+              onCredentialSubmitted?.(data.url || tab.url, data.username, data.password);
+            }
+          } catch (err) {
+            console.error('[WebView] Failed to parse credential submission:', err);
+          }
+        }
       },
     };
 
@@ -186,7 +268,7 @@ export const WebView: React.FC<WebViewProps> = ({
         webview.removeEventListener(event, handler);
       });
     };
-  }, [tab.id, onTitleChange, onUrlChange, onLoadingChange, onFaviconChange, onNavigate]);
+  }, [tab.id, tab.url, autofillInjected, injectAutofillScript, onTitleChange, onUrlChange, onLoadingChange, onFaviconChange, onNavigate, onCredentialSubmitted]);
 
   // Navigation Methods
   const goBack = useCallback(() => {
@@ -226,9 +308,10 @@ export const WebView: React.FC<WebViewProps> = ({
         loadURL,
         canGoBack: () => webview?.canGoBack?.() || false,
         canGoForward: () => webview?.canGoForward?.() || false,
+        fillCredentials, // Add autofill method
       };
     }
-  }, [isActive, goBack, goForward, reload, stop, loadURL]);
+  }, [isActive, goBack, goForward, reload, stop, loadURL, fillCredentials]);
 
   // Don't render for internal URLs
   if (tab.url.startsWith('serendib://')) {
