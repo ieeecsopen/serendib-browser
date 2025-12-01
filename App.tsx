@@ -467,6 +467,42 @@ const App: React.FC = () => {
     // This would require additional webview integration
   };
 
+  // --- Permission Handlers ---
+  const handleUpdatePermission = (origin: string, permission: PermissionType, setting: PermissionSetting) => {
+    setSitePermissionsMap(prev => {
+      const existing = prev[origin] || { origin, permissions: {}, lastModified: Date.now() };
+      const updated = {
+        ...existing,
+        permissions: { ...existing.permissions, [permission]: setting },
+        lastModified: Date.now(),
+      };
+      const newMap = { ...prev, [origin]: updated };
+      localStorage.setItem('serendib-site-permissions', JSON.stringify(newMap));
+      return newMap;
+    });
+    addNotification('Permission Updated', `${permission} set to ${setting} for ${new URL(origin).hostname}`, 'info');
+  };
+
+  const handleResetSitePermissions = (origin: string) => {
+    setSitePermissionsMap(prev => {
+      const { [origin]: removed, ...rest } = prev;
+      localStorage.setItem('serendib-site-permissions', JSON.stringify(rest));
+      return rest;
+    });
+    addNotification('Permissions Reset', `Custom permissions removed for ${new URL(origin).hostname}`, 'info');
+  };
+
+  // Get permissions for current tab's origin
+  const getCurrentSitePermissions = (): SitePermissions | undefined => {
+    if (!activeTab?.url.startsWith('http')) return undefined;
+    try {
+      const origin = new URL(activeTab.url).origin;
+      return sitePermissionsMap[origin];
+    } catch {
+      return undefined;
+    }
+  };
+
   const handleSwitchContainer = (tabId: string, containerId: string) => {
     const tab = tabs.find(t => t.id === tabId);
     if (tab) {
