@@ -7,3 +7,4 @@ export * from './browser';
 export * from './settings';
 export * from './ui';
 export * from './snapshot';
+export * from './passwords';

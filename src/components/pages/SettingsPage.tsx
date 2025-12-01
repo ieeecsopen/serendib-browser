@@ -32,6 +32,7 @@ type SettingsSection = 'general' | 'privacy' | 'passwords' | 'performance' | 'ap
 const navItems: { id: SettingsSection; label: string; icon: React.ReactNode; description: string }[] = [
   { id: 'general', label: 'General', icon: <Globe size={18} />, description: 'Language, search, tabs' },
   { id: 'privacy', label: 'Privacy & Security', icon: <Shield size={18} />, description: 'Tracking, data, blockers' },
+  { id: 'passwords', label: 'Passwords', icon: <Key size={18} />, description: 'Saved logins, autofill' },
   { id: 'performance', label: 'Performance', icon: <Zap size={18} />, description: 'Speed, memory, data' },
   { id: 'appearance', label: 'Appearance', icon: <Palette size={18} />, description: 'Theme, notifications' },
   { id: 'shortcuts', label: 'Keyboard Shortcuts', icon: <Keyboard size={18} />, description: 'Hotkeys, commands' },
@@ -233,6 +234,109 @@ const PrivacySection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting
           <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors">
             <Trash2 size={16} />
             Clear All Browsing Data
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
+
+const PasswordsSection: React.FC<{ onOpenPasswordManager?: () => void }> = ({ onOpenPasswordManager }) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-xl font-semibold text-white mb-1">Passwords</h2>
+      <p className="text-sm text-zinc-500">Manage saved logins and autofill settings</p>
+    </div>
+    
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Password Manager</CardTitle>
+        <CardDescription>View and manage your saved passwords</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <button
+          onClick={onOpenPasswordManager}
+          className="flex items-center gap-3 w-full p-4 bg-zinc-900 rounded-xl hover:bg-zinc-800 transition-colors group"
+        >
+          <div className="p-3 rounded-xl bg-zinc-800 text-white group-hover:bg-zinc-700">
+            <Key size={24} />
+          </div>
+          <div className="flex-1 text-left">
+            <p className="font-medium text-white">Open Password Manager</p>
+            <p className="text-sm text-zinc-500">View, edit, and delete saved passwords</p>
+          </div>
+          <ChevronRight size={20} className="text-zinc-500 group-hover:text-white" />
+        </button>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Autofill Settings</CardTitle>
+        <CardDescription>Control automatic form filling</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-0">
+        <SettingItem
+          icon={<Key size={18} />}
+          label="Offer to Save Passwords"
+          description="Ask to save passwords when signing in to websites"
+        >
+          <Switch checked={true} onCheckedChange={() => {}} />
+        </SettingItem>
+        
+        <Separator />
+        
+        <SettingItem
+          icon={<Lock size={18} />}
+          label="Auto-fill Credentials"
+          description="Automatically fill in saved usernames and passwords"
+        >
+          <Switch checked={true} onCheckedChange={() => {}} />
+        </SettingItem>
+        
+        <Separator />
+        
+        <SettingItem
+          icon={<Shield size={18} />}
+          label="Password Breach Alerts"
+          description="Notify when saved passwords appear in data breaches"
+        >
+          <Switch checked={true} onCheckedChange={() => {}} />
+        </SettingItem>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-base">Vault Security</CardTitle>
+        <CardDescription>Protect your password vault</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-0">
+        <SettingItem
+          icon={<Lock size={18} />}
+          label="Auto-lock Timeout"
+          description="Lock the vault after a period of inactivity"
+        >
+          <Select
+            value="15"
+            onValueChange={() => {}}
+            options={[
+              { value: '5', label: '5 minutes' },
+              { value: '15', label: '15 minutes' },
+              { value: '30', label: '30 minutes' },
+              { value: '60', label: '1 hour' },
+              { value: '0', label: 'Never' },
+            ]}
+            className="w-32"
+          />
+        </SettingItem>
+        
+        <Separator />
+        
+        <div className="py-4">
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded-lg transition-colors">
+            <Lock size={16} />
+            Change Master Password
           </button>
         </div>
       </CardContent>
@@ -481,7 +585,8 @@ const AboutSection: React.FC = () => (
 
 export const SettingsPage: React.FC<SettingsPageProps> = ({ 
   settings, 
-  onUpdateSetting 
+  onUpdateSetting,
+  onOpenPasswordManager
 }) => {
   const [activeSection, setActiveSection] = useState<SettingsSection>('general');
 
@@ -491,6 +596,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         return <GeneralSection settings={settings} onUpdateSetting={onUpdateSetting} />;
       case 'privacy':
         return <PrivacySection settings={settings} onUpdateSetting={onUpdateSetting} />;
+      case 'passwords':
+        return <PasswordsSection onOpenPasswordManager={onOpenPasswordManager} />;
       case 'performance':
         return <PerformanceSection settings={settings} onUpdateSetting={onUpdateSetting} />;
       case 'appearance':
