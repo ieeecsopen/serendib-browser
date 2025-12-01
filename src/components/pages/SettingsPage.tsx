@@ -555,66 +555,77 @@ const PerformanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSet
   </div>
 );
 
-const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting }) => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-xl font-semibold text-white mb-1">Appearance</h2>
-      <p className="text-sm text-zinc-500">Customize how the browser looks and feels</p>
-    </div>
-    
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Theme</CardTitle>
-        <CardDescription>Choose your preferred color scheme</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-3 gap-4">
-          {['dark', 'light', 'system'].map((theme) => (
-            <button
-              key={theme}
-              onClick={() => onUpdateSetting('theme', theme)}
-              className={`
-                relative p-4 rounded-xl border-2 transition-all
-                ${(settings.theme ?? 'dark') === theme 
-                  ? 'border-white bg-zinc-900' 
-                  : 'border-zinc-800 hover:border-zinc-700 bg-zinc-950'
-                }
-              `}
-            >
-              <div className={`
-                w-full aspect-video rounded-lg mb-3 overflow-hidden
-                ${theme === 'dark' ? 'bg-zinc-900' : theme === 'light' ? 'bg-zinc-100' : 'bg-gradient-to-r from-zinc-900 to-zinc-100'}
-              `}>
-                <div className={`h-2 ${theme === 'light' ? 'bg-zinc-300' : 'bg-zinc-700'}`} />
-              </div>
-              <span className="text-sm font-medium capitalize text-zinc-300">{theme}</span>
-              {(settings.theme ?? 'dark') === theme && (
-                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-white" />
-              )}
-            </button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+const AppearanceSection: React.FC<SettingsPageProps> = ({ settings, onUpdateSetting }) => {
+  const themeOptions = [
+    { id: 'dark', name: 'Dark', preview: 'bg-zinc-900', headerBg: 'bg-zinc-700' },
+    { id: 'light', name: 'Light', preview: 'bg-zinc-100', headerBg: 'bg-zinc-300' },
+    { id: 'serendib', name: 'Serendib', preview: 'bg-[#12121a]', headerBg: 'bg-purple-700' },
+    { id: 'midnight', name: 'Midnight', preview: 'bg-[#1e293b]', headerBg: 'bg-blue-700' },
+    { id: 'forest', name: 'Forest', preview: 'bg-[#132018]', headerBg: 'bg-green-700' },
+    { id: 'rose', name: 'Rose', preview: 'bg-[#200a14]', headerBg: 'bg-pink-700' },
+    { id: 'sunset', name: 'Sunset', preview: 'bg-[#251510]', headerBg: 'bg-orange-700' },
+    { id: 'nord', name: 'Nord', preview: 'bg-[#3b4252]', headerBg: 'bg-cyan-700' },
+  ];
 
-    <Card>
-      <CardContent className="pt-6">
-        <SettingItem
-          icon={<Bell size={18} />}
-          label="Notifications"
-          description="Allow websites to show notifications"
-          htmlFor="notifications-switch"
-        >
-          <Switch
-            id="notifications-switch"
-            checked={settings.notifications ?? true}
-            onCheckedChange={(v) => onUpdateSetting('notifications', v)}
-          />
-        </SettingItem>
-      </CardContent>
-    </Card>
-  </div>
-);
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-xl font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Appearance</h2>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Customize how the browser looks and feels</p>
+      </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Theme</CardTitle>
+          <CardDescription>Choose your preferred color scheme</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-3">
+            {themeOptions.map((theme) => (
+              <button
+                key={theme.id}
+                onClick={() => onUpdateSetting('theme', theme.id)}
+                className={`
+                  relative p-3 rounded-xl border-2 transition-all
+                  ${(settings.theme ?? 'dark') === theme.id 
+                    ? 'border-white/50 ring-2 ring-white/20' 
+                    : 'border-transparent hover:border-white/20'
+                  }
+                `}
+                style={{ backgroundColor: 'var(--bg-tertiary)' }}
+              >
+                <div className={`w-full aspect-video rounded-lg mb-2 overflow-hidden ${theme.preview}`}>
+                  <div className={`h-2 ${theme.headerBg}`} />
+                </div>
+                <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>{theme.name}</span>
+                {(settings.theme ?? 'dark') === theme.id && (
+                  <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-green-500" />
+                )}
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <SettingItem
+            icon={<Bell size={18} />}
+            label="Notifications"
+            description="Allow websites to show notifications"
+            htmlFor="notifications-switch"
+          >
+            <Switch
+              id="notifications-switch"
+              checked={settings.notifications ?? true}
+              onCheckedChange={(v) => onUpdateSetting('notifications', v)}
+            />
+          </SettingItem>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
 const ShortcutsSection: React.FC = () => (
   <div className="space-y-6">
