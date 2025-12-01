@@ -20,7 +20,7 @@ import {
   Sliders, Twitter, Instagram, Disc, Dribbble, Hexagon, BookOpen,
   Tag, Calendar, User, ExternalLink, FolderOpen, HardDrive,
   Palmtree, Mountain, Waves, Sun, MapPin, Newspaper, TrendingUp,
-  Coffee, Compass, Globe2, Star
+  Coffee, Compass, Globe2, Star, Crown, Sparkles
 } from 'lucide-react';
 
 // ============================================================================
@@ -474,47 +474,125 @@ const NewTabPage: React.FC<{
               </div>
             </div>
 
-            {/* Featured Content - Sri Lankan Theme */}
+            {/* Featured Content - Bento Grid Style (21st.dev inspired) */}
             <div className="w-full">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider flex items-center gap-2">
-                  <Star size={12} className="text-amber-500" /> Discover Sri Lanka
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-2">
+                  <Star size={14} className="text-amber-500" /> Discover Sri Lanka
                 </h2>
-                <button className="text-xs text-amber-500 hover:text-amber-400 transition-colors">View All →</button>
+                <button className="text-xs text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-1 group">
+                  View All <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-in slide-in-from-bottom-8 duration-700 fade-in">
-                <SriLankanCard
+              
+              {/* Bento Grid Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[200px]">
+                {/* Large Featured Card - Sigiriya */}
+                <BentoCard
                   onClick={() => onNavigate('https://www.srilanka.travel/sigiriya')}
-                  image="🏛️"
-                  gradient="from-amber-900 via-orange-950 to-black"
-                  title="Sigiriya Lion Rock - Ancient Marvel of Engineering"
-                  location="Matale District"
-                  category="Heritage"
-                />
-                <SriLankanCard
+                  className="md:col-span-2 md:row-span-2"
+                  gradient="from-amber-600/20 via-orange-900/40 to-black"
+                  glowColor="amber"
+                >
+                  <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:opacity-30 transition-opacity">
+                    <span className="text-[120px]">🦁</span>
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-between p-6">
+                    <div>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 backdrop-blur-sm text-amber-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-amber-500/30">
+                        <Crown size={10} /> UNESCO Heritage
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-amber-100 transition-colors">
+                        Sigiriya Lion Rock
+                      </h3>
+                      <p className="text-sm text-zinc-400 mb-3 line-clamp-2">
+                        Ancient rock fortress and palace ruins, rising 200m above the surrounding plains
+                      </p>
+                      <div className="flex items-center gap-4 text-xs text-zinc-500">
+                        <span className="flex items-center gap-1"><MapPin size={12} /> Matale</span>
+                        <span className="flex items-center gap-1"><Clock size={12} /> 2h from Colombo</span>
+                      </div>
+                    </div>
+                  </div>
+                </BentoCard>
+
+                {/* Temple of the Tooth */}
+                <BentoCard
                   onClick={() => onNavigate('https://www.srilanka.travel/kandy')}
-                  image="🛕"
-                  gradient="from-rose-900 via-pink-950 to-black"
-                  title="Temple of the Sacred Tooth Relic - Spiritual Heart of Lanka"
-                  location="Kandy"
-                  category="Culture"
-                />
-                <SriLankanCard
+                  className="md:col-span-1"
+                  gradient="from-rose-600/20 via-pink-900/40 to-black"
+                  glowColor="rose"
+                >
+                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
+                    🛕
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
+                    <span className="text-[9px] font-bold text-rose-400 uppercase tracking-wider mb-1">Culture</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-rose-100 transition-colors">
+                      Temple of the Tooth
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 mt-1">Sacred Buddhist temple in Kandy</p>
+                  </div>
+                </BentoCard>
+
+                {/* Ella */}
+                <BentoCard
                   onClick={() => onNavigate('https://www.srilanka.travel/ella')}
-                  image="🌄"
-                  gradient="from-emerald-900 via-green-950 to-black"
-                  title="Ella's Nine Arch Bridge - Colonial Era Engineering"
-                  location="Ella, Badulla"
-                  category="Nature"
-                />
-                <SriLankanCard
+                  className="md:col-span-1"
+                  gradient="from-emerald-600/20 via-green-900/40 to-black"
+                  glowColor="emerald"
+                >
+                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
+                    🌄
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
+                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Nature</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-emerald-100 transition-colors">
+                      Nine Arch Bridge
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 mt-1">Colonial-era railway marvel in Ella</p>
+                  </div>
+                </BentoCard>
+
+                {/* Galle Fort */}
+                <BentoCard
                   onClick={() => onNavigate('https://www.srilanka.travel/galle')}
-                  image="🏰"
-                  gradient="from-sky-900 via-blue-950 to-black"
-                  title="Galle Fort - UNESCO World Heritage Dutch Colonial Fort"
-                  location="Galle"
-                  category="History"
-                />
+                  className="md:col-span-1"
+                  gradient="from-sky-600/20 via-blue-900/40 to-black"
+                  glowColor="sky"
+                >
+                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
+                    🏰
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
+                    <span className="text-[9px] font-bold text-sky-400 uppercase tracking-wider mb-1">History</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-sky-100 transition-colors">
+                      Galle Fort
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 mt-1">Dutch colonial fortification</p>
+                  </div>
+                </BentoCard>
+
+                {/* Yala National Park */}
+                <BentoCard
+                  onClick={() => onNavigate('https://www.srilanka.travel/yala')}
+                  className="md:col-span-1"
+                  gradient="from-yellow-600/20 via-amber-900/40 to-black"
+                  glowColor="yellow"
+                >
+                  <div className="absolute top-4 right-4 text-4xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
+                    🐆
+                  </div>
+                  <div className="relative z-10 h-full flex flex-col justify-end p-5">
+                    <span className="text-[9px] font-bold text-yellow-400 uppercase tracking-wider mb-1">Wildlife</span>
+                    <h3 className="text-base font-bold text-white group-hover:text-yellow-100 transition-colors">
+                      Yala Safari
+                    </h3>
+                    <p className="text-[11px] text-zinc-500 mt-1">Highest leopard density in the world</p>
+                  </div>
+                </BentoCard>
               </div>
             </div>
 
@@ -550,44 +628,62 @@ const NewTabPage: React.FC<{
   );
 };
 
-const SriLankanCard: React.FC<{
+// 21st.dev inspired Bento Card Component with glassmorphism and glow effects
+const BentoCard: React.FC<{
   onClick?: () => void;
-  image: string;
+  className?: string;
   gradient: string;
-  title: string;
-  location: string;
-  category: string;
-}> = ({ onClick, image, gradient, title, location, category }) => (
-  <div
-    onClick={onClick}
-    className="group relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer bg-zinc-900 border border-white/5 hover:border-amber-500/30 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/20"
-  >
-    <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
-    
-    {/* Decorative emoji as hero */}
-    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all">
-      {image}
-    </div>
-    
-    <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-      {/* Category badge */}
-      <div className="mb-2">
-        <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[9px] font-bold uppercase tracking-wider rounded-full border border-amber-500/30">
-          {category}
-        </span>
+  glowColor: 'amber' | 'rose' | 'emerald' | 'sky' | 'yellow' | 'purple';
+  children: React.ReactNode;
+}> = ({ onClick, className = '', gradient, glowColor, children }) => {
+  const glowColors = {
+    amber: 'group-hover:shadow-amber-500/20',
+    rose: 'group-hover:shadow-rose-500/20',
+    emerald: 'group-hover:shadow-emerald-500/20',
+    sky: 'group-hover:shadow-sky-500/20',
+    yellow: 'group-hover:shadow-yellow-500/20',
+    purple: 'group-hover:shadow-purple-500/20',
+  };
+  
+  const borderColors = {
+    amber: 'group-hover:border-amber-500/40',
+    rose: 'group-hover:border-rose-500/40',
+    emerald: 'group-hover:border-emerald-500/40',
+    sky: 'group-hover:border-sky-500/40',
+    yellow: 'group-hover:border-yellow-500/40',
+    purple: 'group-hover:border-purple-500/40',
+  };
+
+  return (
+    <div
+      onClick={onClick}
+      className={`
+        group relative rounded-2xl overflow-hidden cursor-pointer
+        bg-white/[0.02] backdrop-blur-sm
+        border border-white/[0.08] ${borderColors[glowColor]}
+        transition-all duration-500 ease-out
+        hover:-translate-y-1 hover:shadow-2xl ${glowColors[glowColor]}
+        ${className}
+      `}
+    >
+      {/* Animated gradient background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-60 group-hover:opacity-80 transition-opacity duration-500`} />
+      
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.015]" style={{ 
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` 
+      }} />
+      
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
       </div>
       
-      <h3 className="text-sm font-bold text-white leading-tight mb-2 group-hover:text-amber-100 transition-colors line-clamp-2">
-        {title}
-      </h3>
-      
-      <div className="flex items-center gap-1.5 text-zinc-400">
-        <MapPin size={10} />
-        <span className="text-[10px] font-medium">{location}</span>
-      </div>
+      {/* Content */}
+      {children}
     </div>
-  </div>
-);
+  );
+};
 
 const OfflineListPage: React.FC<{
   offlinePages: OfflinePage[];
