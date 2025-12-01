@@ -4,9 +4,11 @@ import { MOCK_SEARCH_RESULTS } from '../constants';
 import { ShieldAlert, Search, Link as LinkIcon, Settings, Clock, Star, Trash2, Check, ExternalLink, Cloud, Calendar, DollarSign, Newspaper, Bus, LayoutGrid, X, TrendingUp, Sun, Moon, Globe, Zap, Database, Cpu, Palette, Layout, Shield, ArrowRight, Plus, DownloadCloud, FileText, Wifi, WifiOff, RefreshCcw, Bell, Home, PlusSquare, Sliders, MessageCircle, Github, Twitter, Instagram, Disc, Dribbble, Hexagon } from 'lucide-react';
 import { FindBar } from './BrowserUI';
 import { DownloadsPage, ExtensionsPage } from './BrowserPages';
+import WebView from './WebView';
 
 interface ContentFrameProps {
   activeTab: Tab | undefined;
+  tabs: Tab[];
   bookmarks: Bookmark[];
   history: HistoryItem[];
   offlinePages: OfflinePage[];
@@ -24,10 +26,15 @@ interface ContentFrameProps {
   onClearDownloads: () => void;
   onToggleExtension: (id: string) => void;
   onRemoveExtension: (id: string) => void;
+  onTabTitleChange: (tabId: string, title: string) => void;
+  onTabUrlChange: (tabId: string, url: string) => void;
+  onTabLoadingChange: (tabId: string, isLoading: boolean) => void;
+  onTabFaviconChange: (tabId: string, favicon: string) => void;
 }
 
 export const ContentFrame: React.FC<ContentFrameProps> = ({
   activeTab,
+  tabs,
   bookmarks,
   history,
   offlinePages,
@@ -44,7 +51,11 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   onSyncOfflinePages,
   onClearDownloads,
   onToggleExtension,
-  onRemoveExtension
+  onRemoveExtension,
+  onTabTitleChange,
+  onTabUrlChange,
+  onTabLoadingChange,
+  onTabFaviconChange,
 }) => {
   const [showDashboard, setShowDashboard] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -554,7 +565,7 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
   }
 
   // --- 8. Search Results Page (Minimalist) ---
-  const isSearch = !url.includes('.') || url.includes('search');
+  const isSearch = url.startsWith('https://search') || url.startsWith('http://search');
   
   if (isSearch) {
     const query = url.includes('search') ? new URLSearchParams(url.split('?')[1]).get('q') : url;
@@ -606,7 +617,33 @@ export const ContentFrame: React.FC<ContentFrameProps> = ({
     );
   }
 
-  // --- 9. External URL Fallback ---
+  // --- 9. External URL - Render WebViews ---
+  // Check if we're in Electron environment
+  const isElectron = typeof window !== 'undefined' && window.electron;
+  
+  if (isElectron) {
+    // Render webviews for all tabs (hidden when not active)
+    return (
+      <div className="flex-1 bg-black relative overflow-hidden">
+        <FindBar isOpen={showFindBar} onClose={onCloseFindBar} />
+        
+        {tabs.filter(tab => !tab.url.startsWith('serendib://')).map(tab => (
+          <WebView
+            key={tab.id}
+            tab={tab}
+            isActive={tab.id === activeTab?.id}
+            onTitleChange={onTabTitleChange}
+            onUrlChange={onTabUrlChange}
+            onLoadingChange={onTabLoadingChange}
+            onFaviconChange={onTabFaviconChange}
+            onNavigate={onNavigate}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // --- 10. Web fallback (non-Electron environment) ---
   return (
     <div className="flex-1 bg-black flex flex-col items-center justify-center p-8 text-center font-sans relative">
        <FindBar isOpen={showFindBar} onClose={onCloseFindBar} />
