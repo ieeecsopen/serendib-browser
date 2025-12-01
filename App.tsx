@@ -7,10 +7,12 @@ import { ToastContainer } from './src/components/ui/ToastContainer';
 import { WindowControls } from './src/components/layout/WindowControls';
 import { ContentFrame } from './src/components/pages/ContentFrame';
 import { SnapshotManager } from './src/components/snapshots/SnapshotManager';
+import { SavePasswordPrompt } from './src/components/passwords/SavePasswordPrompt';
 import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification, WorkspaceSnapshot, SnapshotImportOptions } from './src/types';
 import { ThemeMode } from './src/types/settings';
 import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS } from './src/constants';
 import { snapshotTabsToTabs, snapshotWorkspacesToWorkspaces, snapshotContainersToContainers } from './src/services/snapshot';
+import { saveCredential, extractDomain, isVaultUnlocked, credentialExists } from './src/services';
 import { Minimize2, Plus, X } from 'lucide-react';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -47,6 +49,28 @@ const App: React.FC = () => {
   
   // Snapshot Manager State
   const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false);
+  
+  // Password Save Prompt State
+  const [passwordPrompt, setPasswordPrompt] = useState<{
+    isVisible: boolean;
+    domain: string;
+    username: string;
+    password: string;
+    favicon?: string;
+    isUpdate: boolean;
+  }>({
+    isVisible: false,
+    domain: '',
+    username: '',
+    password: '',
+    isUpdate: false,
+  });
+  
+  // Sites that should never save passwords
+  const [neverSaveSites, setNeverSaveSites] = useState<string[]>(() => {
+    const saved = localStorage.getItem('serendib-never-save-passwords');
+    return saved ? JSON.parse(saved) : [];
+  });
   
   const [settings, setSettings] = useState<BrowserSettings>({
     homeUrl: DEFAULT_HOME_URL,
