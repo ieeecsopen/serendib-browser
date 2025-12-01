@@ -429,24 +429,39 @@ const NewTabPage: React.FC<{
               <p className="text-zinc-500 text-sm">Welcome to Serendib - The Pearl of the Indian Ocean</p>
             </div>
 
-            {/* Search Bar */}
-            <div className="w-full max-w-2xl relative mb-10 group z-20">
-              <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-red-600/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity" />
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="සොයන්න... Search Google or enter URL"
-                  className="w-full bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl py-4 pl-6 pr-14 text-lg text-white placeholder:text-zinc-500 focus:outline-none focus:bg-white/[0.07] focus:border-amber-500/30 transition-all shadow-2xl shadow-black/50"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      onNavigate(e.currentTarget.value);
-                    }
-                  }}
-                  autoFocus
-                />
-                <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-500 hover:to-orange-500 transition-all">
-                  <Search size={18} />
-                </button>
+            {/* Search Bar - 21st.dev inspired with enhanced glow */}
+            <div className="w-full max-w-2xl relative mb-12 group z-20">
+              {/* Outer glow effect */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-600/30 via-orange-500/20 to-red-600/30 rounded-3xl blur-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+              
+              {/* Inner glow */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600/40 via-orange-500/30 to-amber-600/40 rounded-2xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+              
+              <div className="relative bg-black/40 backdrop-blur-xl border border-white/[0.08] group-focus-within:border-amber-500/40 rounded-2xl transition-all duration-300 overflow-hidden">
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                </div>
+                
+                <div className="relative flex items-center">
+                  <div className="pl-5 text-zinc-500">
+                    <Search size={20} />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="සොයන්න... Search Google or enter URL"
+                    className="flex-1 bg-transparent py-4 px-4 text-lg text-white placeholder:text-zinc-500 focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        onNavigate(e.currentTarget.value);
+                      }
+                    }}
+                    autoFocus
+                  />
+                  <button className="mr-3 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-sm font-medium hover:from-amber-500 hover:to-orange-500 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg shadow-amber-900/30">
+                    Search
+                  </button>
+                </div>
               </div>
             </div>
 
