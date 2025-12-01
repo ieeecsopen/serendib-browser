@@ -72,6 +72,12 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
   
+  // Site permissions state
+  const [sitePermissionsMap, setSitePermissionsMap] = useState<Record<string, SitePermissions>>(() => {
+    const saved = localStorage.getItem('serendib-site-permissions');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
   const [settings, setSettings] = useState<BrowserSettings>({
     homeUrl: DEFAULT_HOME_URL,
     searchEngine: 'DuckDuckGo',
