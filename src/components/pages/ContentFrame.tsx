@@ -357,7 +357,7 @@ const NewTabPage: React.FC<{
       {/* Center Content */}
       <div className="flex-1 flex flex-col relative overflow-y-auto">
         <header className="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
-          <div className="text-xl font-bold tracking-tight text-white/90 font-display">cosmos</div>
+          <div className="text-xl font-bold tracking-tight text-white/90 font-display">Serendib</div>
           <div className="flex items-center gap-6 text-zinc-400">
             <button className="hover:text-white transition-colors"><Home size={20} strokeWidth={1.5} /></button>
             <button className="hover:text-white transition-colors"><Search size={20} strokeWidth={1.5} /></button>
