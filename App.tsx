@@ -131,6 +131,13 @@ const App: React.FC = () => {
     const theme = getTheme(settings.theme);
     applyTheme(theme);
   }, [settings.theme]);
+  
+  // Apply theme on initial mount
+  useEffect(() => {
+    const theme = getTheme(settings.theme);
+    applyTheme(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // --- Shortcuts Effect ---
   useEffect(() => {
