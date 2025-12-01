@@ -384,6 +384,33 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
 
             <MenuDivider />
 
+            {/* Print & PDF */}
+            <div className="px-1 space-y-0.5">
+              <MenuItem 
+                icon={<Printer size={16} />} 
+                label="Print Page" 
+                shortcut="Ctrl+P"
+                onClick={() => onAction(async () => {
+                  const electron = (window as any).electron;
+                  if (electron?.print?.printPage) {
+                    await electron.print.printPage();
+                  }
+                })} 
+              />
+              <MenuItem 
+                icon={<FileText size={16} />} 
+                label="Save as PDF" 
+                onClick={() => onAction(async () => {
+                  const electron = (window as any).electron;
+                  if (electron?.print?.savePDF) {
+                    await electron.print.savePDF({ showInFolder: true });
+                  }
+                })} 
+              />
+            </div>
+
+            <MenuDivider />
+
             {/* Container Section */}
             <div className="px-3 py-1.5 text-[10px] font-bold text-zinc-600 uppercase tracking-wider">
               Open in Container
