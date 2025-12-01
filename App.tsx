@@ -492,6 +492,15 @@ const App: React.FC = () => {
     addNotification('Permissions Reset', `Custom permissions removed for ${new URL(origin).hostname}`, 'info');
   };
 
+  const handleClearAllSitePermissions = () => {
+    setSitePermissionsMap({});
+    localStorage.removeItem('serendib-site-permissions');
+    addNotification('All Permissions Cleared', 'All site-specific permissions have been reset', 'info');
+  };
+
+  // Note: Default permissions are stored as a constant and don't need a setter
+  // For changing defaults, we would need to add it to settings
+
   // Get permissions for current tab's origin
   const getCurrentSitePermissions = (): SitePermissions | undefined => {
     if (!activeTab?.url.startsWith('http')) return undefined;
