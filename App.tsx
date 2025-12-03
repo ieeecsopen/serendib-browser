@@ -1119,36 +1119,72 @@ const App: React.FC = () => {
 
   // Capture selected area
   const handleCaptureArea = async (rect: { x: number; y: number; width: number; height: number }) => {
+    // Hide the overlay first
     setIsScreenshotSelecting(false);
     
     const electron = (window as any).electron;
     
-    if (electron?.screenshot?.captureVisible) {
+    if (electron?.screenshot?.captureRect) {
       try {
+        // Wait for overlay to be removed from DOM
+        await new Promise(resolve => setTimeout(resolve, 150));
+        
         addNotification('Capturing...', 'Capturing selected area', 'info');
         
-        // Capture the full visible area first
+        // Use the native captureRect with the selection coordinates
+        // Account for device pixel ratio
+        const dpr = window.devicePixelRatio || 1;
+        const captureRect = {
+          x: Math.round(rect.x * dpr),
+          y: Math.round(rect.y * dpr),
+          width: Math.round(rect.width * dpr),
+          height: Math.round(rect.height * dpr)
+        };
+        
+        const result = await electron.screenshot.captureRect(captureRect);
+        
+        if (result.success && result.dataUrl) {
+          // Save the screenshot
+          const saved = await electron.screenshot.saveWithDialog(
+            result.dataUrl,
+            `screenshot-area-${Date.now()}.png`
+          );
+          
+          if (saved.success) {
+            addNotification('Screenshot Saved', 'Area screenshot saved successfully!', 'success');
+          }
+        } else {
+          throw new Error(result.error || 'Capture failed');
+        }
+      } catch (error) {
+        console.error('Screenshot failed:', error);
+        addNotification('Screenshot Failed', 'Could not capture the area.', 'error');
+      }
+    } else if (electron?.screenshot?.captureVisible) {
+      // Fallback: capture full and crop manually
+      try {
+        await new Promise(resolve => setTimeout(resolve, 150));
+        
+        addNotification('Capturing...', 'Capturing selected area', 'info');
+        
         const result = await electron.screenshot.captureVisible();
         
         if (result.success && result.dataUrl) {
-          // Crop the image to the selected area using canvas
+          // Crop the image using canvas
           const img = new Image();
           img.src = result.dataUrl;
           
           await new Promise((resolve) => { img.onload = resolve; });
           
-          // Create canvas for cropping
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
           if (ctx) {
-            // Account for device pixel ratio
             const dpr = window.devicePixelRatio || 1;
             
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
             
-            // Draw the cropped portion
             ctx.drawImage(
               img,
               rect.x * dpr,
@@ -1163,7 +1199,6 @@ const App: React.FC = () => {
             
             const croppedDataUrl = canvas.toDataURL('image/png');
             
-            // Save the cropped screenshot
             const saved = await electron.screenshot.saveWithDialog(
               croppedDataUrl,
               `screenshot-area-${Date.now()}.png`
