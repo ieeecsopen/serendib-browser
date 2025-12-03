@@ -87,6 +87,9 @@ const App: React.FC = () => {
   // Snapshot Manager State
   const [isSnapshotManagerOpen, setIsSnapshotManagerOpen] = useState(false);
   
+  // Screenshot Selection State
+  const [isScreenshotSelecting, setIsScreenshotSelecting] = useState(false);
+  
   // Password Save Prompt State
   const [passwordPrompt, setPasswordPrompt] = useState<{
     isVisible: boolean;
@@ -1080,6 +1083,12 @@ const App: React.FC = () => {
 
   // --- Screenshot Handler ---
   const handleTakeScreenshot = async () => {
+    // Open the selection overlay for area screenshot
+    setIsScreenshotSelecting(true);
+  };
+
+  // Capture full visible area
+  const handleCaptureVisible = async () => {
     const electron = (window as any).electron;
     
     if (electron?.screenshot?.captureVisible) {
@@ -1088,7 +1097,6 @@ const App: React.FC = () => {
         const result = await electron.screenshot.captureVisible();
         
         if (result.success && result.dataUrl) {
-          // Show save dialog
           const saved = await electron.screenshot.saveWithDialog(
             result.dataUrl, 
             `screenshot-${Date.now()}.png`
@@ -1105,7 +1113,74 @@ const App: React.FC = () => {
         addNotification('Screenshot Failed', 'Could not capture the page.', 'error');
       }
     } else {
-      // Fallback: use html2canvas or notify not available
+      addNotification('Not Available', 'Screenshots require the desktop app.', 'warning');
+    }
+  };
+
+  // Capture selected area
+  const handleCaptureArea = async (rect: { x: number; y: number; width: number; height: number }) => {
+    setIsScreenshotSelecting(false);
+    
+    const electron = (window as any).electron;
+    
+    if (electron?.screenshot?.captureVisible) {
+      try {
+        addNotification('Capturing...', 'Capturing selected area', 'info');
+        
+        // Capture the full visible area first
+        const result = await electron.screenshot.captureVisible();
+        
+        if (result.success && result.dataUrl) {
+          // Crop the image to the selected area using canvas
+          const img = new Image();
+          img.src = result.dataUrl;
+          
+          await new Promise((resolve) => { img.onload = resolve; });
+          
+          // Create canvas for cropping
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          if (ctx) {
+            // Account for device pixel ratio
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Draw the cropped portion
+            ctx.drawImage(
+              img,
+              rect.x * dpr,
+              rect.y * dpr,
+              rect.width * dpr,
+              rect.height * dpr,
+              0,
+              0,
+              rect.width * dpr,
+              rect.height * dpr
+            );
+            
+            const croppedDataUrl = canvas.toDataURL('image/png');
+            
+            // Save the cropped screenshot
+            const saved = await electron.screenshot.saveWithDialog(
+              croppedDataUrl,
+              `screenshot-area-${Date.now()}.png`
+            );
+            
+            if (saved.success) {
+              addNotification('Screenshot Saved', 'Area screenshot saved successfully!', 'success');
+            }
+          }
+        } else {
+          throw new Error(result.error || 'Capture failed');
+        }
+      } catch (error) {
+        console.error('Screenshot failed:', error);
+        addNotification('Screenshot Failed', 'Could not capture the area.', 'error');
+      }
+    } else {
       addNotification('Not Available', 'Screenshots require the desktop app.', 'warning');
     }
   };
@@ -1349,6 +1424,7 @@ const App: React.FC = () => {
             isPrivateMode={activeTab?.isPrivate || false}
             // Screenshot
             onTakeScreenshot={handleTakeScreenshot}
+            onCaptureVisible={handleCaptureVisible}
           />
         )}        <div className="flex-1 flex overflow-hidden relative">
           {/* Split View Mode */}
@@ -1430,6 +1506,13 @@ const App: React.FC = () => {
             sessionState={sessionRestorePrompt.sessionState}
             onRestore={handleRestoreSession}
             onDismiss={handleDismissSessionRestore}
+          />
+
+          {/* Screenshot Selection Overlay */}
+          <ScreenshotOverlay
+            isOpen={isScreenshotSelecting}
+            onClose={() => setIsScreenshotSelecting(false)}
+            onCapture={handleCaptureArea}
           />
 
           {/* Snapshot Manager Modal */}

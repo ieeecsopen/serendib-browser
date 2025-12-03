@@ -73,6 +73,7 @@ interface OmniBoxProps {
   isPrivateMode?: boolean;
   // Screenshot
   onTakeScreenshot?: () => void;
+  onCaptureVisible?: () => void;
 }
 
 // ============================================================================
@@ -136,12 +137,14 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   isPrivateMode = false,
   // Screenshot
   onTakeScreenshot,
+  onCaptureVisible,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
   const [isFocused, setIsFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSiteInfoOpen, setIsSiteInfoOpen] = useState(false);
+  const [isScreenshotMenuOpen, setIsScreenshotMenuOpen] = useState(false);
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -195,6 +198,22 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isShareMenuOpen]);
+
+  // Close screenshot menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setIsScreenshotMenuOpen(false);
+    };
+
+    if (isScreenshotMenuOpen) {
+      // Delay to allow the click that opened the menu
+      setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 0);
+    }
+
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isScreenshotMenuOpen]);
 
   // Handlers
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -378,15 +397,50 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
-              {/* Screenshot Button */}
-              {!url.startsWith('seran://') && onTakeScreenshot && (
-                <button
-                  onClick={onTakeScreenshot}
-                  className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
-                  title="Take Screenshot"
-                >
-                  <Aperture size={14} />
-                </button>
+              {/* Screenshot Button with Dropdown */}
+              {!url.startsWith('seran://') && (onTakeScreenshot || onCaptureVisible) && (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsScreenshotMenuOpen(!isScreenshotMenuOpen)}
+                    className={`p-1.5 rounded-md transition-all ${
+                      isScreenshotMenuOpen 
+                        ? 'text-white bg-white/10' 
+                        : 'text-zinc-500 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="Take Screenshot"
+                  >
+                    <Aperture size={14} />
+                  </button>
+                  
+                  {/* Screenshot Menu Dropdown */}
+                  {isScreenshotMenuOpen && (
+                    <div 
+                      className="absolute right-0 top-full mt-2 w-48 rounded-xl shadow-2xl py-1.5 animate-in fade-in zoom-in-95 duration-100 z-50 backdrop-blur-xl"
+                      style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-primary)' }}
+                    >
+                      <button
+                        onClick={() => {
+                          onTakeScreenshot?.();
+                          setIsScreenshotMenuOpen(false);
+                        }}
+                        className="w-full text-left flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                      >
+                        <span className="text-zinc-500"><Aperture size={14} /></span>
+                        Select Area
+                      </button>
+                      <button
+                        onClick={() => {
+                          onCaptureVisible?.();
+                          setIsScreenshotMenuOpen(false);
+                        }}
+                        className="w-full text-left flex items-center gap-3 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-white/10 transition-colors"
+                      >
+                        <span className="text-zinc-500"><Camera size={14} /></span>
+                        Capture Visible Area
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* QR Code Generator */}
