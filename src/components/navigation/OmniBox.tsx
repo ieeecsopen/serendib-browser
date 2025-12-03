@@ -20,7 +20,7 @@ import {
   User, Plus, History, Settings, HelpCircle, Download, Briefcase, ShoppingBag, 
   DollarSign, ShieldAlert, DownloadCloud, Check, MoreHorizontal, Camera, Printer, FileText,
   Shield, Code, Maximize, PictureInPicture2, SplitSquareHorizontal, Share2, ShieldCheck,
-  QrCode, Send, EyeOff, RotateCcw
+  QrCode, Send, EyeOff, RotateCcw, Aperture
 } from 'lucide-react';
 
 // ============================================================================
@@ -71,6 +71,8 @@ interface OmniBoxProps {
   isSplitView?: boolean;
   // Private mode indicator
   isPrivateMode?: boolean;
+  // Screenshot
+  onTakeScreenshot?: () => void;
 }
 
 // ============================================================================
@@ -132,6 +134,8 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   isSplitView = false,
   // Private mode
   isPrivateMode = false,
+  // Screenshot
+  onTakeScreenshot,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -374,6 +378,17 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
 
             {/* Trailing Actions */}
             <div className="pr-1.5 flex items-center space-x-1">
+              {/* Screenshot Button */}
+              {!url.startsWith('seran://') && onTakeScreenshot && (
+                <button
+                  onClick={onTakeScreenshot}
+                  className="p-1.5 rounded-md text-zinc-500 hover:text-white hover:bg-white/10 transition-all"
+                  title="Take Screenshot"
+                >
+                  <Aperture size={14} />
+                </button>
+              )}
+
               {/* QR Code Generator */}
               {!url.startsWith('seran://') && (
                 <div className="relative" ref={qrCodeRef}>
@@ -646,8 +661,25 @@ const MainMenu = React.forwardRef<HTMLDivElement, MainMenuProps>(
 
             <MenuDivider />
 
-            {/* Print & PDF */}
+            {/* Screenshot, Print & PDF */}
             <div className="px-1 space-y-0.5">
+              <MenuItem 
+                icon={<Aperture size={16} />} 
+                label="Take Screenshot" 
+                onClick={() => onAction(async () => {
+                  const electron = (window as any).electron;
+                  if (electron?.screenshot?.captureVisible) {
+                    try {
+                      const result = await electron.screenshot.captureVisible();
+                      if (result.success) {
+                        await electron.screenshot.saveWithDialog(result.dataUrl, `screenshot-${Date.now()}.png`);
+                      }
+                    } catch (err) {
+                      console.error('Screenshot failed:', err);
+                    }
+                  }
+                })} 
+              />
               <MenuItem 
                 icon={<Printer size={16} />} 
                 label="Print Page" 
