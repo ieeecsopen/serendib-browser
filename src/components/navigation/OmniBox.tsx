@@ -74,6 +74,9 @@ interface OmniBoxProps {
   // Screenshot
   onTakeScreenshot?: () => void;
   onCaptureVisible?: () => void;
+  // VPN/Proxy
+  onToggleVPN?: () => void;
+  isVPNConnected?: boolean;
 }
 
 // ============================================================================
@@ -138,6 +141,9 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
   // Screenshot
   onTakeScreenshot,
   onCaptureVisible,
+  // VPN
+  onToggleVPN,
+  isVPNConnected = false,
 }) => {
   // State
   const [inputValue, setInputValue] = useState(url);
@@ -556,6 +562,21 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
             onZoomReset={onZoomReset}
             onSetZoom={onSetZoom}
           />
+        )}
+
+        {/* VPN/Proxy Button */}
+        {onToggleVPN && (
+          <button
+            onClick={onToggleVPN}
+            className={`p-2 rounded-lg transition-colors hidden md:block ${
+              isVPNConnected 
+                ? 'text-green-500 hover:bg-green-500/10' 
+                : 'hover:bg-white/5 hover:text-white'
+            }`}
+            title={isVPNConnected ? 'VPN Connected' : 'VPN/Proxy Settings'}
+          >
+            {isVPNConnected ? <ShieldCheck size={18} strokeWidth={1.5} /> : <Shield size={18} strokeWidth={1.5} />}
+          </button>
         )}
 
         <button
