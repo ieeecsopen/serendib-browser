@@ -10,6 +10,7 @@ import { ContentFrame } from './src/components/pages/ContentFrame';
 import { SnapshotManager } from './src/components/snapshots/SnapshotManager';
 import { SavePasswordPrompt } from './src/components/passwords/SavePasswordPrompt';
 import { SessionRestorePrompt } from './src/components/ui/SessionRestorePrompt';
+import { ScreenshotOverlay } from './src/components/ui/ScreenshotOverlay';
 import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification, WorkspaceSnapshot, SnapshotImportOptions, SitePermissions, PermissionType, PermissionSetting } from './src/types';
 import type { SessionState } from './src/types/session';
 import { ThemeMode } from './src/types/settings';
