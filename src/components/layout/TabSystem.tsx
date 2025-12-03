@@ -11,7 +11,7 @@ import {
   X, Plus, Globe, Settings, History, Home, Layers, 
   Briefcase, Newspaper, User, Edit3, Trash2, ArrowRight, 
   Box, ShieldAlert, PanelLeftClose, PanelLeft, RotateCw,
-  Pin, PinOff, Volume2, VolumeX
+  Pin, PinOff, Volume2, VolumeX, ExternalLink
 } from 'lucide-react';
 
 // ============================================================================
@@ -39,6 +39,7 @@ interface TabSystemProps {
   onCreateDisposableTab: () => void;
   onTogglePinTab?: (tabId: string) => void;
   onToggleMuteTab?: (tabId: string) => void;
+  onDetachTab?: (tabId: string) => void;
 }
 
 interface ContextMenuState {
@@ -94,6 +95,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   onCreateDisposableTab,
   onTogglePinTab,
   onToggleMuteTab,
+  onDetachTab,
 }) => {
   // State
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
@@ -111,6 +113,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
   // Refs
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Save collapsed state to localStorage
   useEffect(() => {
@@ -202,14 +205,30 @@ export const TabSystem: React.FC<TabSystemProps> = ({
     setDraggedTabId(null);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (e: React.DragEvent) => {
+    // Check if dragged outside the sidebar to detach tab
+    if (draggedTabId && sidebarRef.current && onDetachTab) {
+      const sidebarRect = sidebarRef.current.getBoundingClientRect();
+      const { clientX, clientY } = e;
+      
+      // If dropped outside the sidebar bounds, detach the tab to a new window
+      const isOutsideSidebar = 
+        clientX > sidebarRect.right + 50 || // Dragged far enough to the right
+        clientX < sidebarRect.left - 50 ||
+        clientY < sidebarRect.top - 50 ||
+        clientY > sidebarRect.bottom + 50;
+      
+      if (isOutsideSidebar) {
+        onDetachTab(draggedTabId);
+      }
+    }
     setDraggedTabId(null);
     setDropTargetWorkspace(null);
   };
 
   return (
     <>
-      <div className={`flex flex-col h-full ${isCollapsed ? 'w-[60px]' : 'w-[260px]'} backdrop-blur-xl z-10 font-sans select-none transition-all duration-300`} style={{ backgroundColor: 'var(--bg-primary)', borderRight: '1px solid var(--border-secondary)', color: 'var(--text-secondary)' }}>
+      <div ref={sidebarRef} className={`flex flex-col h-full ${isCollapsed ? 'w-[60px]' : 'w-[260px]'} backdrop-blur-xl z-10 font-sans select-none transition-all duration-300`} style={{ backgroundColor: 'var(--bg-primary)', borderRight: '1px solid var(--border-secondary)', color: 'var(--text-secondary)' }}>
         
         {/* Header: Traffic Lights & New Tab Button */}
         <div className={`pt-8 pb-4 ${isCollapsed ? 'px-2' : 'px-5'} flex flex-col gap-5 shrink-0`}>
@@ -500,6 +519,7 @@ export const TabSystem: React.FC<TabSystemProps> = ({
           onMoveTabToWorkspace={onMoveTabToWorkspace}
           onTogglePinTab={onTogglePinTab}
           onToggleMuteTab={onToggleMuteTab}
+          onDetachTab={onDetachTab}
         />
       )}
     </>
@@ -525,6 +545,7 @@ interface TabContextMenuProps {
   onMoveTabToWorkspace: (tabId: string, workspaceId: string) => void;
   onTogglePinTab?: (tabId: string) => void;
   onToggleMuteTab?: (tabId: string) => void;
+  onDetachTab?: (tabId: string) => void;
 }
 
 const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
@@ -543,6 +564,7 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
     onMoveTabToWorkspace,
     onTogglePinTab,
     onToggleMuteTab,
+    onDetachTab,
   }, ref) => {
     
     if (contextMenu.type === 'tab') {
@@ -578,6 +600,14 @@ const TabContextMenu = React.forwardRef<HTMLDivElement, TabContextMenuProps>(
               label="Rename Tab"
               onClick={() => onRenameTab(tab.id, tab.title)}
             />
+            {/* Detach to New Window */}
+            {onDetachTab && (
+              <ContextMenuItem 
+                icon={<ExternalLink size={12} />} 
+                label="Move to New Window"
+                onClick={() => { onDetachTab(tab.id); onClose(); }}
+              />
+            )}
             <ContextMenuItem 
               icon={<Trash2 size={12} />} 
               label="Close Tab"

@@ -9,11 +9,14 @@ import { WindowControls } from './src/components/layout/WindowControls';
 import { ContentFrame } from './src/components/pages/ContentFrame';
 import { SnapshotManager } from './src/components/snapshots/SnapshotManager';
 import { SavePasswordPrompt } from './src/components/passwords/SavePasswordPrompt';
+import { SessionRestorePrompt } from './src/components/ui/SessionRestorePrompt';
 import type { Tab, Bookmark, Workspace, HistoryItem, BrowserSettings, Container, OfflinePage, DownloadItem, Extension, Notification, WorkspaceSnapshot, SnapshotImportOptions, SitePermissions, PermissionType, PermissionSetting } from './src/types';
+import type { SessionState } from './src/types/session';
 import { ThemeMode } from './src/types/settings';
 import { INITIAL_BOOKMARKS, INITIAL_WORKSPACES, INITIAL_CONTAINERS, DEFAULT_HOME_URL, MOCK_DOWNLOADS, MOCK_EXTENSIONS, DEFAULT_PERMISSIONS } from './src/constants';
 import { snapshotTabsToTabs, snapshotWorkspacesToWorkspaces, snapshotContainersToContainers } from './src/services/snapshot';
 import { saveCredential, extractDomain, isVaultUnlocked, credentialExists } from './src/services';
+import { sessionService } from './src/services/session';
 import { getTheme, applyTheme } from './src/constants/themes';
 import { Minimize2, EyeOff } from 'lucide-react';
 
@@ -111,6 +114,15 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : {};
   });
   
+  // Session restore state
+  const [sessionRestorePrompt, setSessionRestorePrompt] = useState<{
+    isVisible: boolean;
+    sessionState: SessionState | null;
+  }>({
+    isVisible: false,
+    sessionState: null,
+  });
+  
   const [settings, setSettings] = useState<BrowserSettings>({
     homeUrl: DEFAULT_HOME_URL,
     searchEngine: 'DuckDuckGo',
@@ -138,6 +150,55 @@ const App: React.FC = () => {
     applyTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // --- Session Restore Check ---
+  useEffect(() => {
+    const checkSession = async () => {
+      const hasSession = await sessionService.hasSessionToRestore();
+      if (hasSession) {
+        const sessionState = await sessionService.loadSession();
+        if (sessionState && sessionState.tabs.length > 0) {
+          setSessionRestorePrompt({
+            isVisible: true,
+            sessionState,
+          });
+        }
+      }
+    };
+    checkSession();
+  }, []);
+
+  // --- Session Auto-Save ---
+  useEffect(() => {
+    // Start auto-save
+    sessionService.startAutoSave(() => ({
+      tabs: tabs.map(t => ({
+        id: t.id,
+        url: t.url,
+        title: t.title,
+        workspaceId: t.workspaceId,
+        containerId: t.containerId,
+        isPinned: t.isPinned,
+        scrollPosition: 0, // Would need webview integration for actual scroll
+      })),
+      workspaces: workspaces.map(ws => ({
+        id: ws.id,
+        name: ws.name,
+        icon: ws.icon,
+      })),
+      containers: containers.map(c => ({
+        id: c.id,
+        name: c.name,
+        color: c.color,
+        icon: c.icon,
+      })),
+      activeTabId,
+      activeWorkspaceId,
+      timestamp: Date.now(),
+    }));
+
+    return () => sessionService.stopAutoSave();
+  }, [tabs, workspaces, containers, activeTabId, activeWorkspaceId]);
 
   // --- Shortcuts Effect ---
   useEffect(() => {
