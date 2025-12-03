@@ -172,29 +172,11 @@ const App: React.FC = () => {
   useEffect(() => {
     // Start auto-save
     sessionService.startAutoSave(() => ({
-      tabs: tabs.map(t => ({
-        id: t.id,
-        url: t.url,
-        title: t.title,
-        workspaceId: t.workspaceId,
-        containerId: t.containerId,
-        isPinned: t.isPinned,
-        scrollPosition: 0, // Would need webview integration for actual scroll
-      })),
-      workspaces: workspaces.map(ws => ({
-        id: ws.id,
-        name: ws.name,
-        icon: ws.icon,
-      })),
-      containers: containers.map(c => ({
-        id: c.id,
-        name: c.name,
-        color: c.color,
-        icon: c.icon,
-      })),
+      tabs,
+      workspaces,
+      containers,
       activeTabId,
       activeWorkspaceId,
-      timestamp: Date.now(),
     }));
 
     return () => sessionService.stopAutoSave();

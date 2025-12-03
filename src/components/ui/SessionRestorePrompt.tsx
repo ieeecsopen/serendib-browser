@@ -116,7 +116,7 @@ export const SessionRestorePrompt: React.FC<SessionRestorePromptProps> = ({
             <div className="flex items-center gap-2">
               <Clock size={16} className="text-zinc-400" />
               <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                {formatTimeSince(sessionState.savedAt || sessionState.timestamp || Date.now())}
+                {formatTimeSince(sessionState.savedAt)}
               </span>
             </div>
           </div>
