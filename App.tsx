@@ -91,6 +91,10 @@ const App: React.FC = () => {
   // Screenshot Selection State
   const [isScreenshotSelecting, setIsScreenshotSelecting] = useState(false);
   
+  // VPN/Proxy Panel State
+  const [isVPNPanelOpen, setIsVPNPanelOpen] = useState(false);
+  const [isVPNConnected, setIsVPNConnected] = useState(false);
+  
   // Password Save Prompt State
   const [passwordPrompt, setPasswordPrompt] = useState<{
     isVisible: boolean;
