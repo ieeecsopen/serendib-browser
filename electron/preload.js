@@ -55,6 +55,111 @@ contextBridge.exposeInMainWorld('electron', {
     },
     
     // =========================================================================
+    // Proxy/VPN Support
+    // =========================================================================
+    
+    proxy: {
+        /**
+         * Connect to a proxy server
+         * @param {string} proxyRules - Proxy rules string (e.g., "http=host:port")
+         * @param {string} bypassRules - Bypass rules string
+         */
+        connect: (proxyRules, bypassRules = '') =>
+            ipcRenderer.invoke('proxy-connect', proxyRules, bypassRules),
+        
+        /**
+         * Disconnect from proxy
+         */
+        disconnect: () => ipcRenderer.invoke('proxy-disconnect'),
+        
+        /**
+         * Test proxy connection
+         * @param {string} proxyRules - Proxy rules to test
+         */
+        test: (proxyRules) => ipcRenderer.invoke('proxy-test', proxyRules),
+        
+        /**
+         * Get current proxy status
+         */
+        getStatus: () => ipcRenderer.invoke('proxy-get-status'),
+    },
+    
+    // =========================================================================
+    // Screenshot Capture
+    // =========================================================================
+    
+    screenshot: {
+        /**
+         * Capture visible area of the window
+         * @param {Object} options - Capture options
+         */
+        captureVisible: (options = {}) =>
+            ipcRenderer.invoke('screenshot-capture-visible', options),
+        
+        /**
+         * Capture a specific rectangle
+         * @param {Object} rect - {x, y, width, height}
+         * @param {Object} options - Capture options
+         */
+        captureRect: (rect, options = {}) =>
+            ipcRenderer.invoke('screenshot-capture-rect', rect, options),
+        
+        /**
+         * Save screenshot with file dialog
+         * @param {string} dataUrl - Image data URL
+         * @param {string} defaultFilename - Default filename
+         */
+        saveWithDialog: (dataUrl, defaultFilename) =>
+            ipcRenderer.invoke('screenshot-save-dialog', dataUrl, defaultFilename),
+    },
+    
+    // =========================================================================
+    // Session Restore
+    // =========================================================================
+    
+    session: {
+        /**
+         * Save session data to persistent storage
+         * @param {string} sessionData - JSON session data
+         */
+        save: (sessionData) => ipcRenderer.invoke('session-save', sessionData),
+        
+        /**
+         * Load session data from persistent storage
+         */
+        load: () => ipcRenderer.invoke('session-load'),
+        
+        /**
+         * Clear saved session data
+         */
+        clear: () => ipcRenderer.invoke('session-clear'),
+    },
+    
+    // =========================================================================
+    // Window Management (Tab Detachment)
+    // =========================================================================
+    
+    window: {
+        /**
+         * Create a new window with a specific tab
+         * @param {Object} tabData - Tab data to open in new window
+         */
+        createWithTab: (tabData) =>
+            ipcRenderer.invoke('window-create-with-tab', tabData),
+        
+        /**
+         * Get current window bounds
+         */
+        getBounds: () => ipcRenderer.invoke('window-get-bounds'),
+        
+        /**
+         * Set window bounds
+         * @param {Object} bounds - {x, y, width, height}
+         */
+        setBounds: (bounds) => ipcRenderer.invoke('window-set-bounds', bounds),
+    },
+    
+    // =========================================================================
     // Container Session Management
     // =========================================================================
     
