@@ -1077,6 +1077,38 @@ const App: React.FC = () => {
     }
   };
 
+  // --- Screenshot Handler ---
+  const handleTakeScreenshot = async () => {
+    const electron = (window as any).electron;
+    
+    if (electron?.screenshot?.captureVisible) {
+      try {
+        addNotification('Capturing...', 'Taking screenshot of the page', 'info');
+        const result = await electron.screenshot.captureVisible();
+        
+        if (result.success && result.dataUrl) {
+          // Show save dialog
+          const saved = await electron.screenshot.saveWithDialog(
+            result.dataUrl, 
+            `screenshot-${Date.now()}.png`
+          );
+          
+          if (saved.success) {
+            addNotification('Screenshot Saved', 'Screenshot saved successfully!', 'success');
+          }
+        } else {
+          throw new Error(result.error || 'Capture failed');
+        }
+      } catch (error) {
+        console.error('Screenshot failed:', error);
+        addNotification('Screenshot Failed', 'Could not capture the page.', 'error');
+      }
+    } else {
+      // Fallback: use html2canvas or notify not available
+      addNotification('Not Available', 'Screenshots require the desktop app.', 'warning');
+    }
+  };
+
   // --- Snapshot Restore Handler ---
   const handleRestoreSnapshot = (snapshot: WorkspaceSnapshot, options: SnapshotImportOptions) => {
     const mergeMode = options.mergeMode || 'merge';
@@ -1314,6 +1346,8 @@ const App: React.FC = () => {
             isSplitView={splitView.enabled}
             // Private mode
             isPrivateMode={activeTab?.isPrivate || false}
+            // Screenshot
+            onTakeScreenshot={handleTakeScreenshot}
           />
         )}        <div className="flex-1 flex overflow-hidden relative">
           {/* Split View Mode */}
