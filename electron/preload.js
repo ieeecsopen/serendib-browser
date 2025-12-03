@@ -419,19 +419,19 @@ contextBridge.exposeInMainWorld('electron', {
     
     // IPC communication
     send: (channel, data) => {
-        const validChannels = ['toMain', 'new-tab-request'];
+        const validChannels = ['toMain', 'new-tab-request', 'init-with-tab'];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data);
         }
     },
     receive: (channel, func) => {
-        const validChannels = ['fromMain', 'new-tab-request'];
+        const validChannels = ['fromMain', 'new-tab-request', 'init-with-tab'];
         if (validChannels.includes(channel)) {
             ipcRenderer.on(channel, (event, ...args) => func(...args));
         }
     },
     removeListener: (channel, func) => {
-        const validChannels = ['fromMain', 'new-tab-request'];
+        const validChannels = ['fromMain', 'new-tab-request', 'init-with-tab'];
         if (validChannels.includes(channel)) {
             ipcRenderer.removeListener(channel, func);
         }
@@ -477,7 +477,24 @@ contextBridge.exposeInMainWorld('electron', {
             'password-vault-exists',
             'password-generate-random',
             'password-export',
-            'password-import'
+            'password-import',
+            // Proxy/VPN
+            'proxy-connect',
+            'proxy-disconnect',
+            'proxy-test',
+            'proxy-get-status',
+            // Screenshot
+            'screenshot-capture-visible',
+            'screenshot-capture-rect',
+            'screenshot-save-dialog',
+            // Session
+            'session-save',
+            'session-load',
+            'session-clear',
+            // Window management
+            'window-create-with-tab',
+            'window-get-bounds',
+            'window-set-bounds'
         ];
         if (validChannels.includes(channel)) {
             return ipcRenderer.invoke(channel, ...args);

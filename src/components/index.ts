@@ -19,6 +19,9 @@ export type { ActiveWebview } from './browser/WebView';
 export { SiteInfoPopup } from './ui/SiteInfoPopup';
 export { FindBar } from './ui/FindBar';
 export { ToastContainer } from './ui/ToastContainer';
+export { ProxyPanel } from './ui/ProxyPanel';
+export { ScreenshotCapture } from './ui/ScreenshotCapture';
+export { SessionRestorePrompt } from './ui/SessionRestorePrompt';
 
 // Page Components
 export { DownloadsPage } from './pages/DownloadsPage';
