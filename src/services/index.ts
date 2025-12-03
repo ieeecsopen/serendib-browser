@@ -105,3 +105,67 @@ export {
   getSuggestionsForUrl,
   getSavePromptData,
 } from './autofill';
+
+// Proxy/VPN
+export {
+  loadProxySettings,
+  saveProxySettings,
+  createProxyConfig,
+  addProxyConfig,
+  updateProxyConfig,
+  deleteProxyConfig,
+  createFromPreset,
+  getProxyStatus,
+  buildProxyUrl,
+  buildProxyRules,
+  connectProxy,
+  disconnectProxy,
+  testProxyConnection,
+  getCurrentIp,
+  countryCodeToFlag,
+  getCountryName,
+  PROXY_PRESETS,
+} from './proxy';
+
+// Session Restore
+export {
+  loadSessionSettings,
+  saveSessionSettings,
+  setSessionActive,
+  clearSessionActive,
+  didSessionCrash,
+  getLastSessionTimestamp,
+  saveSession,
+  loadSession,
+  loadSessionFromStorage,
+  clearSession,
+  getRestorePromptData,
+  restoreSession,
+  startAutoSave,
+  stopAutoSave,
+  triggerManualSave,
+  formatTimeSince,
+  setupSessionCleanup,
+} from './session';
+
+// Screenshot
+export {
+  loadSavedScreenshots,
+  saveScreenshot,
+  deleteScreenshot,
+  clearAllScreenshots,
+  captureVisibleArea,
+  captureFullPage,
+  captureSelection,
+  captureElement,
+  downloadScreenshot,
+  copyScreenshotToClipboard,
+  saveScreenshotWithDialog,
+  blobToDataUrl,
+  dataUrlToBlob,
+  formatToMimeType,
+  formatToExtension,
+  formatFileSize,
+  estimateDataUrlSize,
+  getSelectionRect,
+} from './screenshot';

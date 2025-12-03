@@ -8,3 +8,6 @@ export * from './settings';
 export * from './ui';
 export * from './snapshot';
 export * from './passwords';
+export * from './proxy';
+export * from './session';
+export * from './screenshot';
