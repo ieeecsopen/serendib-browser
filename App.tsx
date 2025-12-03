@@ -1127,7 +1127,7 @@ const App: React.FC = () => {
     if (electron?.screenshot?.captureRect) {
       try {
         // Wait for overlay to be removed from DOM
-        await new Promise(resolve => setTimeout(resolve, 150));
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         addNotification('Capturing...', 'Capturing selected area', 'info');
         
@@ -1141,7 +1141,9 @@ const App: React.FC = () => {
           height: Math.round(rect.height * dpr)
         };
         
+        console.log('[Screenshot] Capturing rect:', captureRect);
         const result = await electron.screenshot.captureRect(captureRect);
+        console.log('[Screenshot] Capture result:', result.success, result.error);
         
         if (result.success && result.dataUrl) {
           // Save the screenshot
@@ -1150,24 +1152,31 @@ const App: React.FC = () => {
             `screenshot-area-${Date.now()}.png`
           );
           
+          console.log('[Screenshot] Save result:', saved);
+          
           if (saved.success) {
-            addNotification('Screenshot Saved', 'Area screenshot saved successfully!', 'success');
+            addNotification('Screenshot Saved', `Saved to: ${saved.filePath}`, 'success');
+          } else if (saved.canceled) {
+            addNotification('Cancelled', 'Screenshot save was cancelled.', 'info');
+          } else {
+            throw new Error(saved.error || 'Save failed');
           }
         } else {
           throw new Error(result.error || 'Capture failed');
         }
       } catch (error) {
-        console.error('Screenshot failed:', error);
+        console.error('[Screenshot] Failed:', error);
         addNotification('Screenshot Failed', 'Could not capture the area.', 'error');
       }
     } else if (electron?.screenshot?.captureVisible) {
       // Fallback: capture full and crop manually
       try {
-        await new Promise(resolve => setTimeout(resolve, 150));
+        await new Promise(resolve => setTimeout(resolve, 200));
         
         addNotification('Capturing...', 'Capturing selected area', 'info');
         
         const result = await electron.screenshot.captureVisible();
+        console.log('[Screenshot] Visible capture result:', result.success);
         
         if (result.success && result.dataUrl) {
           // Crop the image using canvas
@@ -1198,21 +1207,28 @@ const App: React.FC = () => {
             );
             
             const croppedDataUrl = canvas.toDataURL('image/png');
+            console.log('[Screenshot] Cropped, dataUrl length:', croppedDataUrl.length);
             
             const saved = await electron.screenshot.saveWithDialog(
               croppedDataUrl,
               `screenshot-area-${Date.now()}.png`
             );
             
+            console.log('[Screenshot] Save result:', saved);
+            
             if (saved.success) {
-              addNotification('Screenshot Saved', 'Area screenshot saved successfully!', 'success');
+              addNotification('Screenshot Saved', `Saved to: ${saved.filePath}`, 'success');
+            } else if (saved.canceled) {
+              addNotification('Cancelled', 'Screenshot save was cancelled.', 'info');
+            } else {
+              throw new Error(saved.error || 'Save failed');
             }
           }
         } else {
           throw new Error(result.error || 'Capture failed');
         }
       } catch (error) {
-        console.error('Screenshot failed:', error);
+        console.error('[Screenshot] Failed:', error);
         addNotification('Screenshot Failed', 'Could not capture the area.', 'error');
       }
     } else {
