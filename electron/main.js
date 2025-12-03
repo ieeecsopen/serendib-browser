@@ -1037,6 +1037,325 @@ ipcMain.handle('password-import', async () => {
     }
 });
 
+// ============================================================================
+// Proxy/VPN Support
+// ============================================================================
+
+// Current proxy configuration
+let currentProxyConfig = null;
+
+// Connect to proxy
+ipcMain.handle('proxy-connect', async (event, proxyRules, bypassRules = '') => {
+    try {
+        const ses = session.defaultSession;
+        
+        await ses.setProxy({
+            proxyRules: proxyRules,
+            proxyBypassRules: bypassRules || '<local>'
+        });
+        
+        currentProxyConfig = { proxyRules, bypassRules };
+        console.log(`[Proxy] Connected: ${proxyRules}`);
+        
+        return { success: true };
+    } catch (error) {
+        console.error('[Proxy] Connect error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Disconnect from proxy
+ipcMain.handle('proxy-disconnect', async () => {
+    try {
+        const ses = session.defaultSession;
+        
+        await ses.setProxy({
+            proxyRules: '',
+            proxyBypassRules: ''
+        });
+        
+        currentProxyConfig = null;
+        console.log('[Proxy] Disconnected');
+        
+        return { success: true };
+    } catch (error) {
+        console.error('[Proxy] Disconnect error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Test proxy connection
+ipcMain.handle('proxy-test', async (event, proxyRules) => {
+    try {
+        const startTime = Date.now();
+        
+        // Create a temporary session to test the proxy
+        const testSession = session.fromPartition('proxy-test-' + Date.now());
+        await testSession.setProxy({ proxyRules });
+        
+        // Try to fetch a test URL
+        return new Promise((resolve) => {
+            const request = net.request({
+                url: 'https://www.google.com/generate_204',
+                session: testSession
+            });
+            
+            request.on('response', (response) => {
+                const latency = Date.now() - startTime;
+                resolve({ success: true, latency, statusCode: response.statusCode });
+            });
+            
+            request.on('error', (error) => {
+                resolve({ success: false, error: error.message });
+            });
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                request.abort();
+                resolve({ success: false, error: 'Connection timeout' });
+            }, 10000);
+            
+            request.end();
+        });
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Get current proxy status
+ipcMain.handle('proxy-get-status', () => {
+    return {
+        isConnected: currentProxyConfig !== null,
+        config: currentProxyConfig
+    };
+});
+
+// ============================================================================
+// Screenshot Capture
+// ============================================================================
+
+// Capture visible area
+ipcMain.handle('screenshot-capture-visible', async (event, options = {}) => {
+    try {
+        if (!mainWindow) {
+            return { success: false, error: 'No window available' };
+        }
+        
+        const image = await mainWindow.webContents.capturePage();
+        const dataUrl = image.toDataURL();
+        const size = image.getSize();
+        
+        return {
+            success: true,
+            dataUrl,
+            width: size.width,
+            height: size.height
+        };
+    } catch (error) {
+        console.error('[Screenshot] Capture error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Capture specific rect
+ipcMain.handle('screenshot-capture-rect', async (event, rect, options = {}) => {
+    try {
+        if (!mainWindow) {
+            return { success: false, error: 'No window available' };
+        }
+        
+        const image = await mainWindow.webContents.capturePage(rect);
+        const dataUrl = image.toDataURL();
+        const size = image.getSize();
+        
+        return {
+            success: true,
+            dataUrl,
+            width: size.width,
+            height: size.height
+        };
+    } catch (error) {
+        console.error('[Screenshot] Capture rect error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Save screenshot with dialog
+ipcMain.handle('screenshot-save-dialog', async (event, dataUrl, defaultFilename) => {
+    try {
+        const result = await dialog.showSaveDialog(mainWindow, {
+            title: 'Save Screenshot',
+            defaultPath: `${defaultFilename || 'screenshot'}.png`,
+            filters: [
+                { name: 'PNG Image', extensions: ['png'] },
+                { name: 'JPEG Image', extensions: ['jpg', 'jpeg'] },
+                { name: 'WebP Image', extensions: ['webp'] }
+            ]
+        });
+        
+        if (result.canceled || !result.filePath) {
+            return { success: false, canceled: true };
+        }
+        
+        // Convert data URL to buffer
+        const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        await fs.writeFile(result.filePath, buffer);
+        console.log(`[Screenshot] Saved to: ${result.filePath}`);
+        
+        return { success: true, filePath: result.filePath };
+    } catch (error) {
+        console.error('[Screenshot] Save error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// ============================================================================
+// Session Restore
+// ============================================================================
+
+// Get session storage directory
+function getSessionDir() {
+    return path.join(app.getPath('userData'), 'sessions');
+}
+
+// Ensure session directory exists
+async function ensureSessionDir() {
+    const dir = getSessionDir();
+    try {
+        await fs.mkdir(dir, { recursive: true });
+    } catch (error) {
+        if (error.code !== 'EEXIST') throw error;
+    }
+    return dir;
+}
+
+// Get current session file path
+function getSessionPath() {
+    return path.join(getSessionDir(), 'current-session.json');
+}
+
+// Save session to file
+ipcMain.handle('session-save', async (event, sessionData) => {
+    try {
+        await ensureSessionDir();
+        const sessionPath = getSessionPath();
+        await fs.writeFile(sessionPath, sessionData, 'utf8');
+        console.log('[Session] Saved');
+        return { success: true };
+    } catch (error) {
+        console.error('[Session] Save error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Load session from file
+ipcMain.handle('session-load', async () => {
+    try {
+        await ensureSessionDir();
+        const sessionPath = getSessionPath();
+        const data = await fs.readFile(sessionPath, 'utf8');
+        return { success: true, data };
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return { success: false, notFound: true };
+        }
+        console.error('[Session] Load error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Clear session file
+ipcMain.handle('session-clear', async () => {
+    try {
+        const sessionPath = getSessionPath();
+        await fs.unlink(sessionPath);
+        console.log('[Session] Cleared');
+        return { success: true };
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return { success: true }; // Already cleared
+        }
+        console.error('[Session] Clear error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// ============================================================================
+// Tab Detachment - New Window Creation
+// ============================================================================
+
+// Store for child windows
+const childWindows = new Map();
+
+// Create a new window with a specific tab
+ipcMain.handle('window-create-with-tab', async (event, tabData) => {
+    try {
+        const newWindow = new BrowserWindow({
+            width: 1200,
+            height: 800,
+            minWidth: 600,
+            minHeight: 400,
+            frame: false,
+            webPreferences: {
+                nodeIntegration: false,
+                contextIsolation: true,
+                preload: path.join(__dirname, 'preload.js'),
+                webviewTag: true,
+                sandbox: false,
+                webSecurity: true,
+            },
+            backgroundColor: '#000000',
+            titleBarStyle: 'hiddenInset',
+            show: false,
+        });
+        
+        const windowId = newWindow.id;
+        childWindows.set(windowId, newWindow);
+        
+        newWindow.once('ready-to-show', () => {
+            newWindow.show();
+            // Send the tab data to the new window
+            newWindow.webContents.send('init-with-tab', tabData);
+        });
+        
+        if (isDev) {
+            newWindow.loadURL('http://localhost:5173');
+        } else {
+            newWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+        }
+        
+        newWindow.on('closed', () => {
+            childWindows.delete(windowId);
+        });
+        
+        console.log(`[Window] Created new window ${windowId} with tab: ${tabData.url}`);
+        return { success: true, windowId };
+    } catch (error) {
+        console.error('[Window] Create error:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Get current window position
+ipcMain.handle('window-get-bounds', () => {
+    if (mainWindow) {
+        return mainWindow.getBounds();
+    }
+    return null;
+});
+
+// Set window bounds
+ipcMain.handle('window-set-bounds', (event, bounds) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+        win.setBounds(bounds);
+        return { success: true };
+    }
+    return { success: false };
+});
+
 app.whenReady().then(() => {
     createWindow();
 
