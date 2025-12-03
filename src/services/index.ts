@@ -146,6 +146,7 @@ export {
   triggerManualSave,
   formatTimeSince,
   setupSessionCleanup,
+  sessionService,
 } from './session';
 
 // Screenshot

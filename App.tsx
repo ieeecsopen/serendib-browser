@@ -1002,6 +1002,99 @@ const App: React.FC = () => {
     addNotification('Extension Removed', 'Extension has been uninstalled.', 'info');
   };
 
+  // --- Session Restore Handlers ---
+  const handleRestoreSession = async () => {
+    const sessionState = sessionRestorePrompt.sessionState;
+    if (!sessionState) return;
+
+    // Convert session tabs to Tab objects
+    const restoredTabs: Tab[] = sessionState.tabs.map(st => ({
+      id: st.id,
+      title: st.title,
+      url: st.url,
+      isLoading: false,
+      history: [st.url],
+      historyIndex: 0,
+      workspaceId: st.workspaceId,
+      containerId: st.containerId || 'cont-default',
+      isPinned: st.isPinned,
+    }));
+
+    // Restore workspaces
+    if (sessionState.workspaces && sessionState.workspaces.length > 0) {
+      const restoredWorkspaces: Workspace[] = sessionState.workspaces.map(sw => ({
+        id: sw.id,
+        name: sw.name,
+        icon: sw.icon || 'Layers',
+        tabIds: restoredTabs.filter(t => t.workspaceId === sw.id).map(t => t.id),
+      }));
+      setWorkspaces(restoredWorkspaces);
+    }
+
+    // Restore containers
+    if (sessionState.containers && sessionState.containers.length > 0) {
+      const restoredContainers: Container[] = sessionState.containers.map(sc => ({
+        id: sc.id,
+        name: sc.name,
+        icon: sc.icon || 'Box',
+        color: sc.color,
+      }));
+      // Merge with default containers
+      setContainers(prev => {
+        const existingIds = new Set(prev.map(c => c.id));
+        const newContainers = restoredContainers.filter(c => !existingIds.has(c.id));
+        return [...prev, ...newContainers];
+      });
+    }
+
+    // Set tabs
+    setTabs(restoredTabs);
+    
+    // Set active states
+    if (sessionState.activeTabId && restoredTabs.find(t => t.id === sessionState.activeTabId)) {
+      setActiveTabId(sessionState.activeTabId);
+    } else if (restoredTabs.length > 0) {
+      setActiveTabId(restoredTabs[0].id);
+    }
+
+    if (sessionState.activeWorkspaceId) {
+      setActiveWorkspaceId(sessionState.activeWorkspaceId);
+    }
+
+    // Clear the session after restore
+    await sessionService.clearSession();
+    setSessionRestorePrompt({ isVisible: false, sessionState: null });
+    addNotification('Session Restored', `Restored ${restoredTabs.length} tabs from previous session.`, 'success');
+  };
+
+  const handleDismissSessionRestore = async () => {
+    await sessionService.clearSession();
+    setSessionRestorePrompt({ isVisible: false, sessionState: null });
+  };
+
+  // --- Tab Detach Handler ---
+  const handleDetachTab = async (tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId);
+    if (!tab) return;
+
+    const electron = (window as any).electron;
+    if (electron?.tabDetach?.toNewWindow) {
+      try {
+        await electron.tabDetach.toNewWindow(tab.url, tab.title);
+        // Close the tab in current window after detaching
+        handleCloseTab(tabId);
+        addNotification('Tab Detached', `"${tab.title}" moved to new window.`, 'info');
+      } catch (error) {
+        console.error('Failed to detach tab:', error);
+        addNotification('Detach Failed', 'Could not move tab to new window.', 'error');
+      }
+    } else {
+      // Fallback for non-Electron environment
+      window.open(tab.url, '_blank');
+      addNotification('New Window', `Opened "${tab.title}" in new browser window.`, 'info');
+    }
+  };
+
   // --- Snapshot Restore Handler ---
   const handleRestoreSnapshot = (snapshot: WorkspaceSnapshot, options: SnapshotImportOptions) => {
     const mergeMode = options.mergeMode || 'merge';
@@ -1166,6 +1259,7 @@ const App: React.FC = () => {
           onCreateDisposableTab={handleCreateDisposableTab}
           onTogglePinTab={handleTogglePinTab}
           onToggleMuteTab={handleToggleMuteTab}
+          onDetachTab={handleDetachTab}
         />
         </div>
       )}
@@ -1311,6 +1405,14 @@ const App: React.FC = () => {
             onSave={handleSavePassword}
             onNeverSave={handleNeverSavePassword}
             onDismiss={handleDismissPasswordPrompt}
+          />
+
+          {/* Session Restore Prompt */}
+          <SessionRestorePrompt
+            isVisible={sessionRestorePrompt.isVisible}
+            sessionState={sessionRestorePrompt.sessionState}
+            onRestore={handleRestoreSession}
+            onDismiss={handleDismissSessionRestore}
           />
 
           {/* Snapshot Manager Modal */}

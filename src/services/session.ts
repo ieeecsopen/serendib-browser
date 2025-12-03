@@ -542,3 +542,58 @@ export function setupSessionCleanup(
     clearSessionActive();
   });
 }
+
+// ============================================================================
+// Session Service Object (for convenience)
+// ============================================================================
+
+/**
+ * Session service object grouping all session-related functions
+ */
+export const sessionService = {
+  // Settings
+  loadSettings: loadSessionSettings,
+  saveSettings: saveSessionSettings,
+  
+  // Crash detection
+  setActive: setSessionActive,
+  clearActive: clearSessionActive,
+  didCrash: didSessionCrash,
+  getLastTimestamp: getLastSessionTimestamp,
+  
+  // Session management
+  save: saveSession,
+  load: loadSession,
+  loadFromStorage: loadSessionFromStorage,
+  clear: clearSession,
+  
+  // Restore
+  getRestorePrompt: getRestorePromptData,
+  restore: restoreSession,
+  
+  // Auto-save
+  startAutoSave,
+  stopAutoSave,
+  triggerSave: triggerManualSave,
+  
+  // Cleanup
+  setupCleanup: setupSessionCleanup,
+  
+  // Utility
+  formatTimeSince,
+  
+  // Convenience methods
+  hasSessionToRestore: async (): Promise<boolean> => {
+    const session = await loadSessionFromStorage();
+    return session !== null && session.tabs.length > 0;
+  },
+  
+  loadSession: async (): Promise<SessionState | null> => {
+    return loadSessionFromStorage();
+  },
+  
+  clearSession: async (): Promise<void> => {
+    clearSession();
+    clearSessionActive();
+  },
+};
