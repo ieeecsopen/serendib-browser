@@ -568,7 +568,7 @@ export const OmniBox: React.FC<OmniBoxProps> = ({
         {onToggleVPN && (
           <button
             onClick={onToggleVPN}
-            className={`p-2 rounded-lg transition-colors hidden md:block ${
+            className={`p-2 rounded-lg transition-colors ${
               isVPNConnected 
                 ? 'text-green-500 hover:bg-green-500/10' 
                 : 'hover:bg-white/5 hover:text-white'

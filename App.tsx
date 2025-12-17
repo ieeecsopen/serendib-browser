@@ -1481,6 +1481,9 @@ const App: React.FC = () => {
             // Screenshot
             onTakeScreenshot={handleTakeScreenshot}
             onCaptureVisible={handleCaptureVisible}
+            // VPN
+            isVPNConnected={isVPNConnected}
+            onToggleVPN={() => setIsVPNPanelOpen(true)}
           />
         )}        <div className="flex-1 flex overflow-hidden relative">
           {/* Split View Mode */}
@@ -1569,6 +1572,13 @@ const App: React.FC = () => {
             isOpen={isScreenshotSelecting}
             onClose={() => setIsScreenshotSelecting(false)}
             onCapture={handleCaptureArea}
+          />
+
+          {/* VPN/Proxy Panel */}
+          <ProxyPanel
+            isOpen={isVPNPanelOpen}
+            onClose={() => setIsVPNPanelOpen(false)}
+            onNotification={addNotification}
           />
 
           {/* Snapshot Manager Modal */}
