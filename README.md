@@ -1,107 +1,77 @@
-
-
 # Seran Browser
 
-A modern, privacy-focused Electron browser with AI integration, container tabs, and workspace management.
+A privacy-focused desktop browser built on Electron, with container tabs,
+workspace management and an AI sidebar.
 
 ## Features
 
-### 🔒 Privacy & Security
-- **Container Tabs (Firefox-style)**: Isolate your browsing with separate containers (e.g., Personal, Work, Shopping) to prevent cross-site tracking.
-  - **Persistent Containers**: Sessions saved across restarts.
-  - **Disposable Containers**: Temporary, incognito-like usage where data is cleared internally upon closure.
-- **Built-in Ad & Tracker Blocker**: Automatically blocks known tracking domains and ads.
-- **Proxy & VPN Manager**: Native interface to connect to proxy servers and manage connection rules.
-- **Secure Password Manager**:
-  - Encrypted vault for credential storage.
-  - Strong password generator.
-  - Import/Export functionality.
+- **Container tabs** — Firefox-style isolation. Separate cookie jars and storage
+  per container (Personal, Work, Shopping), so sites can't correlate you across
+  contexts.
+- **Workspaces** — group tabs by task and switch between them wholesale.
+- **AI assistant** — Gemini-backed page summarising and Q&A in a sidebar.
+- **Privacy defaults** — tracker isolation rather than opt-in blocking.
 
-### 🚀 Productivity & Workflow
-- **Workspace Snapshots**:
-  - Save your entire browsing state (open tabs, layout) to a generic file (`.Seran-snapshot`).
-  - Export and share workspaces with colleagues.
-  - Load previous snapshots instantly.
-- **Offline Reading Mode**:
-  - Download full web pages (HTML + Images) for offline access.
-  - Dedicated library for managing saved offline content.
-- **Mira AI Assistant**:
-  - Integrated sidebar chat powered by Google Gemini.
-  - Context-aware assistance for the current webpage.
-- **Screen Capture Tool**: Built-in utility to capture the visible area or specific regions of a page.
-- **PDF & Printing**: High-fidelity PDF export and customizable printing options.
+## Stack
 
-### 🌐 Browsing Experience
-- **Modern Architecture**:
-  - **Multi-process**: Stable and responsive Electron backend.
-  - **Frameless UI**: Sleek, distraction-free design with custom window controls.
-- **Advanced Omnibox**: Smart address bar with autocomplete and search suggestions.
-- **Download Manager**: Dedicated interface to track and manage file downloads.
-- **Extensions Support**: Compatible with browser extensions for enhanced functionality.
-- **Customization**:
-  - Theming system with multiple color schemes.
-  - Customizable search engines.
+| Layer | Technology |
+| --- | --- |
+| Shell | Electron |
+| UI | React, TypeScript, Vite |
+| AI | Google Gemini (`@google/genai`) |
 
-## Project Structure
+## Getting started
 
-```
-seran-browser/
-├── electron/           # Electron main process
-│   ├── main.js         # Core logic (Windows, IPC, Session Management)
-│   └── preload.js      # Safe API exposure (Bridge between Main & Renderer)
-├── src/
-│   ├── components/     # React UI Components
-│   │   ├── ai/         # Mira AI Assistant
-│   │   ├── browser/    # WebView & Tab Content
-│   │   ├── layout/     # Window Frame, Sidebar, Tabs
-│   │   ├── navigation/ # Omnibox & Address Bar
-│   │   ├── pages/      # Settings, Offline, Passwords, etc.
-│   │   ├── snapshots/  # Workspace Snapshot Management
-│   │   └── ui/         # Reusable Design System
-│   ├── constants/      # Configuration & Defaults
-│   ├── services/       # External Integrations (Gemini, etc.)
-│   └── types/          # TypeScript Definitions
-├── App.tsx             # Main React Application
-├── index.tsx           # Entry Point
-└── index.html          # HTML Shell
-```
-
-## Run Locally
-
-**Prerequisites:** Node.js 18+
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-
-3. Run in development mode:
-   ```bash
-   # Web preview
-   npm run dev
-   
-   # Electron app
-   npm run electron:dev
-   ```
-
-## Build
+**Prerequisites:** Node.js 20+, a Gemini API key (only needed for AI features).
 
 ```bash
-# Build for production
-npm run build
-
-# Package Electron app
-npm run electron:build
+git clone https://github.com/ieeecsopen/serendib-browser
+cd serendib-browser
+npm install
 ```
 
-## Technology Stack
+Create `.env`:
 
-- **Electron** - Desktop app framework
-- **React 19** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **TailwindCSS** - Styling
-- **Lucide Icons** - Icon library
-- **Google Gemini** - AI integration
+```ini
+GEMINI_API_KEY=<gemini key>
+```
+
+```bash
+npm run electron:dev   # Electron shell + Vite dev server
+npm run dev            # renderer only, in a normal browser tab
+npm run electron:build # package a distributable
+```
+
+`npm run dev` is faster for pure UI work, but anything touching the main
+process, container isolation or tab management needs `electron:dev`.
+
+## Project layout
+
+```
+electron/     Main process - windows, container isolation, IPC
+src/
+  components/ Renderer UI
+  services/   AI and browser services
+  constants/  Configuration
+  styles/     Styling
+  types/      Shared TypeScript types
+```
+
+## Architecture notes
+
+Container isolation is enforced in the **main** process by giving each container
+its own Electron session partition. The renderer cannot be trusted to enforce
+this — a renderer-side check would be bypassable by any page. If you touch
+container logic, keep the boundary in the main process.
+
+## Contributing
+
+See [CONTRIBUTING.md](https://github.com/ieeecsopen/.github/blob/main/CONTRIBUTING.md).
+
+Security-relevant contributions (session isolation, IPC surface, CSP) get
+priority review. Please report vulnerabilities privately —
+see [SECURITY.md](https://github.com/ieeecsopen/.github/blob/main/SECURITY.md).
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
